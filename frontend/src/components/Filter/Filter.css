@@ -1,0 +1,123 @@
+:root {
+    --primary-filter-color: #8B7355;
+    --secondary-filter-color: white;
+    --accent-filter-color: #555;
+}
+
+.filterBar {
+    background-color: var(--secondary-filter-color);
+    border-bottom: 0.125rem solid var(--primary-filter-color);
+}
+
+.filterBarContainer {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.filterBarCategories {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.filterBarCategoryButton {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    color: var(--primary-filter-color);
+    border: 0.125rem solid var(--primary-filter-color);
+    cursor: pointer;
+}
+
+.filterBarCategoryButtonActive {
+    background-color: var(--primary-filter-color);
+    color: var(--secondary-filter-color);
+}
+
+.filterBarCategoryButton:hover:not(.filterBarCategoryButtonActive) {
+    border-color: var(--primary-filter-color);
+    background-color: var(--primary-filter-color);
+    color: var(--secondary-filter-color);
+}
+
+.filterBarSort {
+    position: relative;
+}
+
+.filterBarSortButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 0.125rem solid var(--primary-filter-color);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    color: var(--primary-filter-color);
+    cursor: pointer;
+}
+
+.filterBarSortButton:hover {
+    border-color: var(--primary-filter-color);
+    background-color: var(--primary-filter-color);
+}
+
+.filterBarDropdown {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    background-color: var(--secondary-filter-color);
+    border: 0.125rem solid var(--primary-filter-color);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    min-width: 12rem;
+    z-index: 50;
+}
+
+.filterBarDropdownItem {
+    margin: 0;
+    border: 0.125rem solid var(--primary-filter-color);
+}
+
+.filterBarDropdownItem:last-child {
+    border-bottom: none;
+}
+
+.filterBarDropdownButton {
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    border: none;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    color: var(--primary-filter-color);
+    cursor: pointer;
+}
+
+.filterBarDropdownButton:hover {
+    background-color: var(--primary-filter-color);
+    color: var(--secondary-filter-color);
+}
+
+.filterBarDropdownButtonActive {
+    background-color: var(--primary-filter-color);
+    color: var(--secondary-filter-color);
+}
+
+.filterBarOverlay {
+    position: fixed;
+    inset: 0;
+    border: none;
+    cursor: default;
+    z-index: 45;
+}
