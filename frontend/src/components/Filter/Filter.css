@@ -34,6 +34,7 @@
     font-size: 0.875rem;
     text-transform: uppercase;
     color: var(--primary-filter-color);
+    background-color: var(--secondary-filter-color);
     border: 0.125rem solid var(--primary-filter-color);
     cursor: pointer;
 }
@@ -59,6 +60,7 @@
     gap: 0.5rem;
     padding: 0.5rem 1rem;
     border: 0.125rem solid var(--primary-filter-color);
+    background-color: var(--secondary-filter-color);
     font-size: 0.875rem;
     text-transform: uppercase;
     color: var(--primary-filter-color);
@@ -68,6 +70,7 @@
 .filterBarSortButton:hover {
     border-color: var(--primary-filter-color);
     background-color: var(--primary-filter-color);
+    color: var(--secondary-filter-color);
 }
 
 .filterBarDropdown {
