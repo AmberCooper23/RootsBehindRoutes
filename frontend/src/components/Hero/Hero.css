@@ -3,6 +3,7 @@
     --secondary-color: #e8dcc8;
     --text-color: #555;
 }
+
 .hero {
     background-color: var(--secondary-color);
     position: relative;

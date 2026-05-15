@@ -1,5 +1,6 @@
 import {useState} from "react";
 import {Link} from "react-router-dom";
+import './NavBar.css';
 
 export function NavBar() {
 
@@ -11,8 +12,10 @@ export function NavBar() {
                 <section className="navBarContent">
                     <section className="navBarLeft">
                         <Link to="/" className="navBarLogo">
-                        <h1 className="navBarLogoText">RootsBehindRoutes</h1>
-                        <p className="navBarLocationText">Johannesburg, South Africa</p>
+                        <section className="navBarLogoText" aria-hidden="true">
+                        <h1>Roots Behind Routes</h1>
+                        <p>Johannesburg, South Africa</p>
+                        </section>
                         </Link>
 
                         <ul className="navBarLinks">
@@ -57,7 +60,7 @@ export function NavBar() {
 
                             <button
                             onClick={() => setIsContributeOpen(true)}
-                            className="ContributeButton"
+                            className="contributeButton"
                             type="button"
                             aria-label="Contribute"
                             >

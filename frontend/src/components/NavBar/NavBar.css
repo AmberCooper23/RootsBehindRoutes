@@ -1,0 +1,139 @@
+:root {
+    --primary-nav-color: #8B7355;
+    --secondary-nav-color: white;
+    --accent-nav-color: #555;
+}
+
+.navBar {
+    background-color: var(--secondary-nav-color);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 0.125rem solid var(--primary-nav-color);
+}
+
+.navBarContainer {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 1.5rem 2rem;
+}
+
+.navBarContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3rem;
+}
+
+.navBarLeft {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+}
+
+.navBarLogo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    border: none;
+}
+
+.navBarLogoText h1{
+    font-size: 1.5rem;
+    letter-spacing: 0.1em;
+    color: var(--primary-nav-color);
+    text-transform: uppercase;
+    line-height: 1;
+    margin: 0;
+    text-align: left;
+}
+
+.navBarLogoText p{
+    font-size: 0.75rem;
+    color: var(--accent-nav-color);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 0rem;
+    text-align: left;
+}
+
+.navBarLinks {
+    align-items: center;
+    gap: 2rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.navBarLinkItem {
+    margin: 0;
+}
+
+.navBarLink {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--primary-nav-color);
+    padding-bottom: 0.375rem;
+    text-decoration: none;
+}
+
+.navBarRight {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    position: relative;
+}
+
+.navBarSearch {
+    position: absolute;
+    right: 0;
+    top: 50%;
+}
+
+.navBarSearchInput {
+    padding-left: 2.75rem;
+    padding-right: 1rem;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+    width: 18rem;
+    background-color: var(--secondary-nav-color);
+    border: 0.125rem solid var(--primary-nav-color);
+    font-size: 0.8rem;
+    color: var(--primary-nav-color);
+}
+
+.navBarSearchInput:focus {
+    outline: none;
+    border-color: var(--primary-nav-color);
+}
+
+.navBarSearchInput::placeholder {
+    color: var(--accent-nav-color);
+    font-style: italic;
+}
+
+.navBarSearchIcon {
+    color: var(--primary-nav-color);
+}
+
+.navBarIconButton {
+    background: none;
+    border: none;
+    color: var(--primary-nav-color);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.contributeButton {
+    background-color: var(--primary-nav-color);
+    color: var(--secondary-nav-color);
+    padding: 0.75rem 1.5rem;
+    border: none;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
