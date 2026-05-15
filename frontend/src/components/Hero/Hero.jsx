@@ -1,14 +1,18 @@
 import React from "react";
+import './Hero.css';
+import HeroImage from '../../assets/RedTaxiImage.jpg';
 
 export function Hero() {
     return (
-        <section className='heroContainer'>
+        <section className='hero'>
+            <section className="heroGrid">
+                <section className="heroContainer">
                 <article className='heroBadge'>
-                    <p className='badgeText'>
+                    {/* <p className='badgeText'>
                         Est. 2026
-                    </p>
-                </article>
-                
+                    </p> */}
+                    Est. 2026
+                </article>                
                 <h1 className='heroTitle'>
                     Journey Beyond the Tourist Trails
                 </h1>
@@ -20,21 +24,37 @@ export function Hero() {
                     <button className='ctaButtonOutline'>Our Story</button>
                 </section>
 
+                <dl className="heroStats">
+                    <article>
+                        <dt className='heroStatValue'>100+</dt>
+                        <dd className='heroStatLabel'>Authentic Places</dd>
+                    </article>
+                    <article>
+                        <dt className='heroStatValue'>50+</dt>
+                        <dd className='heroStatLabel'>Local Voices</dd>
+                    </article>
+                    <article>
+                        <dt className='heroStatValue'>10K+</dt>
+                        <dd className='heroStatLabel'>Happy Travelers</dd>
+                    </article>
+                </dl>
+
+                </section>
                 <figure className='heroImageContainer'>
-                    <img className='heroimage'>
-                    </img>
-                        <blockquote className='heroQuoteContainer'>
-                            <section className='heroQuoteContent'>
-                                <p className='heroQuoteText'>
+                    <article className="heroImageBorder"></article>
+                    <img className='heroImage' src={HeroImage} alt="Johannesburg Street Scene" />
+                        <blockquote className='QuoteContainer'>
+                            <section className='QuoteContent'>
+                                <p className='QuoteText'>
                                 Culture is an experience, not a commodity.
                                 </p>
-                                <cite className='heroQuoteAuthor'>
+                                <cite className='QuoteAuthor'>
                                 Amber Cooper
                                 </cite>
                             </section>
                         </blockquote> 
                 </figure>
-                
+            </section>  
             </section>
     );
 }
