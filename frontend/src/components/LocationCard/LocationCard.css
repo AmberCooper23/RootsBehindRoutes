@@ -1,0 +1,81 @@
+:root {
+    --primary-location-color: #8B7355;
+    --secondary-location-color: white;
+    --accent-location-color: #555;
+}
+.locationCard {
+    background-color: var(--secondary-location-color);
+    border: 0.125rem solid var(--primary-location-color);
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    position: relative;
+}
+
+.locationCard:hover {
+    border-color: var(--primary-location-color);
+    box-shadow: 0 20px 25px 05px rgba(0, 0, 0, 0.1);
+}
+
+.locationCardCategory {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    background-color: var(--secondary-location-color);
+    border: 1px solid var(--primary-location-color);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: var(--primary-location-color);
+}
+
+.locationCardContent {
+    padding: 1.25rem;
+}
+
+.locationCardSubtitle {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--accent-location-color);
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    font-style: italic;
+}
+
+.locationCardRatings {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 2px solid var(--primary-location-color);
+}
+
+.locationCardRating {
+    font-size: 0.75rem;
+    color: var(--primary-location-color);
+    margin-bottom: 0.25rem;
+}
+
+.locationCardRatingValue {
+    display: flex;
+    flex-direction: column;
+}
+
+.locationCardRatingNumber {
+    font-size: 1.5rem;
+    color: var(--primary-location-color);
+    font-weight: 600;
+}
+
+.locationCardRatingMax {
+    font-size: 0.875rem;
+    color: var(--accent-location-color);
+}
+
+.locationCardAccent {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
