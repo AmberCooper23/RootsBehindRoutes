@@ -1,4 +1,5 @@
 import React from 'react';
+import './LandingPage.css';
 import Hero from '../../components/Hero/Hero';
 import Filter from '../../components/Filter/Filter';
 import LocationCard from '../../components/LocationCard/LocationCard';
@@ -52,11 +53,27 @@ export function LandingPage() {
   ];
 
     return (
-        <main className='landingPage'>
+        <main className='discoverPage'>
             <Hero />
             <Filter />
 
-            <section className="discover__grid">
+            <section className='discoverContainer'>
+              <header className='discoverHeader'>
+                <span className='discoverHeaderText'>
+                  <h2 className='discoverHeaderTitle'>
+                  Discover Authentic Experiences
+                </h2>
+                <p className='discoverSubtitle'>
+                  Endorsed by locals, experienced by travelers like you
+                </p>
+                </span>
+                
+                <p className='discoverCount'>
+                  <span className='discoverCountNumber'>6</span> experiences found
+                </p>
+              </header>
+
+        <section className="discoverGrid">
           {places.map((place, index) => (
             <LocationCard
               key={index}
@@ -65,6 +82,7 @@ export function LandingPage() {
             />
           ))}
         </section>
+            </section>
 
         </main>
     );

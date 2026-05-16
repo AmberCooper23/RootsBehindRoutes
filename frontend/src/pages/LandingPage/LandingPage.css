@@ -1,0 +1,65 @@
+:root {
+    --primary-color: #8B7355;
+    --secondary-color: white;
+    --accent-color: #555;
+    --text-color: black;
+    --bg-color:#e8dcc8;
+
+}
+
+.discoverPage {
+    background-color: var(--bg-color);
+    position: relative;
+}
+.discoverContainer {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+    background-color: var(--bg-color);
+
+}
+
+.discoverHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.discoverHeaderText {
+    display: flex;
+    flex-direction: column;
+}
+
+.discoverHeaderTitle {
+    font-size: 2.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    text-align: left;
+}
+
+.discoverSubtitle {
+    color: var(--accent-color);
+    font-style: italic;
+    text-align: left;
+}
+
+.discoverCount {
+    font-size: 1rem;
+    color: var(--accent-color);
+}
+
+.discoverCountNumber {
+    font-weight: 500;
+    color: var(--primary-color);
+    font-size: 1.125rem;
+}
+
+.discoverGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
