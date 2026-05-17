@@ -2,16 +2,17 @@ import React from "react";
 import "./Filter.css";
 
 export function Filter({ filter, setFilter }) {
-
-    const categories = ["All", "Museums", "Markets", "Restaurants", "Heritage Sites", "Cultural Centers" ];
-    const [activeCategory, setActiveCategory] = React.useState("All");
-    const [isSortOpen, setIsSortOpen] = React.useState(false);
-    const [sortBy, setSortBy] = React.useState('Most Endorsed');
-
+    const categories = ["All", "Museums", "Markets", "Restaurants", "Heritage Sites", "Cultural Centers"];
     const sortOptions = ["Most Endorsed", "Most Reviewed", "Highest Rated", "Newest", "Oldest", "Alphabetical"];
 
+    const [isSortOpen, setIsSortOpen] = React.useState(false);
+
+    const handleCategoryChange = (category) => {
+        setFilter({ category, sort: filter.sort });
+    };
+
     const handleSortChange = (option) => {
-        setSortBy(option);
+        setFilter({ category: filter.category, sort: option });
         setIsSortOpen(false);
     };
 
@@ -20,57 +21,53 @@ export function Filter({ filter, setFilter }) {
             <nav className="filterBarContainer">
                 <ul className="filterBarCategories">
                     {categories.map((category) => (
-                    <li key={category} className="filterBarCategoryItem">
-                        <button
-                        onClick={()=> setActiveCategory(category)}
-                        className={`filterBarCategoryButton $ {
-                            activeCategory === category ? "filterBarCategoryActive" : ""
-                            }`}
-                        type="button"
-                        >
-                        {category}
-                        </button>
-                    </li>
+                        <li key={category} className="filterBarCategoryItem">
+                            <button
+                                onClick={() => handleCategoryChange(category)}
+                                className={`filterBarCategoryButton ${filter.category === category ? "filterBarCategoryButtonActive" : ""}`}
+                                type="button"
+                            >
+                                {category}
+                            </button>
+                        </li>
                     ))}
                 </ul>
 
+                <section className="filterBarSort">
+                    <button
+                        className="filterBarSortButton"
+                        type="button"
+                        onClick={() => setIsSortOpen(!isSortOpen)}
+                        aria-expanded={isSortOpen}
+                    >
+                        {filter.sort} ▼
+                    </button>
+                    {isSortOpen && (
+                        <ul className="filterBarDropdown">
+                            {sortOptions.map((option) => (
+                                <li key={option} className="filterBarDropdownItem">
+                                    <button
+                                        onClick={() => handleSortChange(option)}
+                                        className={`filterBarDropdownButton ${filter.sort === option ? "filterBarDropdownButtonActive" : ""}`}
+                                        type="button"
+                                    >
+                                        {option}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </section>
+            </nav>
 
-            <section className="filterBarSort">
+            {isSortOpen && (
                 <button
-                className="filterBarSortButton"
-                type="button"
-                onClick={() => setIsSortOpen(!isSortOpen)}
-                aria-expanded={isSortOpen}
-                >
-                {sortBy} ▼
-                </button>
-                {isSortOpen && (
-                    <ul className="filterBarDropdown">
-                        {sortOptions.map((option) => (
-                        <li key={option} className="filterBarDropdownItem">
-                            <button
-                            onClick={() => handleSortChange(option)}
-                            className={`filterBarDropdownButton $ 
-                                {sortBy === option ? "filterBarDropdownButtonActive" : ""}`}
-                                type="button"
-                            >
-                            {option}
-                            </button>
-                        </li>
-                        ))}
-                    </ul>
-                )}
-            </section>
-        </nav>
-
-        {isSortOpen &&(
-            <button
-            className="filterBarOverlay"
-            onClick={()=>setIsSortOpen(false)}
-            aria-label="Close sort dropdown"
-            type="button"
-            />
-        )}
+                    className="filterBarOverlay"
+                    onClick={() => setIsSortOpen(false)}
+                    aria-label="Close sort dropdown"
+                    type="button"
+                />
+            )}
         </main>
     );
 }
