@@ -20,7 +20,7 @@
 .locationCardImageWrapper {
   position: relative;
   width: 100%;
-  height: 220px;       
+  height: 160px;       
   margin: 0;           
   padding: 0;
   overflow: hidden;
@@ -53,12 +53,13 @@
 }
 
 .locationCardContent {
-    padding: 1.25rem;
+    padding: 0.25rem;
 }
 
 .locationCardTitle {
     font-size: 1.25rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
+    margin-top: 0.25rem;
     color: var(--primary-location-color);
     text-align: left;
 }
@@ -69,16 +70,22 @@
     gap: 0.25rem;
     color: var(--accent-location-color);
     font-size: 0.875rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     font-style: italic;
 }
 
 .locationCardRatings {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    padding-top: 1rem;
+    gap: 0.5rem;
+    padding-top: 0.5rem;
     border-top: 2px solid var(--primary-location-color);
+}
+
+.locationCardRatingsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
 }
 
 .locationCardRating {
@@ -89,7 +96,7 @@
 
 .locationCardRatingValue {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
 }
 
 .locationCardRatingNumber {

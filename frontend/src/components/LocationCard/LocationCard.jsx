@@ -27,17 +27,21 @@ export function LocationCard({
         <address className="locationCardSubtitle">{location}</address>
 
         <dl className="locationCardRatings">
-          <dt className="locationCardRating">Local Voices</dt>
+          <section className="locationCardRatingsContainer">
+            <dt className="locationCardRating">Local Voices</dt>
           <dd className="locationCardRatingValue">
             <span className="locationCardRatingNumber">{localRating}</span>
             <span className="locationCardRatingMax">/10</span>
           </dd>
-
+          </section>
+          
+          <section className="locationCardRatingsContainer">
           <dt className="locationCardRating">Tourist Rating</dt>
           <dd className="locationCardRatingValue">
             <span className="locationCardRatingNumber">{touristRating}</span>
             <span className="locationCardRatingMax">/5</span>
           </dd>
+          </section>
         </dl>
       </section>
       <article className="locationCardAccent" aria-hidden="true" />
