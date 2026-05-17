@@ -1,0 +1,277 @@
+:root {
+    --primary-cont-color: #8B7355;
+    --dark-primary-cont-color: #6D5A42;
+    --light-primary-cont-color: #D4A574;
+    --secondary-cont-color: #ffffff;
+    --light-secondary-cont-colour: #fdfbf7;
+    --accent-cont-color: #555;
+    --text-cont-color: #000000;
+    --bg-cont-color: #f5f0e6;
+
+    --font-xl: 3rem;
+    --font-lg: 2.25rem;
+    --font-md: 1.5rem;
+    --font-sm: 1.25rem;
+    --font-xs: 1.125rem;
+    --font-xxs: 1rem;
+}
+
+.contributeModalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(0.5rem);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.contributeModal {
+  background-color: var(--bg-cont-color);
+  border: none;
+  width: 100%;
+  max-width: 48rem;
+  max-height: 90vh;
+  overflow: hidden;
+  box-shadow: 0 1.25rem 2.5rem rgba(0, 0, 0, 0.2);
+  border-radius: 0.5rem;
+}
+
+.contributeModalHeader {
+  padding: 1.5rem;
+  position: relative;
+  background-color: var(--primary-cont-color);
+}
+
+.contributeModalClose {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: var(--secondary-cont-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  border-radius: 0.25rem;
+}
+
+.contributeModalBody {
+  padding: 2rem;
+  overflow-y: auto;
+  max-height: calc(90vh - 12.5rem);
+  background-color: var(--secondary-cont-color);
+}
+
+.contributeModalTitle {
+  font-size: var(--font-lg);
+  color: var(--secondary-cont-color);
+  margin: 0 0 0.25rem 0;
+}
+
+.contributeModalSubtitle {
+  color: var(--light-secondary-cont-colour);
+  font-size: var(--font-xs);
+  font-style: italic;
+  margin: 0;
+}
+
+.contributeModalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.contributeModalFormGroup {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: none;
+}
+
+.contributeModalLabel {
+  display: block;
+  font-size: var(--font-xs);
+  color: var(--primary-cont-color);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.contributeModalInput,
+.contributeModalTextarea,
+.contributeModalSelect {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem 1rem;
+  background-color: var(--light-secondary-cont-colour);
+  border: 1px solid var(--primary-cont-color);
+  font-size: var(--font-xxs);
+  color: var(--accent-cont-color);
+  border-radius: 0.25rem;
+}
+
+.contributeModalInput:focus,
+.contributeModalTextarea:focus,
+.contributeModalSelect:focus {
+  outline: none;
+  border-color: var(--light-primary-cont-color);
+  box-shadow: 0 0 0 0.125rem rgba(139, 115, 85, 0.25);
+}
+
+.contributeModalTextarea {
+  resize: none;
+  min-height: 6rem;
+}
+
+.contributeModalSelect {
+  appearance: none;
+  cursor: pointer;
+}
+
+.contributeModalRangeWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.contributeModalRange {
+  width: 100%;
+  height: 0.5rem;
+  appearance: none;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  background-color: var(--light-secondary-cont-colour);
+}
+
+.contributeModalRange::-webkit-slider-thumb {
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  background-color: var(--primary-cont-color);
+  border-radius: 50%;
+  border: 2px solid var(--dark-primary-cont-color);
+  cursor: pointer;
+}
+
+.contributeModalRange::-moz-range-thumb {
+  width: 1.25rem;
+  height: 1.25rem;
+  background-color: var(--primary-cont-color);
+  border-radius: 50%;
+  border: 2px solid var(--dark-primary-cont-color);
+  cursor: pointer;
+}
+
+.contributeModalRangeLabels {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--font-xs);
+  color: var(--primary-cont-color);
+}
+
+.contributeModalRangeLabelLeft {
+  font-style: italic;
+  flex: 1;
+  text-align: left;
+}
+
+.contributeModalRangeLabelRight {
+  font-style: italic;
+  flex: 1;
+  text-align: right;
+}
+
+.contributeModalRangeValue {
+  font-size: var(--font-md);
+  font-weight: 600;
+  color: var(--primary-cont-color);
+  text-align: center;
+  flex: 0;
+  margin: 0 1rem;
+}
+
+.contributeModalAlert {
+  background-color: var(--bg-cont-color);
+  border-left: 0.25rem solid var(--primary-cont-color);
+  padding: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.contributeModalAlertTitle {
+  margin: 0 0 0.5rem 0;
+  color: var(--primary-cont-color);
+  text-transform: uppercase;
+  font-size: var(--font-xs);
+  font-weight: 600;
+}
+
+.contributeModalAlertDescription {
+  font-size: var(--font-xs);
+  color: var(--accent-cont-color);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.contributeModalActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #ccc;
+}
+
+.contributeModalSubmit {
+  flex: 1;
+  padding: 0.75rem 2rem;
+  background-color: var(--primary-cont-color);
+  color: var(--secondary-cont-color);
+  border: none;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-size: var(--font-xs);
+  cursor: pointer;
+  border-radius: 0.25rem;
+}
+
+.contributeModalSubmit:hover:not(:disabled) {
+  background-color: var(--dark-primary-cont-color);
+}
+
+.contributeModalSubmit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.contributeModalCancel {
+  flex: 1;
+  padding: 0.75rem 2rem;
+  background-color: transparent;
+  color: var(--primary-cont-color);
+  border: 1px solid var(--primary-cont-color);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-size: var(--font-xs);
+  cursor: pointer;
+  border-radius: 0.25rem;
+}
+
+.contributeModalCancel:hover {
+  background-color: var(--primary-cont-color);
+  color: var(--secondary-cont-color);
+}
+
+.contributeModalFooterNote {
+  font-size: var(--font-xxs);
+  color: var(--primary-cont-color);
+  text-align: center;
+  margin-top: 1.5rem;
+  font-style: italic;
+}

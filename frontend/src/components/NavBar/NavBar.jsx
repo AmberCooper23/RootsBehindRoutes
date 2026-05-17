@@ -1,5 +1,6 @@
 import {useState} from "react";
 import {Link} from "react-router-dom";
+import {ContributeModal} from "../ContributeModal/ContributeModal";
 import './NavBar.css';
 
 export function NavBar() {
@@ -7,6 +8,7 @@ export function NavBar() {
     const [isSearchExpanded, setIsSearchExpanded] = useState(false);
     const [isContributeOpen, setIsContributeOpen] = useState(false);
     return (
+        <>
         <nav className="navBar">
             <section className="navBarContainer">
                 <section className="navBarContent">
@@ -78,6 +80,12 @@ export function NavBar() {
                 </section>
             </section>
         </nav>
+
+        <ContributeModal 
+        isOpen={isContributeOpen}
+        onClose={()=> setIsContributeOpen(false)}/>
+    </>
+
     );
 }
 
