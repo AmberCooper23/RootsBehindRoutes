@@ -16,10 +16,11 @@ export function LocationCard({
       role="button" 
       tabIndex={0}
     >
-      <figure className="locationCardImage">
-        <img src={image} alt={title} />
+    <figure className="locationCardImageWrapper">
+      <img src={image} alt={title} className="locationCardImage" />
         <article className="locationCardCategory">{category}</article>
-      </figure>
+    </figure>
+
 
       <section className="locationCardContent">
         <h3 className="locationCardTitle">{title}</h3>

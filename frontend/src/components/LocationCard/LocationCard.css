@@ -17,11 +17,34 @@
     box-shadow: 0 20px 25px 05px rgba(0, 0, 0, 0.1);
 }
 
+.locationCardImageWrapper {
+  position: relative;
+  width: 100%;
+  height: 220px;       
+  margin: 0;           
+  padding: 0;
+  overflow: hidden;
+}
+
+.locationCardImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;   
+  display: block;
+  line-height: 0;      
+  transition: transform 0.4s ease;
+}
+
+.locationCardImage:hover {
+  transform: scale(1.05); 
+}
+
+
 .locationCardCategory {
     position: absolute;
-    top: 0.75rem;
-    left: 0.75rem;
-    padding: 0.25rem 0.75rem;
+    top: 0.3rem;
+    left: 0.3rem;
+    padding: 0.2rem 0.7rem;
     background-color: var(--secondary-location-color);
     border: 1px solid var(--primary-location-color);
     font-size: 0.75rem;
@@ -33,9 +56,16 @@
     padding: 1.25rem;
 }
 
+.locationCardTitle {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary-location-color);
+    text-align: left;
+}
+
 .locationCardSubtitle {
     display: flex;
-    align-items: center;
+    text-align: left;
     gap: 0.25rem;
     color: var(--accent-location-color);
     font-size: 0.875rem;
