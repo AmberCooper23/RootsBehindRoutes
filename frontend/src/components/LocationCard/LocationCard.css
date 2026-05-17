@@ -107,7 +107,7 @@
 }
 
 .locationCardRatingNumber {
-    font-size: var(--font-lg);
+    font-size: var(--font-md);
     color: var(--primary-location-color);
     font-weight: 600;
 }
