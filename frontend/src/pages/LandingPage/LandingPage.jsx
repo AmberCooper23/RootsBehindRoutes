@@ -16,6 +16,7 @@ export function LandingPage() {
       category: "Museum"
     },
     {
+      image: "https://images.unsplash.com/photo-1692689383138-c2df3476072c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600",
       title: "Neighbourgoods Market",
       location: "Braamfontein, JHB",
       localRating: 7.8,
@@ -23,6 +24,7 @@ export function LandingPage() {
       category: "Market"
     },
     {
+      image: "https://images.unsplash.com/photo-1692689388228-363ffdb7a551?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600",
       title: "Rosebank Art Market",
       location: "Rosebank, JHB",
       localRating: 6.9,
@@ -30,6 +32,7 @@ export function LandingPage() {
       category: "Market"
     },
     {
+      image: "https://images.unsplash.com/photo-1695142258282-99f0ac5db788?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600",
       title: "Traditional Arts Gallery",
       location: "Newtown, JHB",
       localRating: 9.2,
@@ -37,6 +40,7 @@ export function LandingPage() {
       category: "Heritage Site"
     },
     {
+      image: "https://images.unsplash.com/photo-1636706519609-988babca3dd5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600",
       title: "Constitution Hill",
       location: "Hillbrow, JHB",
       localRating: 9.5,
@@ -44,6 +48,7 @@ export function LandingPage() {
       category: "Heritage Site"
     },
     {
+      image: "https://images.unsplash.com/photo-1630960411440-10f7b59717ba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600",
       title: "Bruma Flea Market",
       location: "Bruma, JHB",
       localRating: 7.2,
@@ -82,7 +87,55 @@ export function LandingPage() {
             />
           ))}
         </section>
-            </section>
+
+        <aside className='ratingSystem'>
+          <h3 className='ratingSystemTitle'>
+            Understanding our rating system
+          </h3>
+          <article className='ratingSystemDivider' aria-hidden="true"></article>
+          <p className='ratingSystemDescription'>
+            We use a unique dual rating system to give you both local insight and tourist perspective.
+          </p>
+          
+          <section className='ratingSystemGrid'>
+            <article className='ratingSystemCategory'>
+              <header className='ratingSystemHeader'>
+                <section className='ratingSystemIconContainer'>
+                <article className='ratingSystemIcon'>10</article>
+                </section>
+                <h4 className='ratingSystemCategoryTitle'>
+                  Local Endorsement (1-10)
+                </h4>
+              </header>
+              <ul className="ratingSystemList">
+                <li className="ratingSystemItem"><strong>1-3:</strong> Locals prefer you didn't visit</li>
+                <li className="ratingSystemItem"><strong>4-6:</strong> Locals are okay with visitors</li>
+                <li className="ratingSystemItem"><strong>7-8:</strong> Locals love this place</li>
+                <li className="ratingSystemItem"><strong>9-10:</strong> Locals wish you could experience it</li>
+              </ul>
+            </article>
+
+            <article className='ratingSystemCategory'>
+              <header className='ratingSystemHeader'>
+                <section className='ratingSystemIconContainer'>
+                <article className='ratingSystemIcon'>★</article>
+                </section>
+                <h4 className='ratingSystemCategoryTitle'>
+                  Tourist Rating (1-5)
+                </h4>
+              </header>
+              <ul className="ratingSystemList">
+                <li className="ratingSystemItem"><strong>1-2:</strong> Not recommended</li>
+                <li className="ratingSystemItem"><strong>3:</strong> Average experience</li>
+                <li className="ratingSystemItem"><strong>4:</strong> Good experience</li>
+                <li className="ratingSystemItem"><strong>5:</strong> Excellent, highly recommended</li>
+              </ul>
+            </article>
+
+          </section>
+        </aside>
+
+        </section>
 
         </main>
     );
