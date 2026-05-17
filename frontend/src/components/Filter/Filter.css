@@ -127,7 +127,8 @@
 .filterBarOverlay {
     position: fixed;
     inset: 0;
+    background-color: rgba(0, 0, 0, 0.2); 
     border: none;
     cursor: default;
-    z-index: 45;
+    z-index: 40; 
 }
