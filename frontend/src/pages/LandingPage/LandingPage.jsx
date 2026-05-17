@@ -62,6 +62,54 @@ export function LandingPage() {
             <LocationCard key={index} {...place} />
           ))}
         </section>
+
+        <aside className='ratingSystem'>
+          <h3 className='ratingSystemTitle'>
+            Understanding our rating system
+          </h3>
+          <article className='ratingSystemDivider' aria-hidden="true"></article>
+          <p className='ratingSystemDescription'>
+            We use a unique dual rating system to give you both local insight and tourist perspective.
+          </p>
+          
+          <section className='ratingSystemGrid'>
+            <article className='ratingSystemCategory'>
+              <header className='ratingSystemHeader'>
+                <section className='ratingSystemIconContainer'>
+                <article className='ratingSystemIcon'>10</article>
+                </section>
+                <h4 className='ratingSystemCategoryTitle'>
+                  Local Endorsement (1-10)
+                </h4>
+              </header>
+              <ul className="ratingSystemList">
+                <li className="ratingSystemItem"><strong>1-3:</strong> Locals prefer you didn't visit</li>
+                <li className="ratingSystemItem"><strong>4-6:</strong> Locals are okay with visitors</li>
+                <li className="ratingSystemItem"><strong>7-8:</strong> Locals love this place</li>
+                <li className="ratingSystemItem"><strong>9-10:</strong> Locals wish you could experience it</li>
+              </ul>
+            </article>
+
+            <article className='ratingSystemCategory'>
+              <header className='ratingSystemHeader'>
+                <section className='ratingSystemIconContainer'>
+                <article className='ratingSystemIcon'>★</article>
+                </section>
+                <h4 className='ratingSystemCategoryTitle'>
+                  Tourist Rating (1-5)
+                </h4>
+              </header>
+              <ul className="ratingSystemList">
+                <li className="ratingSystemItem"><strong>1-2:</strong> Not recommended</li>
+                <li className="ratingSystemItem"><strong>3:</strong> Average experience</li>
+                <li className="ratingSystemItem"><strong>4:</strong> Good experience</li>
+                <li className="ratingSystemItem"><strong>5:</strong> Excellent, highly recommended</li>
+              </ul>
+            </article>
+
+          </section>
+        </aside>
+        
       </section>
     </main>
   );
