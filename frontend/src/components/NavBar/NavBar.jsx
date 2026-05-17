@@ -26,7 +26,7 @@ export function NavBar() {
                                 <Link to="/Map" className="navBarLink">Map</Link>
                             </li>
                             <li className="navBarLinkItem">
-                                <Link to="/About" className="navBarLink">About Us</Link>
+                                <Link to="/About" className="navBarLink">About</Link>
                             </li>
                             <li className="navBarLinkItem">
                                 <Link to="/Saved" className="navBarLink">Saved</Link>

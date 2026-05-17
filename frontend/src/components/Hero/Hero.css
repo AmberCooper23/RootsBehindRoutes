@@ -2,11 +2,19 @@
     --primary-color: #8B7355;
     --secondary-color: #e8dcc8;
     --text-color: #555;
+
+    --font-hero-xl: 3.75rem;
+    --font-hero-lg: 2.25rem;
+    --font-hero-md: 2.25rem;
+    --font-hero-sm: 1.25rem;
+    --font-hero-xs: 0.875rem;
+    --font-hero-xxs: 0.75rem;
 }
 
 .hero {
     background-color: var(--secondary-color);
     position: relative;
+    margin: 2.5rem;
 }
 
 .heroGrid {
@@ -28,7 +36,7 @@
     border: 2px solid var(--primary-color);
     color: var(--primary-color);
     margin-bottom: 1.5rem;
-    font-size: 0.75rem;
+    font-size: var(--font-hero-sm);
     text-transform: uppercase;
     letter-spacing: 0.25rem;
     padding: 0.25rem 1rem;
@@ -36,13 +44,13 @@
 }
 
 .heroTitle {
-    font-size: 3.75rem;
+    font-size: var(--font-hero-xl);
     margin-bottom: 1rem;
     line-height: 1.1;
 }
 
 .heroSubtitle {
-    font-size: 1.25rem;
+    font-size: var(--font-hero-sm);
     margin-bottom: 2rem;
     color: var(--text-color);
 }
@@ -57,7 +65,7 @@
     color: white;
     padding: 0.75rem 1.5rem;
     border: none;
-    font-size: 1.25rem;
+    font-size: var(--font-hero-sm);
 }
 
 .ctaButtonOutline {
@@ -65,7 +73,7 @@
     color: var(--primary-color);
     padding: 0.75rem 1.5rem;
     border: 2px solid var(--primary-color);
-    font-size: 1.25rem;
+    font-size: var(--font-hero-sm);
 }
 
 .heroStats {
@@ -76,13 +84,13 @@
 }
 
 .heroStatValue {
-    font-size: 2.25rem;
+    font-size: var(--font-hero-lg);
     color: var(--primary-color);
     margin-bottom: 0.25rem;
 }
 
 .heroStatLabel {
-    font-size: 0.75rem;
+    font-size: var(--font-hero-xxs);
     color: var(--text-color);
     margin: 0rem;
     margin-top: 0.75rem;
@@ -123,7 +131,7 @@
 }
 
 .QuoteContent {
-    font-size: 0.875rem;
+    font-size: var(--font-hero-xs);
 }
 
 .QuoteText::before {

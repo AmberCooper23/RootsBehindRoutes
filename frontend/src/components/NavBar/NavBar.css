@@ -2,6 +2,13 @@
     --primary-nav-color: #8B7355;
     --secondary-nav-color: white;
     --accent-nav-color: #555;
+
+    --font-xl: 3rem;
+    --font-lg: 2.25rem;
+    --font-md: 1.5rem;
+    --font-sm: 1.25rem;
+    --font-xs: 1.125rem;
+    --font-xxs: 1rem;
 }
 
 .navBar {
@@ -22,7 +29,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    justify-content: space-between;
     gap: 3rem;
 }
 
@@ -39,8 +45,8 @@
     border: none;
 }
 
-.navBarLogoText h1{
-    font-size: 1.5rem;
+.navBarLogoText h1 {
+    font-size: var(--font-md);
     letter-spacing: 0.1em;
     color: var(--primary-nav-color);
     text-transform: uppercase;
@@ -49,8 +55,8 @@
     text-align: left;
 }
 
-.navBarLogoText p{
-    font-size: 0.75rem;
+.navBarLogoText p {
+    font-size: var(--font-xxs);
     color: var(--accent-nav-color);
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -72,7 +78,7 @@
 }
 
 .navBarLink {
-    font-size: 0.75rem;
+    font-size: var(--font-xxs);
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--primary-nav-color);
@@ -101,7 +107,7 @@
     width: 18rem;
     background-color: var(--secondary-nav-color);
     border: 0.125rem solid var(--primary-nav-color);
-    font-size: 0.8rem;
+    font-size: var(--font-xs);
     color: var(--primary-nav-color);
 }
 
@@ -123,7 +129,7 @@
     background: none;
     border: none;
     color: var(--primary-nav-color);
-    font-size: 0.75rem;
+    font-size: var(--font-xxs);
     letter-spacing: 0.2em;
     text-transform: uppercase;
 }
@@ -133,7 +139,7 @@
     color: var(--secondary-nav-color);
     padding: 0.75rem 1.5rem;
     border: none;
-    font-size: 0.75rem;
+    font-size: var(--font-xxs);
     letter-spacing: 0.2em;
     text-transform: uppercase;
 }

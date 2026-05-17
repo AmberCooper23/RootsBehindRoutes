@@ -2,6 +2,13 @@
     --primary-filter-color: #8B7355;
     --secondary-filter-color: white;
     --accent-filter-color: #555;
+
+    --font-xl: 3rem;
+    --font-lg: 2.25rem;
+    --font-md: 1.5rem;
+    --font-sm: 1.25rem;
+    --font-xs: 1.125rem;
+    --font-xxs: 1rem;
 }
 
 .filterBar {
@@ -31,7 +38,7 @@
 
 .filterBarCategoryButton {
     padding: 0.5rem 1rem;
-    font-size: 0.875rem;
+    font-size: var(--font-xxs);
     text-transform: uppercase;
     color: var(--primary-filter-color);
     background-color: var(--secondary-filter-color);
@@ -61,7 +68,7 @@
     padding: 0.5rem 1rem;
     border: 0.125rem solid var(--primary-filter-color);
     background-color: var(--secondary-filter-color);
-    font-size: 0.875rem;
+    font-size: var(--font-xxs);
     text-transform: uppercase;
     color: var(--primary-filter-color);
     cursor: pointer;
@@ -101,7 +108,7 @@
     text-align: left;
     padding: 0.75rem 1rem;
     border: none;
-    font-size: 0.875rem;
+    font-size: var(--font-xxs);
     text-transform: uppercase;
     color: var(--primary-filter-color);
     cursor: pointer;

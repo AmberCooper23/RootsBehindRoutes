@@ -5,6 +5,12 @@
     --text-lp-color: rgb(0, 0, 0);
     --bg-lp-color:#e8dcc8;
 
+    --font-xl: 3rem;
+    --font-lg: 2.25rem;
+    --font-md: 1.5rem;
+    --font-sm: 1.25rem;
+    --font-xs: 1.125rem;
+    --font-xxs: 1rem;
 }
 
 .discoverPage {
@@ -34,32 +40,34 @@
 }
 
 .discoverHeaderTitle {
-    font-size: 2.25rem;
-    margin-bottom: 0.5rem;
+    font-size: var(--font-xl);
+    margin-bottom: 0rem;
     color: var(--text-lp-color);
     text-align: left;
 }
 
 .discoverSubtitle {
-    color: var(--accent-lp  -color);
+    color: var(--accent-lp-color);
+    font-size: var(--font-sm);
     font-style: italic;
     text-align: left;
+    margin-top: 0.2rem;
 }
 
 .discoverCount {
-    font-size: 1rem;
+    font-size: var(--font-md);
     color: var(--accent-lp-color);
 }
 
 .discoverCountNumber {
     font-weight: 500;
     color: var(--primary-lp-color);
-    font-size: 1.125rem;
+    font-size: var(--font-lg);
 }
 
 .discoverGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
     margin-bottom: 3rem;
 }
@@ -73,8 +81,8 @@
 }
 
 .ratingSystemTitle {
-    font-size: 1.875rem;
-    margin-bottom: 1rem;
+    font-size: var(--font-lg);
+    margin-bottom: 0.5rem;
     color: var(--text-lp-color);
     text-align: left;
 }
@@ -83,12 +91,14 @@
     width: 5rem;
     height: 2px;
     background-color: var(--primary-lp-color);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0rem;
     text-align: left;
 }
 
 .ratingSystemDescription {
     color: var(--accent-lp-color);
+    font-size: var(--font-md);
+    margin-top: 0.2rem;
     margin-bottom: 2rem;
     font-style: italic;
     line-height: 1.6;
@@ -108,8 +118,8 @@
 .ratingSystemHeader {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
+    gap: var(--font-xxs);
+    margin-bottom: var(--font-sm);
 }
 
 .ratingSystemIconContainer {
@@ -124,11 +134,11 @@
 .ratingSystemIcon {
     color: var(--primary-lp-color);
     font-weight: 600;
-    font-size: 1.125rem;
+    font-size: var(--font-md);
 }
 
 .ratingSystemCategoryTitle {
-    font-size: 1.125rem;
+    font-size: var(--font-md);
     font-weight: 500;
     color: var(--text-lp-color);
     margin: 0;
@@ -141,7 +151,7 @@
 }
 
 .ratingSystemItem {
-    font-size: 0.875rem;
+    font-size: var(--font-xs);
     color: var(--accent-lp-color);
     margin-bottom: 0.5rem;
     text-align: left;
@@ -149,6 +159,6 @@
 
 .ratingSystemItem strong {
     color: var(--primary-lp-color);
-    font-size: 0.9rem;
+    font-size: var(--font-sm);
 }
 
