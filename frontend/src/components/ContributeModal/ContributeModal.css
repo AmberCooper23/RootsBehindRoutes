@@ -275,3 +275,55 @@
   margin-top: 1.5rem;
   font-style: italic;
 }
+
+.contributeModalTypeGrid {
+  display: flex;
+  flex-direction: row;   
+  justify-content: space-between;
+  gap: 1.5rem;        
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.contributeModalTypeButton {
+  flex: 1; /* equal width */
+  padding: 1.5rem;
+  background-color: var(--light-secondary-cont-colour);
+  border: 1px solid var(--primary-cont-color);
+  border-radius: 0.5rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.contributeModalTypeButton:hover {
+  background-color: var(--bg-cont-color);
+  border-color: var(--light-primary-cont-color);
+}
+
+.contributeModalTypeButtonTitle {
+  font-size: var(--font-sm);
+  color: var(--primary-cont-color);
+  margin: 0.5rem 0;
+}
+
+.contributeModalTypeButtonDescription {
+  font-size: var(--font-xxs);
+  color: var(--accent-cont-color);
+  margin: 0.5rem 0 1rem 0;
+}
+
+.contributeModalTypeButtonInfoTitle {
+  font-size: var(--font-xxs);
+  font-weight: 600;
+  color: var(--primary-cont-color);
+  margin-bottom: 0.25rem;
+}
+
+.contributeModalTypeButtonListItem {
+  font-size: var(--font-xxs);
+  color: var(--accent-cont-color);
+  margin-bottom: 0.25rem;
+}
+
+
