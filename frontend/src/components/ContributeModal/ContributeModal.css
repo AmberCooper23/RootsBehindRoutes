@@ -75,8 +75,7 @@
 
 .contributeModalSubtitle {
   color: var(--light-secondary-cont-colour);
-  font-size: var(--font-xs);
-  font-style: italic;
+  font-size: var(--font-md);
   margin: 0;
 }
 
@@ -127,6 +126,55 @@
 .contributeModalTextarea {
   resize: none;
   min-height: 6rem;
+}
+
+.contributeModalTextareaHint {
+  font-size: var(--font-sm);
+  color: var(--light-primary-cont-color);
+  margin: 0.5rem;
+}
+
+.contributeModalRadioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.contributeModalRadioLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: var(--light-secondary-cont-colour);
+  border: 0.125rem solid var(--primary-cont-color);
+  cursor: pointer;
+}
+
+.contributeModalRadioLabel:hover {
+  border-color: var(--dark-primary-cont-color);
+}
+
+.contributeModalRadio {
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: var(--primary-cont-color);
+  cursor: pointer;
+}
+
+.contributeModalRadioTextWrapper {
+  flex: 1;
+}
+
+.contributeModalRadioTitle {
+  margin: 0;
+  color: var(--primary-cont-color);
+  font-size: var(--font-md);
+}
+
+.contributeModalRadioDescription {
+  font-size: var(--font-xs);
+  color: var(--accent-cont-color);
+  margin: 0;
 }
 
 .contributeModalSelect {
@@ -286,7 +334,7 @@
 }
 
 .contributeModalTypeButton {
-  flex: 1; /* equal width */
+  flex: 1; 
   padding: 1.5rem;
   background-color: var(--light-secondary-cont-colour);
   border: 1px solid var(--primary-cont-color);
@@ -305,12 +353,15 @@
   font-size: var(--font-sm);
   color: var(--primary-cont-color);
   margin: 0.5rem 0;
+  text-align: center;
 }
 
 .contributeModalTypeButtonDescription {
   font-size: var(--font-xxs);
   color: var(--accent-cont-color);
   margin: 0.5rem 0 1rem 0;
+  text-align: center;
+  line-height: 1.6;
 }
 
 .contributeModalTypeButtonInfoTitle {
@@ -320,10 +371,59 @@
   margin-bottom: 0.25rem;
 }
 
+.contributeModalTypeButtonList {
+  font-size: var(--font-sm);
+  color: var(--accent-cont-color);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
 .contributeModalTypeButtonListItem {
   font-size: var(--font-xxs);
   color: var(--accent-cont-color);
   margin-bottom: 0.25rem;
+}
+
+.contributeModalStarRating {
+  display: flex;
+  gap: 0.5rem;       
+  justify-content: center;
+  margin: 0.5rem 0;  
+}
+
+.contributeModalStarButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--primary-cont-color);
+  transition: color 0.2s ease;
+}
+
+.contributeModalStarButton:hover {
+  color: var(--light-primary-cont-color);
+}
+
+.contributeModalStarDescription {
+  font-size: var(--font-xxs);
+  color: var(--accent-cont-color);
+  text-align: center;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+.contributeModalTypeTitle {
+  font-size: var(--font-lg);
+  color: var(--primary-cont-color);
+  margin: 0 0 0.75rem 0;
+  text-align: center;
+}
+
+.contributeModalTypeDescription {
+  color: var(--accent-cont-color);
+  font-size: var(--font-sm);
+  margin-top: 0.1rem;
+  text-align: center;
 }
 
 

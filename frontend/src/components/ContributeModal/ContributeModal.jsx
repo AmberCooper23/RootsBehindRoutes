@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import {Star } from 'lucide-react';
 import './ContributeModal.css';
 
 export function ContributeModal({ isOpen, onClose }) {
@@ -138,17 +139,17 @@ export function ContributeModal({ isOpen, onClose }) {
                 >
                   <figure className="contributeModalTypeButtonIconWrapper">
                   </figure>
-                  <h4 className="contributeModalTypeButtonTitle">I'm a Local</h4>
+                  <h4 className="contributeModalTypeButtonTitle">Local</h4>
                   <p className="contributeModalTypeButtonDescription">
                     Share places from your community that you believe travelers should experience with respect and understanding.
                   </p>
                   <section className="contributeModalTypeButtonInfo">
                     <p className="contributeModalTypeButtonInfoTitle">You'll provide:</p>
                     <ul className="contributeModalTypeButtonList">
-                      <li className="contributeModalTypeButtonListItem">• Place details & location</li>
-                      <li className="contributeModalTypeButtonListItem">• Cultural context</li>
-                      <li className="contributeModalTypeButtonListItem">• Local endorsement (1-10)</li>
-                      <li className="contributeModalTypeButtonListItem">• Sensitivity guidelines</li>
+                      <li className="contributeModalTypeButtonListItem">Place details & location</li>
+                      <li className="contributeModalTypeButtonListItem">Cultural context</li>
+                      <li className="contributeModalTypeButtonListItem">Local endorsement (1-10)</li>
+                      <li className="contributeModalTypeButtonListItem">Sensitivity guidelines</li>
                     </ul>
                   </section>
                 </button>
@@ -160,17 +161,17 @@ export function ContributeModal({ isOpen, onClose }) {
                 >
                   <figure className="contributeModalTypeButtonIconWrapper contributeModalTypeButtonIconWrapperTourist">
                   </figure>
-                  <h4 className="contributeModalTypeButtonTitle">I'm a Tourist</h4>
+                  <h4 className="contributeModalTypeButtonTitle">Tourist</h4>
                   <p className="contributeModalTypeButtonDescription">
                     Share your experience visiting places in Johannesburg to help other travelers make informed decisions.
                   </p>
                   <section className="contributeModalTypeButtonInfo contributeModalTypeButtonInfoTourist">
                     <p className="contributeModalTypeButtonInfoTitle">You'll provide:</p>
                     <ul className="contributeModalTypeButtonList">
-                      <li className="contributeModalTypeButtonListItem">• 5-star rating</li>
-                      <li className="contributeModalTypeButtonListItem">• Detailed review</li>
-                      <li className="contributeModalTypeButtonListItem">• Visit date</li>
-                      <li className="contributeModalTypeButtonListItem">• Recommendation level</li>
+                      <li className="contributeModalTypeButtonListItem">5-star rating</li>
+                      <li className="contributeModalTypeButtonListItem">Detailed review</li>
+                      <li className="contributeModalTypeButtonListItem">Visit date</li>
+                      <li className="contributeModalTypeButtonListItem">Recommendation level</li>
                     </ul>
                   </section>
                 </button>
@@ -365,20 +366,25 @@ export function ContributeModal({ isOpen, onClose }) {
                     Your Rating *
                   </label>
                   <section className="contributeModalStarRating">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        key={star}
-                        type="button"
-                        onClick={() => setTouristFormData({ ...touristFormData, rating: star })}
-                        onMouseEnter={() => setTouristFormData({ ...touristFormData, hoveredRating: star })}
-                        onMouseLeave={() => setTouristFormData({ ...touristFormData, hoveredRating: 0 })}
-                        className="contributeModalStarButton"
-                        aria-label={`Rate ${star} stars`}
-                      >
-                        star
-                      </button>
-                    ))}
-                  </section>
+  {[1, 2, 3, 4, 5].map((star) => (
+    <button
+      key={star}
+      type="button"
+      onClick={() => setTouristFormData({ ...touristFormData, rating: star })}
+      onMouseEnter={() => setTouristFormData({ ...touristFormData, hoveredRating: star })}
+      onMouseLeave={() => setTouristFormData({ ...touristFormData, hoveredRating: 0 })}
+      className="contributeModalStarButton"
+      aria-label={`Rate ${star} stars`}
+    >
+      <Star
+        size={35}
+        stroke="#8B7355"
+        fill={touristFormData.hoveredRating >= star || touristFormData.rating >= star ? "#D4A574" : "none"}
+      />
+    </button>
+  ))}
+</section>
+
                   <p className="contributeModalStarDescription">
                     {touristFormData.rating === 0 && 'Click to rate your experience'}
                     {touristFormData.rating === 1 && 'Poor - Major issues'}
