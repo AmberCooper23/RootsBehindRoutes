@@ -338,7 +338,6 @@ export function ContributeModal({ isOpen, onClose }) {
             <>
               <aside className="contributeModalAlert contributeModalAlertTourist">
                 <h3 className="contributeModalAlertTitle">
-                  <MessageSquare style={{ width: '1rem', height: '1rem', display: 'inline-block', marginRight: '0.5rem' }} aria-hidden="true" />
                   Tourist Review
                 </h3>
                 <p className="contributeModalAlertDescription">
