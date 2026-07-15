@@ -1,10 +1,13 @@
 import React from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../firebase";
 import "./Hero.css";
 import HeroImage from "../../assets/RedTaxiImage.jpg";
 
 export function Hero() {
+  const [user] = useAuthState(auth);
+
   const handleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
@@ -12,6 +15,13 @@ export function Hero() {
       console.log("Logged in:", user.displayName, user.email);
     } catch (error) {
       console.error("Login failed:", error);
+    }
+  };
+
+  const scrollToDiscover = () => {
+    const section = document.getElementById("discoverContainer");
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -31,9 +41,16 @@ export function Hero() {
             people.
           </p>
           <section className="ctaButtonContainer">
-            <button className="ctaButtonSolid" onClick={handleLogin}>
-              Start Exploring
-            </button>
+            {!user ? (
+              <button className="ctaButtonSolid" onClick={handleLogin}>
+                Start Exploring
+              </button>
+            ) : (
+              <button className="ctaButtonSolid" onClick={scrollToDiscover}>
+                Continue Exploring
+              </button>
+            )}
+
             <button className="ctaButtonOutline">Our Story</button>
           </section>
 

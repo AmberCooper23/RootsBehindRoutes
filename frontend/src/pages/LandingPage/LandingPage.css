@@ -18,6 +18,11 @@
   position: relative;
   margin: 0;
 }
+
+#discoverContainer {
+  scroll-margin-top: 10rem;
+}
+
 .discoverContainer {
   max-width: 80rem;
   margin: 0 auto;

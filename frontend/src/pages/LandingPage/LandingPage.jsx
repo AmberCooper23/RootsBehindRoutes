@@ -102,7 +102,7 @@ export function LandingPage() {
       <Hero />
       <Filter filter={filter} setFilter={setFilter} />
 
-      <section className="discoverContainer">
+      <section id="discoverContainer" className="discoverContainer">
         <header className="discoverHeader">
           <span className="discoverHeaderText">
             <h2 className="discoverHeaderTitle">
