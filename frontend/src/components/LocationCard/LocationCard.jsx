@@ -2,25 +2,33 @@ import "./LocationCard.css";
 
 export function LocationCard({
   image,
-  title,
+  name,
   location,
   localRating,
   touristRating,
-  category,
+  categoryLabels,
   onClick,
 }) {
-  // Normalize category
-  const categoryLabel =
-    typeof category === "string" ? category : category?.type || "";
+  const formatCategoryLabel = (label) =>
+    label
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
 
-  // Normalize location
+  const categoryLabel = Array.isArray(categoryLabels)
+    ? categoryLabels.map(formatCategoryLabel).join(", ")
+    : categoryLabels
+      ? formatCategoryLabel(categoryLabels)
+      : "";
+
   const locationLabel =
     typeof location === "string"
       ? location
-      : location?.type ||
-        (location?.latitude && location?.longitude
+      : location?.city && location?.region
+        ? `${location.city}, ${location.region}`
+        : location?.latitude && location?.longitude
           ? `${location.latitude}, ${location.longitude}`
-          : "");
+          : "";
 
   return (
     <section
@@ -30,11 +38,11 @@ export function LocationCard({
       tabIndex={0}
     >
       <figure className="locationCardImageWrapper">
-        <img src={image} alt={title} className="locationCardImage" />
+        <img src={image} alt={name} className="locationCardImage" />
         <article className="locationCardCategory">{categoryLabel}</article>
       </figure>
       <section className="locationCardContent">
-        <h3 className="locationCardTitle">{title}</h3>
+        <h3 className="locationCardTitle">{name}</h3>
         <address className="locationCardSubtitle">{locationLabel}</address>
         <dl className="locationCardRatings">
           <section className="locationCardRatingsContainer">

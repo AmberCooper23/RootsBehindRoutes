@@ -4,6 +4,7 @@ import Hero from "../../components/Hero/Hero";
 import Filter from "../../components/Filter/Filter";
 import LocationCard from "../../components/LocationCard/LocationCard";
 import { fetchAllPlaces } from "../../../api/placesApi";
+import { fetchAllActivities } from "../../../api/activitiesApi";
 
 export function LandingPage() {
   const [filter, setFilter] = useState({
@@ -11,32 +12,50 @@ export function LandingPage() {
     sort: "Most Endorsed",
   });
 
-  const [places, setPlaces] = useState([]);
+  const [experiences, setExperiences] = useState([]);
 
   useEffect(() => {
-    async function loadPlaces() {
+    async function loadExperiences() {
       try {
-        const data = await fetchAllPlaces();
-        setPlaces(data);
+        const [places, activities] = await Promise.all([
+          fetchAllPlaces(),
+          fetchAllActivities(),
+        ]);
+
+        // Tag each item with its source type so cards/clicks can tell
+        // places and activities apart later (e.g. for routing to detail pages)
+        const taggedPlaces = places.map((place) => ({
+          ...place,
+          type: "place",
+        }));
+        const taggedActivities = activities.map((activity) => ({
+          ...activity,
+          type: "activity",
+        }));
+
+        setExperiences([...taggedPlaces, ...taggedActivities]);
       } catch (error) {
-        console.error("Error fetching places:", error);
+        console.error("Error fetching experiences:", error);
       }
     }
-    loadPlaces();
+    loadExperiences();
   }, []);
 
-  const filteredPlaces = places.filter(
-    (place) => filter.category === "All" || place.category === filter.category,
+  const filteredExperiences = experiences.filter(
+    (experience) =>
+      filter.category === "All" ||
+      (Array.isArray(experience.categoryLabels) &&
+        experience.categoryLabels.includes(filter.category)),
   );
 
-  const sortedPlaces = [...filteredPlaces].sort((a, b) => {
+  const sortedExperiences = [...filteredExperiences].sort((a, b) => {
     switch (filter.sort) {
       case "Highest Rated":
         return b.touristRating - a.touristRating;
       case "Most Endorsed":
         return b.localRating - a.localRating;
       case "Alphabetical":
-        return a.title.localeCompare(b.title);
+        return (a.name || "").localeCompare(b.name || "");
       default:
         return 0;
     }
@@ -57,13 +76,18 @@ export function LandingPage() {
             </p>
           </span>
           <p className="discoverCount">
-            <span className="discoverCountNumber">{sortedPlaces.length}</span>{" "}
+            <span className="discoverCountNumber">
+              {sortedExperiences.length}
+            </span>{" "}
             experiences found
           </p>
         </header>
         <section className="discoverGrid">
-          {sortedPlaces.map((place, index) => (
-            <LocationCard key={index} {...place} />
+          {sortedExperiences.map((experience) => (
+            <LocationCard
+              key={`${experience.type}-${experience.id}`}
+              {...experience}
+            />
           ))}
         </section>
         <aside className="ratingSystem">

@@ -4,11 +4,14 @@ import "./Filter.css";
 export function Filter({ filter, setFilter }) {
   const categories = [
     "All",
-    "Museums",
-    "Markets",
-    "Restaurants",
-    "Heritage Sites",
-    "Cultural Centers",
+    "museum",
+    "market",
+    "restaurant",
+    "festival",
+    "tour",
+    "heritage_site",
+    "cultural_center",
+    "cultural_event",
   ];
   const sortOptions = [
     "Most Endorsed",
