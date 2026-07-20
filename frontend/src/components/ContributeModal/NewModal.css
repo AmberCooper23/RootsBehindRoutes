@@ -1,0 +1,45 @@
+.discoverHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.discoverAddPlaceButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--primary-cont-color);
+  color: var(--secondary-cont-color);
+  border: none;
+  border-radius: 0.25rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-size: var(--font-xs);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.discoverAddPlaceButton:hover {
+  background-color: var(--dark-primary-cont-color);
+}
+
+.discoverAddPlaceButton:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 0.125rem rgba(139, 115, 85, 0.25);
+}
+
+@media (max-width: 640px) {
+  .discoverHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .discoverAddPlaceButton {
+    width: 100%;
+    justify-content: center;
+  }
+}

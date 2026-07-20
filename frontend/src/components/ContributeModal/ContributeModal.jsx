@@ -2,14 +2,16 @@ import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, provider } from "../../firebase";
 import { signInWithPopup } from "firebase/auth";
-import { addPlace } from "../../../api/placesApi";
+import { addEndorsement } from "../../../api/endorsementsApi";
 import { addReview } from "../../../api/reviewsApi";
 import "./ContributeModal.css";
 import { TypeSelector } from "./TypeSelector";
 import { LocalContributorForm } from "./LocalContributorForm";
 import { TouristReviewForm } from "./TouristReviewForm";
 
-export function ContributeModal({ isOpen, onClose }) {
+// target: the place/activity being endorsed or reviewed, e.g. { id, type: "place" | "activity", name }
+// onSuccess: called after a successful submit so the parent can refetch and show the updated rating
+export function ContributeModal({ isOpen, onClose, target, onSuccess }) {
   const [userType, setUserType] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [user] = useAuthState(auth);
@@ -21,13 +23,33 @@ export function ContributeModal({ isOpen, onClose }) {
     setTimeout(() => resetForm(), 300);
   };
 
+  const buildTargetRef = () =>
+    target?.type === "activity"
+      ? { activityId: target.id }
+      : { placeId: target?.id };
+
   const handleSubmit = async (data) => {
     try {
       if (userType === "local") {
-        await addPlace(data);
+        await addEndorsement({
+          ...buildTargetRef(),
+          rating: data.localRating,
+          whyEndorse: data.whyEndorse,
+          culturalSensitivity: data.culturalSensitivity,
+          createdAt: new Date().toISOString(),
+        });
       } else {
-        await addReview(data);
+        await addReview({
+          ...buildTargetRef(),
+          rating: data.rating,
+          review: data.review,
+          visitDate: data.visitDate,
+          wouldRecommend: data.wouldRecommend,
+          createdAt: new Date().toISOString(),
+        });
       }
+      onSuccess?.();
+      window.dispatchEvent(new CustomEvent("experiences:updated"));
       setIsSubmitted(true);
       setTimeout(() => {
         setIsSubmitted(false);
@@ -51,7 +73,7 @@ export function ContributeModal({ isOpen, onClose }) {
     setUserType(role);
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !target) return null;
 
   const renderBody = () => {
     if (isSubmitted) {
@@ -60,7 +82,7 @@ export function ContributeModal({ isOpen, onClose }) {
           <h3 className="contributeModalSuccessTitle">Thank You!</h3>
           <p className="contributeModalSuccessMessage">
             {userType === "local"
-              ? "Your contribution has been submitted for review. We'll notify you once it's published."
+              ? "Your endorsement has been submitted and this place's local rating has been updated."
               : "Your review has been submitted and will help future travelers make informed decisions."}
           </p>
         </section>
@@ -71,10 +93,20 @@ export function ContributeModal({ isOpen, onClose }) {
     }
     if (userType === "local") {
       return (
-        <LocalContributorForm onSubmit={handleSubmit} onCancel={onClose} />
+        <LocalContributorForm
+          targetName={target.name}
+          onSubmit={handleSubmit}
+          onCancel={onClose}
+        />
       );
     }
-    return <TouristReviewForm onSubmit={handleSubmit} onCancel={handleClose} />;
+    return (
+      <TouristReviewForm
+        targetName={target.name}
+        onSubmit={handleSubmit}
+        onCancel={handleClose}
+      />
+    );
   };
 
   return (
@@ -103,14 +135,13 @@ export function ContributeModal({ isOpen, onClose }) {
             </button>
           )}
           <h2 className="contributeModalTitle">
-            {!userType && "Share Your Voice"}
-            {userType === "local" && "Contribute a Place"}
-            {userType === "tourist" && "Share Your Experience"}
+            {!userType && `Share Your Voice on ${target.name}`}
+            {userType === "local" && `Endorse ${target.name}`}
+            {userType === "tourist" && `Review ${target.name}`}
           </h2>
           <p className="contributeModalSubtitle">
             {!userType && "Help others discover authentic experiences"}
-            {userType === "local" &&
-              "Share your local knowledge with travelers"}
+            {userType === "local" && "Share why locals value this place"}
             {userType === "tourist" && "Your feedback helps future travelers"}
           </p>
         </header>

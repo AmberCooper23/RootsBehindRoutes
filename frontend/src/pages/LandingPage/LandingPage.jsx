@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./LandingPage.css";
 import Hero from "../../components/Hero/Hero";
 import Filter from "../../components/Filter/Filter";
 import LocationCard from "../../components/LocationCard/LocationCard";
+import ContributeModal from "../../components/ContributeModal/ContributeModal";
 import { fetchAllPlaces } from "../../../api/placesApi";
 import { fetchAllActivities } from "../../../api/activitiesApi";
 
@@ -13,33 +14,57 @@ export function LandingPage() {
   });
 
   const [experiences, setExperiences] = useState([]);
+  const [selectedExperience, setSelectedExperience] = useState(null);
+  const [isContributeOpen, setIsContributeOpen] = useState(false);
+
+  const loadExperiences = useCallback(async () => {
+    try {
+      const [places, activities] = await Promise.all([
+        fetchAllPlaces(),
+        fetchAllActivities(),
+      ]);
+
+      // Tag each item with its source type so cards/clicks can tell
+      // places and activities apart later (e.g. for routing to detail pages)
+      const taggedPlaces = places.map((place) => ({
+        ...place,
+        type: "place",
+      }));
+      const taggedActivities = activities.map((activity) => ({
+        ...activity,
+        type: "activity",
+      }));
+
+      setExperiences([...taggedPlaces, ...taggedActivities]);
+    } catch (error) {
+      console.error("Error fetching experiences:", error);
+    }
+  }, []);
 
   useEffect(() => {
-    async function loadExperiences() {
-      try {
-        const [places, activities] = await Promise.all([
-          fetchAllPlaces(),
-          fetchAllActivities(),
-        ]);
-
-        // Tag each item with its source type so cards/clicks can tell
-        // places and activities apart later (e.g. for routing to detail pages)
-        const taggedPlaces = places.map((place) => ({
-          ...place,
-          type: "place",
-        }));
-        const taggedActivities = activities.map((activity) => ({
-          ...activity,
-          type: "activity",
-        }));
-
-        setExperiences([...taggedPlaces, ...taggedActivities]);
-      } catch (error) {
-        console.error("Error fetching experiences:", error);
-      }
-    }
     loadExperiences();
-  }, []);
+  }, [loadExperiences]);
+
+  useEffect(() => {
+    window.addEventListener("experiences:updated", loadExperiences);
+    return () =>
+      window.removeEventListener("experiences:updated", loadExperiences);
+  }, [loadExperiences]);
+
+  const handleCardClick = (experience) => {
+    setSelectedExperience(experience);
+    setIsContributeOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsContributeOpen(false);
+  };
+
+  // Refetch so the endorsement/review the person just submitted is
+  // reflected in the rating shown on the card right away.
+  const handleContributeSuccess = () => {
+    loadExperiences();
+  };
 
   const filteredExperiences = experiences.filter(
     (experience) =>
@@ -87,6 +112,7 @@ export function LandingPage() {
             <LocationCard
               key={`${experience.type}-${experience.id}`}
               {...experience}
+              onClick={() => handleCardClick(experience)}
             />
           ))}
         </section>
@@ -149,6 +175,12 @@ export function LandingPage() {
           </section>
         </aside>
       </section>
+      <ContributeModal
+        isOpen={isContributeOpen}
+        onClose={handleModalClose}
+        target={selectedExperience}
+        onSuccess={handleContributeSuccess}
+      />
     </main>
   );
 }

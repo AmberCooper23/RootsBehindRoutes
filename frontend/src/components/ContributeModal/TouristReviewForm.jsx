@@ -16,10 +16,9 @@ const INITIAL_FORM_DATA = {
   review: "",
   visitDate: "",
   wouldRecommend: "",
-  placeName: "",
 };
 
-export function TouristReviewForm({ onSubmit, onCancel }) {
+export function TouristReviewForm({ targetName, onSubmit, onCancel }) {
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
 
   const handleSubmit = (e) => {
@@ -30,29 +29,13 @@ export function TouristReviewForm({ onSubmit, onCancel }) {
   return (
     <>
       <aside className="contributeModalAlert contributeModalAlertTourist">
-        <h3 className="contributeModalAlertTitle">Tourist Review</h3>
+        <h3 className="contributeModalAlertTitle">Reviewing {targetName}</h3>
         <p className="contributeModalAlertDescription">
           Share your honest experience to help other travelers. Your feedback on
           accessibility, facilities, and overall experience is valuable.
         </p>
       </aside>
       <form onSubmit={handleSubmit} className="contributeModalForm">
-        <fieldset className="contributeModalFormGroup">
-          <label htmlFor="touristPlaceName" className="contributeModalLabel">
-            Place Name *
-          </label>
-          <input
-            id="touristPlaceName"
-            type="text"
-            placeholder="Which place did you visit?"
-            required
-            className="contributeModalInput"
-            value={formData.placeName}
-            onChange={(e) =>
-              setFormData({ ...formData, placeName: e.target.value })
-            }
-          />
-        </fieldset>
         <fieldset className="contributeModalFormGroup">
           <label className="contributeModalLabel">Your Rating *</label>
           <section className="contributeModalStarRating">

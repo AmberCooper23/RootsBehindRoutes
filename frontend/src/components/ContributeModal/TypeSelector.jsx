@@ -35,8 +35,8 @@ export function TypeSelector({ onSelectType }) {
           <figure className="contributeModalTypeButtonIconWrapper" />
           <h4 className="contributeModalTypeButtonTitle">Local</h4>
           <p className="contributeModalTypeButtonDescription">
-            Share places from your community that you believe travelers should
-            experience with respect and understanding.
+            Endorse this place based on your local knowledge and connection to
+            the culture, so travelers know it's genuinely worth visiting.
           </p>
           <section className="contributeModalTypeButtonInfo">
             <p className="contributeModalTypeButtonInfoTitle">
@@ -44,10 +44,7 @@ export function TypeSelector({ onSelectType }) {
             </p>
             <ul className="contributeModalTypeButtonList">
               <li className="contributeModalTypeButtonListItem">
-                Place details & location
-              </li>
-              <li className="contributeModalTypeButtonListItem">
-                Cultural context
+                Why you endorse it
               </li>
               <li className="contributeModalTypeButtonListItem">
                 Local endorsement (1-10)

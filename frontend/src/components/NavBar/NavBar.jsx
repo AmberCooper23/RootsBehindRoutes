@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ContributeModal } from "../ContributeModal/ContributeModal";
+import { AddPlaceModal } from "../ContributeModal/AddPlaceModal";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../firebase";
@@ -9,7 +9,7 @@ import "./NavBar.css";
 
 export function NavBar() {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [isContributeOpen, setIsContributeOpen] = useState(false);
+  const [isAddPlaceOpen, setIsAddPlaceOpen] = useState(false);
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
 
@@ -95,7 +95,7 @@ export function NavBar() {
                 </button>
               )}
               <button
-                onClick={() => setIsContributeOpen(true)}
+                onClick={() => setIsAddPlaceOpen(true)}
                 className="contributeButton"
                 type="button"
                 aria-label="Contribute"
@@ -114,9 +114,9 @@ export function NavBar() {
           </section>
         </section>
       </nav>
-      <ContributeModal
-        isOpen={isContributeOpen}
-        onClose={() => setIsContributeOpen(false)}
+      <AddPlaceModal
+        isOpen={isAddPlaceOpen}
+        onClose={() => setIsAddPlaceOpen(false)}
       />
     </>
   );
