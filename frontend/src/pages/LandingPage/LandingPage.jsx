@@ -1,11 +1,9 @@
-import React, { useState } from "react";
-// import { signInWithPopup } from "firebase/auth";
-// import { auth, provider } from "../../firebase";
-
+import React, { useState, useEffect } from "react";
 import "./LandingPage.css";
 import Hero from "../../components/Hero/Hero";
 import Filter from "../../components/Filter/Filter";
 import LocationCard from "../../components/LocationCard/LocationCard";
+import { fetchAllPlaces } from "../../../api/placesApi";
 
 export function LandingPage() {
   const [filter, setFilter] = useState({
@@ -13,72 +11,19 @@ export function LandingPage() {
     sort: "Most Endorsed",
   });
 
-  // const handleLogin = async () => {
-  //   try {
-  //     const result = await signInWithPopup(auth, provider);
-  //     const user = result.user;
-  //     console.log("Logged in:", user.displayName, user.email);
-  //   } catch (error) {
-  //     console.error("Login failed:", error);
-  //   }
-  // };
+  const [places, setPlaces] = useState([]);
 
-  const places = [
-    {
-      title: "Origins Centre Museum",
-      location: "Braamfontein, JHB",
-      localRating: 8.5,
-      touristRating: 4.6,
-      category: "Museums",
-      image:
-        "https://images.unsplash.com/photo-1621419203897-20b66b98d495?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600",
-    },
-    {
-      title: "Neighbourgoods Market",
-      location: "Braamfontein, JHB",
-      localRating: 7.8,
-      touristRating: 4.3,
-      category: "Markets",
-      image:
-        "https://images.unsplash.com/photo-1692689383138-c2df3476072c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600",
-    },
-    {
-      title: "Rosebank Art Market",
-      location: "Rosebank, JHB",
-      localRating: 6.9,
-      touristRating: 4.0,
-      category: "Markets",
-      image:
-        "https://images.unsplash.com/photo-1692689388228-363ffdb7a551?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600",
-    },
-    {
-      title: "Traditional Arts Gallery",
-      location: "Newtown, JHB",
-      localRating: 9.2,
-      touristRating: 4.8,
-      category: "Heritage Sites",
-      image:
-        "https://images.unsplash.com/photo-1695142258282-99f0ac5db788?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600",
-    },
-    {
-      title: "Constitution Hill",
-      location: "Hillbrow, JHB",
-      localRating: 9.5,
-      touristRating: 4.9,
-      category: "Heritage Sites",
-      image:
-        "https://images.unsplash.com/photo-1636706519609-988babca3dd5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600",
-    },
-    {
-      title: "Bruma Flea Market",
-      location: "Bruma, JHB",
-      localRating: 7.2,
-      touristRating: 4.1,
-      category: "Markets",
-      image:
-        "https://images.unsplash.com/photo-1630960411440-10f7b59717ba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=600",
-    },
-  ];
+  useEffect(() => {
+    async function loadPlaces() {
+      try {
+        const data = await fetchAllPlaces();
+        setPlaces(data);
+      } catch (error) {
+        console.error("Error fetching places:", error);
+      }
+    }
+    loadPlaces();
+  }, []);
 
   const filteredPlaces = places.filter(
     (place) => filter.category === "All" || place.category === filter.category,
@@ -101,7 +46,6 @@ export function LandingPage() {
     <main className="discoverPage">
       <Hero />
       <Filter filter={filter} setFilter={setFilter} />
-
       <section id="discoverContainer" className="discoverContainer">
         <header className="discoverHeader">
           <span className="discoverHeaderText">
@@ -117,13 +61,11 @@ export function LandingPage() {
             experiences found
           </p>
         </header>
-
         <section className="discoverGrid">
           {sortedPlaces.map((place, index) => (
             <LocationCard key={index} {...place} />
           ))}
         </section>
-
         <aside className="ratingSystem">
           <h3 className="ratingSystemTitle">Understanding our rating system</h3>
           <article className="ratingSystemDivider" aria-hidden="true"></article>
@@ -131,7 +73,6 @@ export function LandingPage() {
             We use a unique dual rating system to give you both local insight
             and tourist perspective.
           </p>
-
           <section className="ratingSystemGrid">
             <article className="ratingSystemCategory">
               <header className="ratingSystemHeader">
@@ -157,7 +98,6 @@ export function LandingPage() {
                 </li>
               </ul>
             </article>
-
             <article className="ratingSystemCategory">
               <header className="ratingSystemHeader">
                 <section className="ratingSystemIconContainer">

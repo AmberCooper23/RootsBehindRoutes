@@ -26,7 +26,6 @@ export function TypeSelector({ onSelectType }) {
         Your perspective matters. Choose your role to contribute in the way that
         best represents your experience.
       </p>
-
       <nav className="contributeModalTypeGrid">
         <button
           onClick={() => handleSelect("local")}
@@ -59,7 +58,6 @@ export function TypeSelector({ onSelectType }) {
             </ul>
           </section>
         </button>
-
         <button
           onClick={() => handleSelect("tourist")}
           className="contributeModalTypeButton contributeModalTypeButtonTourist"

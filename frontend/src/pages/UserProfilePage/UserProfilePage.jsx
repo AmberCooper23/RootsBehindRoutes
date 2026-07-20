@@ -1,25 +1,58 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, provider } from "../../firebase";
 import { signInWithPopup, signOut } from "firebase/auth";
+import {
+  fetchUser,
+  addUser,
+  addUserInterest,
+  removeUserInterest,
+} from "../../../api/usersApi";
 import "./UserProfilePage.css";
 
 export function UserProfile() {
   const [user] = useAuthState(auth);
   const [isEditingBio, setIsEditingBio] = useState(false);
-  const [bio, setBio] = useState(
-    "Passionate about discovering the hidden stories and cultural richness of Johannesburg. Always looking for authentic local experiences and community connections.",
-  );
-  const [interests] = useState([
-    "Local History",
-    "Street Food",
-    "Art & Culture",
-    "Community Events",
-  ]);
+  const [bio, setBio] = useState("");
+  const [interests, setInterests] = useState([]);
+  const [stats, setStats] = useState({
+    placesVisited: 0,
+    savedPlaces: 0,
+    contributions: 0,
+  });
+
+  useEffect(() => {
+    async function loadProfile() {
+      if (user) {
+        try {
+          const profile = await fetchUser(user.uid);
+          setBio(profile.bio || "");
+          setInterests(profile.interests || []);
+          setStats({
+            placesVisited: profile.placesVisited || 0,
+            savedPlaces: profile.savedPlaces || 0,
+            contributions: profile.contributions || 0,
+          });
+        } catch (error) {
+          console.error("Failed to load profile:", error);
+        }
+      }
+    }
+    loadProfile();
+  }, [user]);
 
   const handleLogin = async () => {
-    await signInWithPopup(auth, provider);
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const newUser = result.user;
+      await addUser(newUser.uid, {
+        name: newUser.displayName,
+        email: newUser.email,
+      });
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
   };
 
   const handleLogout = async () => {
@@ -28,6 +61,24 @@ export function UserProfile() {
 
   const saveBio = () => {
     setIsEditingBio(false);
+  };
+
+  const handleAddInterest = async (interestId) => {
+    try {
+      await addUserInterest(user.uid, interestId);
+      setInterests([...interests, interestId]);
+    } catch (error) {
+      console.error("Failed to add interest:", error);
+    }
+  };
+
+  const handleRemoveInterest = async (interestId) => {
+    try {
+      await removeUserInterest(user.uid, interestId);
+      setInterests(interests.filter((i) => i !== interestId));
+    } catch (error) {
+      console.error("Failed to remove interest:", error);
+    }
   };
 
   if (!user) {
@@ -86,23 +137,21 @@ export function UserProfile() {
           </section>
         </section>
       </header>
-
       <section className="profileContent">
         <dl className="profileStatsBar">
           <div className="profileStat">
             <dt className="profileStatLabel">Places Visited</dt>
-            <dd className="profileStatValue">12</dd>
+            <dd className="profileStatValue">{stats.placesVisited}</dd>
           </div>
           <div className="profileStat">
             <dt className="profileStatLabel">Saved Places</dt>
-            <dd className="profileStatValue">8</dd>
+            <dd className="profileStatValue">{stats.savedPlaces}</dd>
           </div>
           <div className="profileStat">
             <dt className="profileStatLabel">Contributions</dt>
-            <dd className="profileStatValue">3</dd>
+            <dd className="profileStatValue">{stats.contributions}</dd>
           </div>
         </dl>
-
         <section className="profileGrid">
           <aside>
             <article className="profileCard">
@@ -148,18 +197,30 @@ export function UserProfile() {
               )}
               <p className="profileJoinDate">Member since March 2024</p>
             </article>
-
             <article className="profileCard" style={{ marginTop: "1.25rem" }}>
               <h2 className="profileCardTitle">Interests</h2>
               <ul className="profileTags">
                 {interests.map((interest, idx) => (
                   <li key={idx} className="profileTag">
                     {interest}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveInterest(interest)}
+                      className="profileTagRemove"
+                    >
+                      ×
+                    </button>
                   </li>
                 ))}
               </ul>
+              <button
+                type="button"
+                onClick={() => handleAddInterest("New Interest")}
+                className="profileActionBtn"
+              >
+                Add Interest
+              </button>
             </article>
-
             <nav className="profileActions" aria-label="Account actions">
               <Link to="/settings" className="profileActionBtn">
                 Account Settings
@@ -172,7 +233,6 @@ export function UserProfile() {
               </button>
             </nav>
           </aside>
-
           <article className="profileCard">
             <h2 className="profileCardTitle">Recent Activity</h2>
             <ul className="profileActivityList">

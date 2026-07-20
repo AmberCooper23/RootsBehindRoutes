@@ -2,6 +2,7 @@ import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../firebase";
+import { addUser, fetchUser } from "../../../api/usersApi";
 import "./Hero.css";
 import HeroImage from "../../assets/RedTaxiImage.jpg";
 
@@ -12,7 +13,8 @@ export function Hero() {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      console.log("Logged in:", user.displayName, user.email);
+      await addUser(user.uid, { name: user.displayName, email: user.email });
+      await fetchUser(user.uid);
     } catch (error) {
       console.error("Login failed:", error);
     }
@@ -29,12 +31,7 @@ export function Hero() {
     <section className="hero">
       <section className="heroGrid">
         <section className="heroContainer">
-          <article className="heroBadge">
-            {/* <p className='badgeText'>
-                        Est. 2026
-                    </p> */}
-            Est. 2026
-          </article>
+          <article className="heroBadge">Est. 2026</article>
           <h1 className="heroTitle">Journey Beyond the Tourist Trails</h1>
           <p className="heroSubtitle">
             Discover Johannesburg's cultural tapestry through the eyes of her
@@ -50,10 +47,8 @@ export function Hero() {
                 Continue Exploring
               </button>
             )}
-
             <button className="ctaButtonOutline">Our Story</button>
           </section>
-
           <dl className="heroStats">
             <article>
               <dt className="heroStatValue">100+</dt>

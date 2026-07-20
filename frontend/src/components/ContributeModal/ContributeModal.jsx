@@ -2,10 +2,12 @@ import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, provider } from "../../firebase";
 import { signInWithPopup } from "firebase/auth";
+import { addPlace } from "../../../api/placesApi";
+import { addReview } from "../../../api/reviewsApi";
+import "./ContributeModal.css";
 import { TypeSelector } from "./TypeSelector";
 import { LocalContributorForm } from "./LocalContributorForm";
 import { TouristReviewForm } from "./TouristReviewForm";
-import "./ContributeModal.css";
 
 export function ContributeModal({ isOpen, onClose }) {
   const [userType, setUserType] = useState(null);
@@ -19,13 +21,22 @@ export function ContributeModal({ isOpen, onClose }) {
     setTimeout(() => resetForm(), 300);
   };
 
-  const handleSubmit = () => {
-    setIsSubmitted(true);
-    setTimeout(() => {
-      setIsSubmitted(false);
-      onClose();
-      resetForm();
-    }, 2000);
+  const handleSubmit = async (data) => {
+    try {
+      if (userType === "local") {
+        await addPlace(data);
+      } else {
+        await addReview(data);
+      }
+      setIsSubmitted(true);
+      setTimeout(() => {
+        setIsSubmitted(false);
+        onClose();
+        resetForm();
+      }, 2000);
+    } catch (error) {
+      console.error("Submission failed:", error);
+    }
   };
 
   const handleSelectType = async (role) => {
@@ -103,7 +114,6 @@ export function ContributeModal({ isOpen, onClose }) {
             {userType === "tourist" && "Your feedback helps future travelers"}
           </p>
         </header>
-
         <section className="contributeModalBody">{renderBody()}</section>
       </article>
     </aside>

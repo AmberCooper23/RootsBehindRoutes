@@ -4,6 +4,7 @@ import { ContributeModal } from "../ContributeModal/ContributeModal";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../firebase";
+import { addUser, fetchUser } from "../../../api/usersApi";
 import "./NavBar.css";
 
 export function NavBar() {
@@ -15,7 +16,13 @@ export function NavBar() {
   const handleUserClick = async () => {
     if (!user) {
       try {
-        await signInWithPopup(auth, provider);
+        const result = await signInWithPopup(auth, provider);
+        const newUser = result.user;
+        await addUser(newUser.uid, {
+          name: newUser.displayName,
+          email: newUser.email,
+        });
+        await fetchUser(newUser.uid);
       } catch (error) {
         console.error("Login failed:", error);
       }
@@ -36,7 +43,6 @@ export function NavBar() {
                   <p>Johannesburg, South Africa</p>
                 </section>
               </Link>
-
               <ul className="navBarLinks">
                 <li className="navBarLinkItem">
                   <Link to="/" className="navBarLink">
@@ -60,7 +66,6 @@ export function NavBar() {
                 </li>
               </ul>
             </section>
-
             <section className="navBarRight">
               {isSearchExpanded ? (
                 <form
@@ -89,7 +94,6 @@ export function NavBar() {
                   🔍︎
                 </button>
               )}
-
               <button
                 onClick={() => setIsContributeOpen(true)}
                 className="contributeButton"
@@ -98,7 +102,6 @@ export function NavBar() {
               >
                 Contribute
               </button>
-
               <button
                 className="navBarIconButton"
                 type="button"
@@ -111,7 +114,6 @@ export function NavBar() {
           </section>
         </section>
       </nav>
-
       <ContributeModal
         isOpen={isContributeOpen}
         onClose={() => setIsContributeOpen(false)}

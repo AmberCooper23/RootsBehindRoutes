@@ -28,7 +28,6 @@ export function LocalContributorForm({ onSubmit, onCancel }) {
           respectful visitors and feel the culture is represented authentically.
         </p>
       </aside>
-
       <form onSubmit={handleSubmit} className="contributeModalForm">
         <fieldset className="contributeModalFormGroup">
           <label htmlFor="placeName" className="contributeModalLabel">
@@ -46,7 +45,6 @@ export function LocalContributorForm({ onSubmit, onCancel }) {
             required
           />
         </fieldset>
-
         <fieldset className="contributeModalFormGroup">
           <label htmlFor="location" className="contributeModalLabel">
             Location *
@@ -65,7 +63,6 @@ export function LocalContributorForm({ onSubmit, onCancel }) {
             />
           </section>
         </fieldset>
-
         <fieldset className="contributeModalFormGroup">
           <label htmlFor="category" className="contributeModalLabel">
             Category *
@@ -90,7 +87,6 @@ export function LocalContributorForm({ onSubmit, onCancel }) {
             </select>
           </section>
         </fieldset>
-
         <fieldset className="contributeModalFormGroup">
           <label htmlFor="description" className="contributeModalLabel">
             Description *
@@ -109,7 +105,6 @@ export function LocalContributorForm({ onSubmit, onCancel }) {
             />
           </section>
         </fieldset>
-
         <fieldset className="contributeModalFormGroup">
           <label htmlFor="whyEndorse" className="contributeModalLabel">
             Why Do You Endorse This Place? *
@@ -126,7 +121,6 @@ export function LocalContributorForm({ onSubmit, onCancel }) {
             required
           />
         </fieldset>
-
         <fieldset className="contributeModalFormGroup">
           <label htmlFor="localRating" className="contributeModalLabel">
             Your Local Endorsement (1-10) *
@@ -162,7 +156,6 @@ export function LocalContributorForm({ onSubmit, onCancel }) {
             </section>
           </section>
         </fieldset>
-
         <fieldset className="contributeModalFormGroup">
           <label htmlFor="culturalSensitivity" className="contributeModalLabel">
             Cultural Sensitivity Notes
@@ -178,7 +171,6 @@ export function LocalContributorForm({ onSubmit, onCancel }) {
             className="contributeModalTextarea"
           />
         </fieldset>
-
         <footer className="contributeModalActions">
           <button type="submit" className="contributeModalSubmit">
             Submit Contribution
@@ -192,7 +184,6 @@ export function LocalContributorForm({ onSubmit, onCancel }) {
           </button>
         </footer>
       </form>
-
       <p className="contributeModalFooterNote">
         * Required fields. All contributions are reviewed to ensure quality and
         cultural respect.
