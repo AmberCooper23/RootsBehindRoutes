@@ -95,4 +95,4 @@ router.delete("/:uid/places/:placeId", async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;
