@@ -1,15 +1,15 @@
-import express from "express";
-import cors from "cors";
-import * as admin from "firebase-admin"; // ✅ FIX: import everything as admin
+const express = require("express");
+const cors = require("cors");
+const admin = require("firebase-admin");
 
-import usersRoutes from "./routes/usersRoutes.js";
-import postsRoutes from "./routes/postsRoutes.js";
-import placesRoutes from "./routes/placesRoutes.js";
-import activitiesRoutes from "./routes/activitiesRoutes.js";
-import commentsRoutes from "./routes/commentsRoutes.js";
-import reviewsRoutes from "./routes/reviewsRoutes.js";
-import endorsementsRoutes from "./routes/endorsementsRoutes.js";
-import interestsRoutes from "./routes/interestsRoutes.js";
+const usersRoutes = require("./routes/usersRoutes.js");
+const postsRoutes = require("./routes/postsRoutes.js");
+const placesRoutes = require("./routes/placesRoutes.js");
+const activitiesRoutes = require("./routes/activitiesRoutes.js");
+const commentsRoutes = require("./routes/commentsRoutes.js");
+const reviewsRoutes = require("./routes/reviewsRoutes.js");
+const endorsementsRoutes = require("./routes/endorsementsRoutes.js");
+const interestsRoutes = require("./routes/interestsRoutes.js");
 
 const app = express();
 app.use(express.json());
@@ -19,7 +19,7 @@ const serviceAccount = {
   type: process.env.TYPE,
   project_id: process.env.PROJECT_ID,
   private_key_id: process.env.PRIVATE_KEY_ID,
-  private_key: process.env.PRIVATE_KEY?.replace(/\\n/g, "\n"), // safe optional chaining
+  private_key: process.env.PRIVATE_KEY?.replace(/\\n/g, "\n"),
   client_email: process.env.CLIENT_EMAIL,
   client_id: process.env.CLIENT_ID,
   auth_uri: process.env.AUTH_URI,
