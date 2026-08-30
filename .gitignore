@@ -70,3 +70,4 @@ node_modules/
 .dataconnect
 server/.env.production
 serviceAccountKey.json
+frontend/.env.production
