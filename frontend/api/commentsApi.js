@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5000/api/comments";
+const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api/activities`;
 
 export async function fetchComment(id) {
   const res = await fetch(`${BASE_URL}/${id}`);

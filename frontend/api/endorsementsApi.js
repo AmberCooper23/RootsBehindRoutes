@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5000/api/endorsements";
+const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api/endorsements`;
 
 export async function fetchEndorsement(id) {
   const res = await fetch(`${BASE_URL}/${id}`);
