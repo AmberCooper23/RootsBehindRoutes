@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
-const admin = require("firebase-admin");
+// ✅ Force CommonJS entry point for firebase-admin
+const admin = require("firebase-admin/lib/index.js");
 
 const usersRoutes = require("./routes/usersRoutes.js");
 const postsRoutes = require("./routes/postsRoutes.js");
