@@ -1,9 +1,9 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   createEndorsement,
   getEndorsement,
   getAllEndorsements,
-} from "../services/endorsementsService.js";
+} = require("../services/endorsementsService.js");
 
 const router = express.Router();
 
@@ -19,8 +19,11 @@ router.post("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const endorsement = await getEndorsement(req.params.id);
-    if (endorsement) res.send(endorsement);
-    else res.status(404).send({ error: "Endorsement not found" });
+    if (endorsement) {
+      res.send(endorsement);
+    } else {
+      res.status(404).send({ error: "Endorsement not found" });
+    }
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
@@ -35,4 +38,5 @@ router.get("/", async (req, res) => {
   }
 });
 
+// ✅ CommonJS export
 module.exports = router;

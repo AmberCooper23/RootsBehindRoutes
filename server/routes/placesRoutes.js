@@ -1,9 +1,9 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   createPlace,
   getPlace,
   getAllPlaces,
-} from "../services/placesService.js";
+} = require("../services/placesService.js");
 
 const router = express.Router();
 
@@ -19,8 +19,11 @@ router.post("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const place = await getPlace(req.params.id);
-    if (place) res.send(place);
-    else res.status(404).send({ error: "Place not found" });
+    if (place) {
+      res.send(place);
+    } else {
+      res.status(404).send({ error: "Place not found" });
+    }
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
@@ -35,4 +38,5 @@ router.get("/", async (req, res) => {
   }
 });
 
+// ✅ CommonJS export
 module.exports = router;

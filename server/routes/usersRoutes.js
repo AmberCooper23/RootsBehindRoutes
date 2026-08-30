@@ -1,5 +1,5 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   createUser,
   getUser,
   addUserInterest,
@@ -8,7 +8,7 @@ import {
   removeUserActivity,
   addUserPlace,
   removeUserPlace,
-} from "../services/usersService.js";
+} = require("../services/usersService.js");
 
 const router = express.Router();
 
@@ -25,8 +25,11 @@ router.post("/", async (req, res) => {
 router.get("/:uid", async (req, res) => {
   try {
     const user = await getUser(req.params.uid);
-    if (user) res.send(user);
-    else res.status(404).send({ error: "User not found" });
+    if (user) {
+      res.send(user);
+    } else {
+      res.status(404).send({ error: "User not found" });
+    }
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
@@ -45,9 +48,10 @@ router.post("/:uid/interests", async (req, res) => {
 router.delete("/:uid/interests/:interestId", async (req, res) => {
   try {
     await removeUserInterest(req.params.uid, req.params.interestId);
-    res
-      .status(200)
-      .send({ message: "Interest removed", interestId: req.params.interestId });
+    res.status(200).send({
+      message: "Interest removed",
+      interestId: req.params.interestId,
+    });
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
@@ -66,9 +70,10 @@ router.post("/:uid/activities", async (req, res) => {
 router.delete("/:uid/activities/:activityId", async (req, res) => {
   try {
     await removeUserActivity(req.params.uid, req.params.activityId);
-    res
-      .status(200)
-      .send({ message: "Activity removed", activityId: req.params.activityId });
+    res.status(200).send({
+      message: "Activity removed",
+      activityId: req.params.activityId,
+    });
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
@@ -87,12 +92,14 @@ router.post("/:uid/places", async (req, res) => {
 router.delete("/:uid/places/:placeId", async (req, res) => {
   try {
     await removeUserPlace(req.params.uid, req.params.placeId);
-    res
-      .status(200)
-      .send({ message: "Place removed", placeId: req.params.placeId });
+    res.status(200).send({
+      message: "Place removed",
+      placeId: req.params.placeId,
+    });
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
 });
 
+// ✅ CommonJS export
 module.exports = router;

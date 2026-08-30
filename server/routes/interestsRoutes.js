@@ -1,9 +1,9 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   createInterest,
   getInterest,
   getAllInterests,
-} from "../services/interestsService.js";
+} = require("../services/interestsService.js");
 
 const router = express.Router();
 
@@ -20,8 +20,11 @@ router.post("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const interest = await getInterest(req.params.id);
-    if (interest) res.send(interest);
-    else res.status(404).send({ error: "Interest not found" });
+    if (interest) {
+      res.send(interest);
+    } else {
+      res.status(404).send({ error: "Interest not found" });
+    }
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
@@ -36,4 +39,5 @@ router.get("/", async (req, res) => {
   }
 });
 
+// ✅ CommonJS export
 module.exports = router;

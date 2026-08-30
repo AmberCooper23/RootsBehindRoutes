@@ -1,5 +1,9 @@
-import express from "express";
-import { createPost, getPost, getAllPosts } from "../services/postsService.js";
+const express = require("express");
+const {
+  createPost,
+  getPost,
+  getAllPosts,
+} = require("../services/postsService.js");
 
 const router = express.Router();
 
@@ -15,8 +19,11 @@ router.post("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const post = await getPost(req.params.id);
-    if (post) res.send(post);
-    else res.status(404).send({ error: "Post not found" });
+    if (post) {
+      res.send(post);
+    } else {
+      res.status(404).send({ error: "Post not found" });
+    }
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
@@ -31,4 +38,5 @@ router.get("/", async (req, res) => {
   }
 });
 
+// ✅ CommonJS export
 module.exports = router;

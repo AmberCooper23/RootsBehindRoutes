@@ -1,9 +1,9 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   createActivity,
   getActivity,
   getAllActivities,
-} from "../services/activitiesService.js";
+} = require("../services/activitiesService.js");
 
 const router = express.Router();
 
@@ -35,4 +35,5 @@ router.get("/", async (req, res) => {
   }
 });
 
+// ✅ CommonJS export
 module.exports = router;

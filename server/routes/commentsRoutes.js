@@ -1,9 +1,9 @@
-import express from "express";
-import {
+const express = require("express");
+const {
   createComment,
   getComment,
   getAllComments,
-} from "../services/commentsService.js";
+} = require("../services/commentsService.js");
 
 const router = express.Router();
 
@@ -19,8 +19,11 @@ router.post("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const comment = await getComment(req.params.id);
-    if (comment) res.send(comment);
-    else res.status(404).send({ error: "Comment not found" });
+    if (comment) {
+      res.send(comment);
+    } else {
+      res.status(404).send({ error: "Comment not found" });
+    }
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
@@ -35,4 +38,5 @@ router.get("/", async (req, res) => {
   }
 });
 
+// ✅ CommonJS export
 module.exports = router;
