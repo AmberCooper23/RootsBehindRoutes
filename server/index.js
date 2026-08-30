@@ -14,10 +14,11 @@ const interestsRoutes = require("./routes/interestsRoutes.js");
 const app = express();
 app.use(express.json());
 
-// ✅ Always convert literal \n escapes to real newlines
+// ✅ Always convert literal \n escapes to real newlines and strip accidental quotes
 const formatKey = (key) => {
   if (!key) return undefined;
-  return key.replace(/\\n/g, "\n");
+  const cleaned = key.trim().replace(/^"|"$/g, ""); // remove surrounding quotes if present
+  return cleaned.replace(/\\n/g, "\n");
 };
 
 // ✅ Build service account object from env vars
