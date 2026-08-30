@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-// ✅ Correct import for firebase-admin
 const admin = require("firebase-admin");
 
 const usersRoutes = require("./routes/usersRoutes.js");
@@ -15,14 +14,23 @@ const interestsRoutes = require("./routes/interestsRoutes.js");
 const app = express();
 app.use(express.json());
 
+// ✅ Normalize PRIVATE_KEY whether it has literal "\n" or real newlines
+const formatKey = (key) => {
+  if (!key) return undefined;
+  // If it contains literal "\n", replace with real newlines
+  if (key.includes("\\n")) {
+    return key.replace(/\\n/g, "\n");
+  }
+  // Otherwise return as-is (already has real newlines)
+  return key;
+};
+
 // ✅ Build service account object from env vars
 const serviceAccount = {
   type: process.env.TYPE,
   project_id: process.env.PROJECT_ID,
   private_key_id: process.env.PRIVATE_KEY_ID,
-  private_key: process.env.PRIVATE_KEY
-    ? process.env.PRIVATE_KEY.replace(/\\n/g, "\n")
-    : undefined,
+  private_key: formatKey(process.env.PRIVATE_KEY),
   client_email: process.env.CLIENT_EMAIL,
   client_id: process.env.CLIENT_ID,
   auth_uri: process.env.AUTH_URI,
@@ -39,6 +47,11 @@ console.log("ServiceAccount debug:", {
   CLIENT_EMAIL: serviceAccount.client_email,
   PRIVATE_KEY: serviceAccount.private_key ? "exists" : "missing",
 });
+
+// ✅ Extra preview of first 100 chars of key
+if (serviceAccount.private_key) {
+  console.log("PRIVATE_KEY preview:", serviceAccount.private_key.slice(0, 100));
+}
 
 // ✅ Initialize Firebase Admin only if PRIVATE_KEY exists
 if (serviceAccount.private_key && serviceAccount.client_email) {
@@ -77,7 +90,13 @@ app.use("/api/interests", interestsRoutes);
 
 // ✅ Healthcheck route
 app.get("/api/healthcheck", (req, res) => {
-  res.json({ status: "ok", firebase: !!serviceAccount.private_key });
+  res.json({
+    status: "ok",
+    firebase: !!serviceAccount.private_key,
+    keyPreview: serviceAccount.private_key
+      ? serviceAccount.private_key.slice(0, 50)
+      : "missing",
+  });
 });
 
 // ✅ Render requires process.env.PORT
