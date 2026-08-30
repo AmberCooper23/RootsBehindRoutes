@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import admin from "firebase-admin";
+import * as admin from "firebase-admin"; // ✅ FIX: import everything as admin
 
 import usersRoutes from "./routes/usersRoutes.js";
 import postsRoutes from "./routes/postsRoutes.js";
@@ -14,11 +14,12 @@ import interestsRoutes from "./routes/interestsRoutes.js";
 const app = express();
 app.use(express.json());
 
+// ✅ Build service account object from env vars
 const serviceAccount = {
   type: process.env.TYPE,
   project_id: process.env.PROJECT_ID,
   private_key_id: process.env.PRIVATE_KEY_ID,
-  private_key: process.env.PRIVATE_KEY.replace(/\\n/g, "\n"),
+  private_key: process.env.PRIVATE_KEY?.replace(/\\n/g, "\n"), // safe optional chaining
   client_email: process.env.CLIENT_EMAIL,
   client_id: process.env.CLIENT_ID,
   auth_uri: process.env.AUTH_URI,
@@ -28,12 +29,14 @@ const serviceAccount = {
   universe_domain: process.env.UNIVERSE_DOMAIN,
 };
 
+// ✅ Initialize Firebase Admin
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
 const db = admin.firestore();
 
+// ✅ CORS middleware
 app.use(
   cors({
     origin: [
@@ -46,6 +49,7 @@ app.use(
   }),
 );
 
+// ✅ Mount routes
 app.use("/api/users", usersRoutes);
 app.use("/api/posts", postsRoutes);
 app.use("/api/places", placesRoutes);
@@ -55,5 +59,6 @@ app.use("/api/reviews", reviewsRoutes);
 app.use("/api/endorsements", endorsementsRoutes);
 app.use("/api/interests", interestsRoutes);
 
+// ✅ Render requires process.env.PORT
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
