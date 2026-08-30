@@ -34,6 +34,13 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
+console.log("ServiceAccount debug:", {
+  TYPE: process.env.TYPE,
+  PROJECT_ID: process.env.PROJECT_ID,
+  CLIENT_EMAIL: process.env.CLIENT_EMAIL,
+  PRIVATE_KEY: process.env.PRIVATE_KEY ? "exists" : "missing",
+});
+
 const db = admin.firestore();
 
 // ✅ CORS middleware
