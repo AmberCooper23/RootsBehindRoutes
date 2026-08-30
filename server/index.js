@@ -14,15 +14,13 @@ const interestsRoutes = require("./routes/interestsRoutes.js");
 const app = express();
 app.use(express.json());
 
-// ✅ Normalize PRIVATE_KEY whether it has literal "\n" or real newlines
+// ✅ Normalize PRIVATE_KEY safely
 const formatKey = (key) => {
   if (!key) return undefined;
-  // If it contains literal "\n", replace with real newlines
   if (key.includes("\\n")) {
-    return key.replace(/\\n/g, "\n");
+    return key.replace(/\\n/g, "\n"); // convert literal \n to real newlines
   }
-  // Otherwise return as-is (already has real newlines)
-  return key;
+  return key; // already has real newlines
 };
 
 // ✅ Build service account object from env vars
@@ -50,17 +48,24 @@ console.log("ServiceAccount debug:", {
 
 // ✅ Extra preview of first 100 chars of key
 if (serviceAccount.private_key) {
-  console.log("PRIVATE_KEY preview:", serviceAccount.private_key.slice(0, 100));
+  console.log(
+    "PRIVATE_KEY preview:",
+    JSON.stringify(serviceAccount.private_key.slice(0, 100)),
+  );
 }
 
-// ✅ Initialize Firebase Admin only if PRIVATE_KEY exists
-if (serviceAccount.private_key && serviceAccount.client_email) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
-  console.log("Firebase Admin initialized ✅");
-} else {
-  console.error("❌ Firebase Admin not initialized. Missing env vars.");
+// ✅ Initialize Firebase Admin with error handling
+try {
+  if (serviceAccount.private_key && serviceAccount.client_email) {
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+    });
+    console.log("Firebase Admin initialized ✅");
+  } else {
+    console.error("❌ Firebase Admin not initialized. Missing env vars.");
+  }
+} catch (err) {
+  console.error("❌ Firebase Admin failed to initialize:", err.message);
 }
 
 const db = admin.firestore();
