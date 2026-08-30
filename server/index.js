@@ -14,13 +14,10 @@ const interestsRoutes = require("./routes/interestsRoutes.js");
 const app = express();
 app.use(express.json());
 
-// ✅ Normalize PRIVATE_KEY safely
+// ✅ Always convert literal \n escapes to real newlines
 const formatKey = (key) => {
   if (!key) return undefined;
-  if (key.includes("\\n")) {
-    return key.replace(/\\n/g, "\n"); // convert literal \n to real newlines
-  }
-  return key; // already has real newlines
+  return key.replace(/\\n/g, "\n");
 };
 
 // ✅ Build service account object from env vars
@@ -46,12 +43,10 @@ console.log("ServiceAccount debug:", {
   PRIVATE_KEY: serviceAccount.private_key ? "exists" : "missing",
 });
 
-// ✅ Extra preview of first 100 chars of key
+// ✅ Show first 100 chars with actual newlines
 if (serviceAccount.private_key) {
-  console.log(
-    "PRIVATE_KEY preview:",
-    JSON.stringify(serviceAccount.private_key.slice(0, 100)),
-  );
+  console.log("PRIVATE_KEY preview (first 100 chars):");
+  console.log(serviceAccount.private_key.slice(0, 100));
 }
 
 // ✅ Initialize Firebase Admin with error handling
