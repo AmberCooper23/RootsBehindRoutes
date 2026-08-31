@@ -1,49 +1,48 @@
-import { db } from "../firestore.js";
-import {
+const { db } = require("../firestore.js");
+const {
   doc,
   setDoc,
   getDoc,
   updateDoc,
   arrayUnion,
   arrayRemove,
-} from "firebase/firestore";
+} = require("firebase/firestore");
 
-export async function createUser(uid, data) {
+async function createUser(uid, data) {
   const userRef = doc(db, "users", uid);
   await setDoc(userRef, data, { merge: true });
-  return uid;
+  return { id: uid, ...data };
 }
 
-export async function getUser(uid) {
+async function getUser(uid) {
   const userRef = doc(db, "users", uid);
   const snap = await getDoc(userRef);
   return snap.exists() ? { id: snap.id, ...snap.data() } : null;
 }
 
-export async function addUserInterest(uid, interestId) {
+async function addUserInterest(uid, interestId) {
   const userRef = doc(db, "users", uid);
   await updateDoc(userRef, { interests: arrayUnion(interestId) });
   return interestId;
 }
 
-export async function removeUserInterest(uid, interestId) {
+async function removeUserInterest(uid, interestId) {
   const userRef = doc(db, "users", uid);
   await updateDoc(userRef, { interests: arrayRemove(interestId) });
   return interestId;
 }
 
-export async function addUserActivity(uid, activityId) {
+async function addUserActivity(uid, activityId) {
   const userRef = doc(db, "users", uid);
   await updateDoc(userRef, { activitiesTried: arrayUnion(activityId) });
 
-  // Schema: activities.usersTried is the reverse side of users.activitiesTried.
   const activityRef = doc(db, "activities", activityId);
   await updateDoc(activityRef, { usersTried: arrayUnion(uid) });
 
   return activityId;
 }
 
-export async function removeUserActivity(uid, activityId) {
+async function removeUserActivity(uid, activityId) {
   const userRef = doc(db, "users", uid);
   await updateDoc(userRef, { activitiesTried: arrayRemove(activityId) });
 
@@ -53,14 +52,25 @@ export async function removeUserActivity(uid, activityId) {
   return activityId;
 }
 
-export async function addUserPlace(uid, placeId) {
+async function addUserPlace(uid, placeId) {
   const userRef = doc(db, "users", uid);
   await updateDoc(userRef, { placesVisited: arrayUnion(placeId) });
   return placeId;
 }
 
-export async function removeUserPlace(uid, placeId) {
+async function removeUserPlace(uid, placeId) {
   const userRef = doc(db, "users", uid);
   await updateDoc(userRef, { placesVisited: arrayRemove(placeId) });
   return placeId;
 }
+
+module.exports = {
+  createUser,
+  getUser,
+  addUserInterest,
+  removeUserInterest,
+  addUserActivity,
+  removeUserActivity,
+  addUserPlace,
+  removeUserPlace,
+};

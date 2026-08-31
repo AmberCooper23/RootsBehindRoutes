@@ -1,5 +1,5 @@
-import { db } from "../firestore.js";
-import {
+const { db } = require("../firestore.js");
+const {
   collection,
   addDoc,
   getDocs,
@@ -9,13 +9,12 @@ import {
   arrayUnion,
   query,
   where,
-} from "firebase/firestore";
+} = require("firebase/firestore");
 
-export async function createEndorsement(data) {
+async function createEndorsement(data) {
   const endorsementsRef = collection(db, "endorsements");
   const docRef = await addDoc(endorsementsRef, data);
 
-  // Schema: an endorsement belongs to either a place OR an activity, never both.
   if (data.placeId) {
     await syncTargetRating("places", "placeId", data.placeId, docRef.id);
   } else if (data.activityId) {
@@ -27,11 +26,9 @@ export async function createEndorsement(data) {
     );
   }
 
-  return docRef.id;
+  return { id: docRef.id, ...data };
 }
 
-// Keeps the target's endorsementIds array in sync, then recomputes its
-// localRating as the live average of every endorsement rating it has.
 async function syncTargetRating(
   collectionName,
   foreignKeyField,
@@ -63,14 +60,20 @@ async function syncTargetRating(
   }
 }
 
-export async function getEndorsement(id) {
+async function getEndorsement(id) {
   const endorsementRef = doc(db, "endorsements", id);
   const snap = await getDoc(endorsementRef);
   return snap.exists() ? { id: snap.id, ...snap.data() } : null;
 }
 
-export async function getAllEndorsements() {
+async function getAllEndorsements() {
   const endorsementsRef = collection(db, "endorsements");
   const snap = await getDocs(endorsementsRef);
-  return snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  return snap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
 }
+
+module.exports = {
+  createEndorsement,
+  getEndorsement,
+  getAllEndorsements,
+};

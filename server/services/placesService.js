@@ -1,5 +1,5 @@
-import { db } from "../firestore.js";
-import {
+const { db } = require("../firestore.js");
+const {
   collection,
   addDoc,
   getDocs,
@@ -7,9 +7,9 @@ import {
   getDoc,
   updateDoc,
   arrayUnion,
-} from "firebase/firestore";
+} = require("firebase/firestore");
 
-export async function createPlace(data) {
+async function createPlace(data) {
   const placesRef = collection(db, "places");
   const docRef = await addDoc(placesRef, data);
 
@@ -23,7 +23,7 @@ export async function createPlace(data) {
     );
   }
 
-  return docRef.id;
+  return { id: docRef.id, ...data };
 }
 
 async function resolveCategories(categories) {
@@ -32,13 +32,9 @@ async function resolveCategories(categories) {
   const categoryDocs = await Promise.all(
     categories.map(async (ref) => {
       try {
-        // Support both: array of DocumentReferences, or array of category ID strings
         const categoryRef =
           typeof ref === "string" ? doc(db, "categories", ref) : ref;
         const snap = await getDoc(categoryRef);
-        // Category docs are keyed by slug (e.g. categories/heritage_site),
-        // and that slug is what Filter.jsx's category options match against,
-        // so use the doc id itself as the label rather than a "name" field.
         return snap.exists() ? snap.id : "";
       } catch (err) {
         console.error("Failed to resolve category:", ref, err);
@@ -50,26 +46,24 @@ async function resolveCategories(categories) {
   return categoryDocs.filter(Boolean);
 }
 
-export async function getPlace(id) {
+async function getPlace(id) {
   const placeRef = doc(db, "places", id);
   const snap = await getDoc(placeRef);
   if (!snap.exists()) return null;
 
   const data = { id: snap.id, ...snap.data() };
-  // Firestore field is "category" (singular), not "categories"
   data.categoryLabels = await resolveCategories(data.category);
 
   return data;
 }
 
-export async function getAllPlaces() {
+async function getAllPlaces() {
   const placesRef = collection(db, "places");
   const snap = await getDocs(placesRef);
 
   const places = await Promise.all(
     snap.docs.map(async (docSnap) => {
       const data = { id: docSnap.id, ...docSnap.data() };
-      // Firestore field is "category" (singular), not "categories"
       data.categoryLabels = await resolveCategories(data.category);
       return data;
     }),
@@ -77,3 +71,9 @@ export async function getAllPlaces() {
 
   return places;
 }
+
+module.exports = {
+  createPlace,
+  getPlace,
+  getAllPlaces,
+};
