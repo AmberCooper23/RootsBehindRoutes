@@ -1,24 +1,18 @@
-const { db } = require("../firestore.js");
-const {
-  collection,
-  addDoc,
-  getDocs,
-  doc,
-  getDoc,
-  updateDoc,
-  arrayUnion,
-} = require("firebase/firestore");
+const admin = require("firebase-admin");
+const db = admin.firestore();
 
 async function createPlace(data) {
-  const placesRef = collection(db, "places");
-  const docRef = await addDoc(placesRef, data);
+  const docRef = await db.collection("places").add(data);
 
   if (Array.isArray(data.activityIds) && data.activityIds.length > 0) {
     await Promise.all(
       data.activityIds.map((activityId) =>
-        updateDoc(doc(db, "activities", activityId), {
-          placeIds: arrayUnion(docRef.id),
-        }),
+        db
+          .collection("activities")
+          .doc(activityId)
+          .update({
+            placeIds: admin.firestore.FieldValue.arrayUnion(docRef.id),
+          }),
       ),
     );
   }
@@ -33,11 +27,11 @@ async function resolveCategories(categories) {
     categories.map(async (ref) => {
       try {
         const categoryRef =
-          typeof ref === "string" ? doc(db, "categories", ref) : ref;
-        const snap = await getDoc(categoryRef);
-        return snap.exists() ? snap.id : "";
+          typeof ref === "string" ? db.collection("categories").doc(ref) : ref;
+        const snap = await categoryRef.get();
+        return snap.exists ? snap.id : "";
       } catch (err) {
-        console.error("Failed to resolve category:", ref, err);
+        console.error("❌ Failed to resolve category:", ref, err);
         return "";
       }
     }),
@@ -47,9 +41,8 @@ async function resolveCategories(categories) {
 }
 
 async function getPlace(id) {
-  const placeRef = doc(db, "places", id);
-  const snap = await getDoc(placeRef);
-  if (!snap.exists()) return null;
+  const snap = await db.collection("places").doc(id).get();
+  if (!snap.exists) return null;
 
   const data = { id: snap.id, ...snap.data() };
   data.categoryLabels = await resolveCategories(data.category);
@@ -58,11 +51,10 @@ async function getPlace(id) {
 }
 
 async function getAllPlaces() {
-  const placesRef = collection(db, "places");
-  const snap = await getDocs(placesRef);
+  const snapshot = await db.collection("places").get();
 
   const places = await Promise.all(
-    snap.docs.map(async (docSnap) => {
+    snapshot.docs.map(async (docSnap) => {
       const data = { id: docSnap.id, ...docSnap.data() };
       data.categoryLabels = await resolveCategories(data.category);
       return data;
