@@ -1,19 +1,7 @@
-const { db } = require("../firestore.js");
-const {
-  collection,
-  addDoc,
-  getDocs,
-  doc,
-  getDoc,
-  updateDoc,
-  arrayUnion,
-  query,
-  where,
-} = require("firebase/firestore");
+const { db, admin } = require("../firebaseConfig.js");
 
 async function createReview(data) {
-  const reviewsRef = collection(db, "reviews");
-  const docRef = await addDoc(reviewsRef, data);
+  const docRef = await db.collection("reviews").add(data);
 
   if (data.placeId) {
     await syncTargetRating("places", "placeId", data.placeId, docRef.id);
@@ -35,17 +23,16 @@ async function syncTargetRating(
   targetId,
   reviewId,
 ) {
-  const targetRef = doc(db, collectionName, targetId);
+  const targetRef = db.collection(collectionName).doc(targetId);
 
-  await updateDoc(targetRef, {
-    reviewIds: arrayUnion(reviewId),
+  await targetRef.update({
+    reviewIds: admin.firestore.FieldValue.arrayUnion(reviewId),
   });
 
-  const reviewsQuery = query(
-    collection(db, "reviews"),
-    where(foreignKeyField, "==", targetId),
-  );
-  const snap = await getDocs(reviewsQuery);
+  const snap = await db
+    .collection("reviews")
+    .where(foreignKeyField, "==", targetId)
+    .get();
 
   const ratings = snap.docs
     .map((d) => d.data().rating)
@@ -53,7 +40,7 @@ async function syncTargetRating(
 
   if (ratings.length > 0) {
     const average = ratings.reduce((sum, r) => sum + r, 0) / ratings.length;
-    await updateDoc(targetRef, {
+    await targetRef.update({
       touristRating: Math.round(average * 10) / 10,
       reviewCount: ratings.length,
     });
@@ -61,15 +48,16 @@ async function syncTargetRating(
 }
 
 async function getReview(id) {
-  const reviewRef = doc(db, "reviews", id);
-  const snap = await getDoc(reviewRef);
-  return snap.exists() ? { id: snap.id, ...snap.data() } : null;
+  const snap = await db.collection("reviews").doc(id).get();
+  return snap.exists ? { id: snap.id, ...snap.data() } : null;
 }
 
 async function getAllReviews() {
-  const reviewsRef = collection(db, "reviews");
-  const snap = await getDocs(reviewsRef);
-  return snap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
+  const snapshot = await db.collection("reviews").get();
+  return snapshot.docs.map((docSnap) => ({
+    id: docSnap.id,
+    ...docSnap.data(),
+  }));
 }
 
 module.exports = {

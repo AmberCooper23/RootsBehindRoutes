@@ -1,5 +1,4 @@
-const admin = require("firebase-admin");
-const db = admin.firestore();
+const { db, admin } = require("../firebaseConfig.js");
 
 async function createPlace(data) {
   const docRef = await db.collection("places").add(data);

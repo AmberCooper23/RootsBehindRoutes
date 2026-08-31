@@ -1,19 +1,7 @@
-const { db } = require("../firestore.js");
-const {
-  collection,
-  addDoc,
-  getDocs,
-  doc,
-  getDoc,
-  updateDoc,
-  arrayUnion,
-  query,
-  where,
-} = require("firebase/firestore");
+const { db, admin } = require("../firebaseConfig.js");
 
 async function createEndorsement(data) {
-  const endorsementsRef = collection(db, "endorsements");
-  const docRef = await addDoc(endorsementsRef, data);
+  const docRef = await db.collection("endorsements").add(data);
 
   if (data.placeId) {
     await syncTargetRating("places", "placeId", data.placeId, docRef.id);
@@ -35,17 +23,16 @@ async function syncTargetRating(
   targetId,
   endorsementId,
 ) {
-  const targetRef = doc(db, collectionName, targetId);
+  const targetRef = db.collection(collectionName).doc(targetId);
 
-  await updateDoc(targetRef, {
-    endorsementIds: arrayUnion(endorsementId),
+  await targetRef.update({
+    endorsementIds: admin.firestore.FieldValue.arrayUnion(endorsementId),
   });
 
-  const endorsementsQuery = query(
-    collection(db, "endorsements"),
-    where(foreignKeyField, "==", targetId),
-  );
-  const snap = await getDocs(endorsementsQuery);
+  const snap = await db
+    .collection("endorsements")
+    .where(foreignKeyField, "==", targetId)
+    .get();
 
   const ratings = snap.docs
     .map((d) => d.data().rating)
@@ -53,7 +40,7 @@ async function syncTargetRating(
 
   if (ratings.length > 0) {
     const average = ratings.reduce((sum, r) => sum + r, 0) / ratings.length;
-    await updateDoc(targetRef, {
+    await targetRef.update({
       localRating: Math.round(average * 10) / 10,
       endorsementCount: ratings.length,
     });
@@ -61,15 +48,16 @@ async function syncTargetRating(
 }
 
 async function getEndorsement(id) {
-  const endorsementRef = doc(db, "endorsements", id);
-  const snap = await getDoc(endorsementRef);
-  return snap.exists() ? { id: snap.id, ...snap.data() } : null;
+  const snap = await db.collection("endorsements").doc(id).get();
+  return snap.exists ? { id: snap.id, ...snap.data() } : null;
 }
 
 async function getAllEndorsements() {
-  const endorsementsRef = collection(db, "endorsements");
-  const snap = await getDocs(endorsementsRef);
-  return snap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
+  const snapshot = await db.collection("endorsements").get();
+  return snapshot.docs.map((docSnap) => ({
+    id: docSnap.id,
+    ...docSnap.data(),
+  }));
 }
 
 module.exports = {
