@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { AddPlaceModal } from "../ContributeModal/AddPlaceModal";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signInWithPopup } from "firebase/auth";
@@ -37,32 +37,32 @@ export function NavBar() {
         <section className="navBarContainer">
           <section className="navBarContent">
             <section className="navBarLeft">
-              <Link to="/" className="navBarLogo">
+              <NavLink to="/" className="navBarLogo">
                 <section className="navBarLogoText" aria-hidden="true">
                   <h1>Roots Behind Routes</h1>
                   <p>Johannesburg, South Africa</p>
                 </section>
-              </Link>
+              </NavLink>
               <ul className="navBarLinks">
                 <li className="navBarLinkItem">
-                  <Link to="/" className="navBarLink">
+                  <NavLink to="/" className="navBarLink">
                     Discover
-                  </Link>
+                  </NavLink>
                 </li>
                 {/* <li className="navBarLinkItem">
-                  <Link to="/Map" className="navBarLink">
+                  <NavLink to="/Map" className="navBarLink">
                     Map
-                  </Link>
+                  </NavLink>
                 </li> */}
                 <li className="navBarLinkItem">
-                  <Link to="/Saved" className="navBarLink">
+                  <NavLink to="/Saved" className="navBarLink">
                     Saved
-                  </Link>
+                  </NavLink>
                 </li>
                 <li className="navBarLinkItem">
-                  <Link to="/About" className="navBarLink">
+                  <NavLink to="/About" className="navBarLink">
                     About
-                  </Link>
+                  </NavLink>
                 </li>
               </ul>
             </section>
