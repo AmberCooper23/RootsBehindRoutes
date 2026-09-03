@@ -38,5 +38,4 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ CommonJS export
 module.exports = router;

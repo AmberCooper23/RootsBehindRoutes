@@ -1,13 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../firebase";
 import { addUser, fetchUser } from "../../../api/usersApi";
+import { fetchStats } from "../../../api/statsApi";
 import "./Hero.css";
 import HeroImage from "../../assets/RedTaxiImage.jpg";
 
 export function Hero() {
   const [user] = useAuthState(auth);
+  const [stats, setStats] = useState({ places: 0, voices: 0, travelers: 0 });
+
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const data = await fetchStats();
+        setStats(data);
+      } catch (err) {
+        console.error("Error fetching stats:", err);
+      }
+    };
+    loadStats();
+  }, []);
 
   const handleLogin = async () => {
     try {
@@ -51,15 +65,15 @@ export function Hero() {
           </section>
           <dl className="heroStats">
             <article>
-              <dt className="heroStatValue">100+</dt>
+              <dt className="heroStatValue">{stats.places}</dt>
               <dd className="heroStatLabel">Authentic Places</dd>
             </article>
             <article>
-              <dt className="heroStatValue">50+</dt>
+              <dt className="heroStatValue">{stats.voices}</dt>
               <dd className="heroStatLabel">Local Voices</dd>
             </article>
             <article>
-              <dt className="heroStatValue">10K+</dt>
+              <dt className="heroStatValue">{stats.travellers}</dt>
               <dd className="heroStatLabel">Happy Travelers</dd>
             </article>
           </dl>
