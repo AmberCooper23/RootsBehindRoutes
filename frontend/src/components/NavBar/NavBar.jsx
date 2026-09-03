@@ -55,13 +55,13 @@ export function NavBar() {
                   </Link>
                 </li>
                 <li className="navBarLinkItem">
-                  <Link to="/About" className="navBarLink">
-                    About
+                  <Link to="/Saved" className="navBarLink">
+                    Saved
                   </Link>
                 </li>
                 <li className="navBarLinkItem">
-                  <Link to="/Saved" className="navBarLink">
-                    Saved
+                  <Link to="/About" className="navBarLink">
+                    About
                   </Link>
                 </li>
               </ul>

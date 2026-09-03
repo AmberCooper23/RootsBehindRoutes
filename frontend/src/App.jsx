@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import { NavBar } from "./components/NavBar/NavBar";
 import { LandingPage } from "./pages/LandingPage/LandingPage";
 import { UserProfile } from "./pages/UserProfilePage/UserProfilePage";
+import AboutPage from "./pages/AboutPage/AboutPage";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "./firebase";
 
@@ -14,6 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage user={user} />} />
         <Route path="/UserProfile" element={<UserProfile />} />
+        <Route path="/About" element={<AboutPage />} />
       </Routes>
     </>
   );
