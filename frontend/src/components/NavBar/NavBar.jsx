@@ -49,11 +49,11 @@ export function NavBar() {
                     Discover
                   </Link>
                 </li>
-                <li className="navBarLinkItem">
+                {/* <li className="navBarLinkItem">
                   <Link to="/Map" className="navBarLink">
                     Map
                   </Link>
-                </li>
+                </li> */}
                 <li className="navBarLinkItem">
                   <Link to="/Saved" className="navBarLink">
                     Saved
