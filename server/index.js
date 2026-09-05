@@ -12,6 +12,7 @@ const reviewsRoutes = require("./routes/reviewsRoutes.js");
 const endorsementsRoutes = require("./routes/endorsementsRoutes.js");
 const interestsRoutes = require("./routes/interestsRoutes.js");
 const statsRoutes = require("./routes/statsRoutes.js");
+const bookmarksRoutes = require("./routes/bookmarksRoutes.js");
 
 const app = express();
 app.use(express.json());
@@ -21,7 +22,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://rootsbehindroutes.web.app",
-      "https://rootsbehindroutes-server.onrender.com",
+      "https://rootsbehindroutes.onrender.com",
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
@@ -37,6 +38,7 @@ app.use("/api/reviews", reviewsRoutes);
 app.use("/api/endorsements", endorsementsRoutes);
 app.use("/api/interests", interestsRoutes);
 app.use("/api/stats", statsRoutes);
+app.use("/api/bookmarks", bookmarksRoutes);
 
 app.get("/api/healthcheck", (req, res) => {
   res.json({ status: "ok", firebase: true });
