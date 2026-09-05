@@ -1,13 +1,18 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "./LandingPage.css";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../../firebase";
 import Hero from "../../components/Hero/Hero";
 import Filter from "../../components/Filter/Filter";
 import LocationCard from "../../components/LocationCard/LocationCard";
 import ContributeModal from "../../components/ContributeModal/ContributeModal";
 import { fetchAllPlaces } from "../../../api/placesApi";
 import { fetchAllActivities } from "../../../api/activitiesApi";
+import { getBookmarks } from "../../../api/bookmarksApi";
 
 export function LandingPage() {
+  const [user] = useAuthState(auth);
+
   const [filter, setFilter] = useState({
     category: "All",
     sort: "Most Endorsed",
@@ -16,17 +21,14 @@ export function LandingPage() {
   const [experiences, setExperiences] = useState([]);
   const [selectedExperience, setSelectedExperience] = useState(null);
   const [isContributeOpen, setIsContributeOpen] = useState(false);
+  const [bookmarksByPath, setBookmarksByPath] = useState({});
 
   const loadExperiences = useCallback(async () => {
     try {
-      console.log("➡️ Loading experiences...");
       const [places, activities] = await Promise.all([
         fetchAllPlaces(),
         fetchAllActivities(),
       ]);
-
-      console.log("✅ Places:", places);
-      console.log("✅ Activities:", activities);
 
       const taggedPlaces = places.map((place) => ({
         ...place,
@@ -37,18 +39,36 @@ export function LandingPage() {
         type: "activity",
       }));
 
-      const combined = [...taggedPlaces, ...taggedActivities];
-      console.log("✅ Combined experiences:", combined);
-
-      setExperiences(combined);
+      setExperiences([...taggedPlaces, ...taggedActivities]);
     } catch (error) {
       console.error("❌ Error fetching experiences:", error);
     }
   }, []);
 
+  const loadBookmarks = useCallback(async () => {
+    if (!user?.uid) {
+      setBookmarksByPath({});
+      return;
+    }
+    try {
+      const bookmarks = await getBookmarks(user.uid);
+      const map = {};
+      bookmarks.forEach((b) => {
+        map[b.itemId] = b.id;
+      });
+      setBookmarksByPath(map);
+    } catch (error) {
+      console.error("❌ Error fetching bookmarks:", error);
+    }
+  }, [user?.uid]);
+
   useEffect(() => {
     loadExperiences();
   }, [loadExperiences]);
+
+  useEffect(() => {
+    loadBookmarks();
+  }, [loadBookmarks]);
 
   useEffect(() => {
     window.addEventListener("experiences:updated", loadExperiences);
@@ -57,7 +77,6 @@ export function LandingPage() {
   }, [loadExperiences]);
 
   const handleCardClick = (experience) => {
-    console.log("🖱️ Card clicked:", experience);
     setSelectedExperience(experience);
     setIsContributeOpen(true);
   };
@@ -67,8 +86,19 @@ export function LandingPage() {
   };
 
   const handleContributeSuccess = () => {
-    console.log("✅ Contribution succeeded, reloading...");
     loadExperiences();
+  };
+
+  const handleBookmarkChange = (itemPath, bookmarkId) => {
+    setBookmarksByPath((prev) => {
+      const next = { ...prev };
+      if (bookmarkId) {
+        next[itemPath] = bookmarkId;
+      } else {
+        delete next[itemPath];
+      }
+      return next;
+    });
   };
 
   const filteredExperiences = experiences.filter(
@@ -90,8 +120,6 @@ export function LandingPage() {
         return 0;
     }
   });
-
-  console.log("✅ Final sorted experiences:", sortedExperiences);
 
   return (
     <main className="discoverPage">
@@ -115,13 +143,20 @@ export function LandingPage() {
           </p>
         </header>
         <section className="discoverGrid">
-          {sortedExperiences.map((experience) => (
-            <LocationCard
-              key={`${experience.type}-${experience.id}`}
-              {...experience}
-              onClick={() => handleCardClick(experience)}
-            />
-          ))}
+          {sortedExperiences.map((experience) => {
+            const itemPath = `${experience.type}/${experience.id}`;
+            return (
+              <LocationCard
+                key={`${experience.type}-${experience.id}`}
+                {...experience}
+                userId={user?.uid}
+                itemPath={itemPath}
+                bookmarkId={bookmarksByPath[itemPath] || null}
+                onBookmarkChange={handleBookmarkChange}
+                onClick={() => handleCardClick(experience)}
+              />
+            );
+          })}
         </section>
         <aside className="ratingSystem">
           <h3 className="ratingSystemTitle">Understanding our rating system</h3>
