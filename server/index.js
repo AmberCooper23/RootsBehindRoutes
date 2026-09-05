@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
-const admin = require("firebase-admin");
+
+const { db, admin } = require("./firebaseConfig.js");
 
 const usersRoutes = require("./routes/usersRoutes.js");
 const postsRoutes = require("./routes/postsRoutes.js");
@@ -14,19 +15,6 @@ const statsRoutes = require("./routes/statsRoutes.js");
 
 const app = express();
 app.use(express.json());
-
-const serviceAccount = require("/etc/secrets/serviceAccountKey.json");
-
-try {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
-  console.log("Firebase Admin initialized ");
-} catch (err) {
-  console.error("❌ Firebase Admin failed to initialize:", err.message);
-}
-
-const db = admin.firestore();
 
 app.use(
   cors({
