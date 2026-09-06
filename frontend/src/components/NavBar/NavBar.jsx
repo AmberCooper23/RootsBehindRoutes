@@ -54,11 +54,13 @@ export function NavBar() {
                     Map
                   </NavLink>
                 </li> */}
-                <li className="navBarLinkItem">
-                  <NavLink to="/Saved" className="navBarLink">
-                    Saved
-                  </NavLink>
-                </li>
+                {user && (
+                  <li className="navBarLinkItem">
+                    <NavLink to="/Bookmarks" className="navBarLink">
+                      Saved
+                    </NavLink>
+                  </li>
+                )}
                 <li className="navBarLinkItem">
                   <NavLink to="/About" className="navBarLink">
                     About

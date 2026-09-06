@@ -1,0 +1,171 @@
+:root {
+  --primary-lp-color: #8b7355;
+  --secondary-lp-color: white;
+  --accent-lp-color: #555;
+  --text-lp-color: #2c2416;
+  --bg-lp-color: #e8dcc8;
+
+  --font-xl: 3rem;
+  --font-lg: 2.25rem;
+  --font-md: 1.5rem;
+  --font-sm: 1.25rem;
+  --font-xs: 1.125rem;
+  --font-xxs: 1rem;
+}
+
+.bookmarksPage {
+  min-height: calc(100vh - 12.5rem);
+  font-family: "Lora", serif;
+  background-color: var(--secondary-lp-color);
+}
+
+.bookmarksHero {
+  background-color: var(--bg-lp-color);
+  border-bottom: 0.125rem solid var(--primary-lp-color);
+  padding: 4rem 1.5rem;
+}
+
+.bookmarksHeroInner {
+  max-width: 52rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.bookmarksHeroStamp {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  padding: 0.25rem 1rem;
+  border: 0.125rem solid var(--primary-lp-color);
+  color: var(--primary-lp-color);
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  font-style: normal;
+  font-weight: normal;
+  font-family: "Lora", serif;
+}
+
+.bookmarksHeroTitle {
+  font-family: "Lora", serif;
+  font-size: 3.75rem;
+  font-weight: 700;
+  color: var(--text-lp-color);
+  line-height: 1.1;
+  margin: 0 0 1.5rem 0;
+}
+
+.bookmarksHeroTitleItalic {
+  font-style: italic;
+}
+
+.bookmarksHeroTagline {
+  font-size: 1.25rem;
+  color: #5c4e3a;
+  line-height: 1.7;
+  max-width: 40rem;
+  margin: 0 auto;
+  font-style: italic;
+}
+
+.bookmarksBody {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+}
+
+.bookmarksBodyHeader {
+  margin-bottom: 2rem;
+}
+
+.bookmarksBodyTitle {
+  font-family: "Lora", serif;
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--text-lp-color);
+  margin: 0 0 0.75rem 0;
+}
+
+.bookmarksBodyDivider {
+  width: 5rem;
+  height: 0.125rem;
+  background-color: var(--primary-lp-color);
+  margin: 0;
+  border: none;
+}
+
+.bookmarksGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.bookmarksStateBox {
+  background-color: var(--bg-lp-color);
+  border: 0.125rem solid var(--primary-lp-color);
+  padding: 4rem 2rem;
+  text-align: center;
+  max-width: 34rem;
+  margin: 2rem auto 0;
+}
+
+.bookmarksStateIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto 1.5rem;
+  background-color: var(--secondary-lp-color);
+  border: 0.125rem solid var(--primary-lp-color);
+  color: var(--primary-lp-color);
+}
+
+.bookmarksStateTitle {
+  font-family: "Lora", serif;
+  font-size: var(--font-md);
+  font-weight: 600;
+  color: var(--text-lp-color);
+  margin: 0 0 0.75rem 0;
+}
+
+.bookmarksStateText {
+  font-size: var(--font-xs);
+  color: #5c4e3a;
+  line-height: 1.6;
+  margin: 0 0 1.5rem 0;
+}
+
+.bookmarksStateButton {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  background-color: var(--primary-lp-color);
+  color: #fdfbf7;
+  border: 0.125rem solid var(--primary-lp-color);
+  font-family: "Lora", serif;
+  font-size: var(--font-xxs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.bookmarksStateButton:hover {
+  background-color: #6d5a42;
+}
+
+@media (max-width: 62.5rem) {
+  .bookmarksGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .bookmarksHeroTitle {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 40rem) {
+  .bookmarksGrid {
+    grid-template-columns: 1fr;
+  }
+}
