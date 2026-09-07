@@ -1,5 +1,30 @@
 const { db, admin } = require("../firebaseConfig.js");
 
+function normalizeRef(value) {
+  if (value && typeof value === "object" && typeof value.id === "string") {
+    return value.id;
+  }
+  return value ?? null;
+}
+
+async function attachUserDisplayName(review) {
+  if (!review.userId) return review;
+  const userSnap = await db.collection("users").doc(review.userId).get();
+  if (userSnap.exists) {
+    return { ...review, userDisplayName: userSnap.data().displayName };
+  }
+  return { ...review, userDisplayName: null };
+}
+
+function normalizeReview(data) {
+  return {
+    ...data,
+    placeId: normalizeRef(data.placeId),
+    activityId: normalizeRef(data.activityId),
+    userId: normalizeRef(data.userId),
+  };
+}
+
 async function createReview(data) {
   const docRef = await db.collection("reviews").add(data);
 
@@ -14,7 +39,8 @@ async function createReview(data) {
     );
   }
 
-  return { id: docRef.id, ...data };
+  const review = normalizeReview({ id: docRef.id, ...data });
+  return attachUserDisplayName(review);
 }
 
 async function syncTargetRating(
@@ -49,15 +75,17 @@ async function syncTargetRating(
 
 async function getReview(id) {
   const snap = await db.collection("reviews").doc(id).get();
-  return snap.exists ? { id: snap.id, ...snap.data() } : null;
+  if (!snap.exists) return null;
+  const review = normalizeReview({ id: snap.id, ...snap.data() });
+  return attachUserDisplayName(review);
 }
 
 async function getAllReviews() {
   const snapshot = await db.collection("reviews").get();
-  return snapshot.docs.map((docSnap) => ({
-    id: docSnap.id,
-    ...docSnap.data(),
-  }));
+  const reviews = snapshot.docs.map((docSnap) =>
+    normalizeReview({ id: docSnap.id, ...docSnap.data() }),
+  );
+  return Promise.all(reviews.map(attachUserDisplayName));
 }
 
 module.exports = {

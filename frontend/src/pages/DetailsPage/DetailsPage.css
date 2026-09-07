@@ -1,0 +1,497 @@
+:root {
+  --primary-lp-color: #8b7355;
+  --secondary-lp-color: white;
+  --accent-lp-color: #555;
+  --text-lp-color: #2c2416;
+  --bg-lp-color: #e8dcc8;
+
+  --font-xl: 3rem;
+  --font-lg: 2.25rem;
+  --font-md: 1.5rem;
+  --font-sm: 1.25rem;
+  --font-xs: 1.125rem;
+  --font-xxs: 1rem;
+}
+
+.detailsPage {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background-color: rgba(44, 36, 22, 0.55);
+  backdrop-filter: blur(0.125rem);
+  font-family: "Lora", serif;
+  padding: 3rem 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+  animation: detailsOverlayFadeIn 0.2s ease-out;
+}
+
+@keyframes detailsOverlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes detailsCardRiseIn {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.detailsCard {
+  width: 100%;
+  max-width: 52rem;
+  max-height: calc(100vh - 6rem);
+  overflow-y: auto;
+  background-color: #fdfbf7;
+  border: 0.0625rem solid var(--primary-lp-color);
+  border-radius: 0.5rem;
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.3);
+  margin: auto 0;
+  animation: detailsCardRiseIn 0.25s ease-out;
+}
+
+.detailsHeroWrapper {
+  position: relative;
+  margin: 0;
+}
+
+.detailsHeroImage {
+  width: 100%;
+  height: 11rem;
+  object-fit: cover;
+  display: block;
+  border-radius: 0.4375rem 0.4375rem 0 0;
+}
+
+.detailsCategoryBadge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background-color: #fdfbf7;
+  color: var(--primary-lp-color);
+  border: 0.0625rem solid var(--primary-lp-color);
+  padding: 0.3rem 0.9rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+.detailsCloseButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  background-color: #fdfbf7;
+  border: 0.0625rem solid var(--primary-lp-color);
+  color: var(--text-lp-color);
+  font-size: 1.125rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detailsCloseButton:hover {
+  background-color: var(--bg-lp-color);
+}
+
+.detailsBody {
+  padding: 1.75rem 2rem 2rem;
+}
+
+.detailsHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.detailsTitle {
+  font-family: "Lora", serif;
+  font-size: 1.9rem;
+  font-weight: 400;
+  color: var(--text-lp-color);
+  margin: 0 0 0.35rem 0;
+}
+
+.detailsSubtitle {
+  font-style: italic;
+  color: var(--accent-lp-color);
+  font-size: var(--font-xs);
+}
+
+.detailsSaveButton {
+  flex-shrink: 0;
+  width: 3rem;
+  height: 3rem;
+  background-color: var(--bg-lp-color);
+  border: 0.0625rem solid var(--primary-lp-color);
+  color: var(--primary-lp-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.detailsSaveButton:hover {
+  background-color: #ddceb0;
+}
+
+.detailsSaveButton.active {
+  color: #b5473a;
+}
+
+.detailsRatings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.detailsRatingBox {
+  background-color: var(--bg-lp-color);
+  border: 0.0625rem solid var(--primary-lp-color);
+  padding: 0.75rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.detailsRatingLabel {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--primary-lp-color);
+  font-weight: 400;
+}
+
+.detailsRatingValue {
+  font-size: var(--font-md);
+  font-weight: 400;
+  color: var(--text-lp-color);
+}
+
+.detailsRatingMax {
+  font-size: var(--font-xs);
+  font-weight: 400;
+  color: var(--accent-lp-color);
+  margin-left: 0.15rem;
+}
+
+.detailsRatingCaption {
+  font-size: 0.8rem;
+  color: var(--accent-lp-color);
+  font-style: italic;
+}
+
+.detailsHoursSection {
+  border: 0.0625rem solid var(--primary-lp-color);
+  background-color: #fdfbf7;
+  margin-bottom: 1rem;
+}
+
+.detailsHoursToggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  font-family: "Lora", serif;
+}
+
+.detailsHoursLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.detailsHoursStatusDot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.detailsHoursStatusDot.open {
+  background-color: #4a7c4e;
+}
+
+.detailsHoursStatusDot.closed {
+  background-color: #b5473a;
+}
+
+.detailsHoursStatusText {
+  font-size: var(--font-xxs);
+  font-weight: 400;
+  color: var(--text-lp-color);
+}
+
+.detailsHoursChevron {
+  font-size: 0.7rem;
+  color: var(--primary-lp-color);
+}
+
+.detailsHoursList {
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem 1rem 0.75rem;
+  border-top: 0.0625rem solid #ddd3c0;
+}
+
+.detailsHoursRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.3rem 0;
+  font-size: 0.9rem;
+}
+
+.detailsHoursDay {
+  color: var(--accent-lp-color);
+}
+
+.detailsHoursTime {
+  color: var(--text-lp-color);
+  font-weight: 400;
+}
+
+.detailsMetaGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  padding: 1rem 0;
+  border-top: 0.0625rem solid #ddd3c0;
+  border-bottom: 0.0625rem solid #ddd3c0;
+  margin-bottom: 1rem;
+}
+
+.detailsMetaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.detailsMetaLabel {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-lp-color);
+}
+
+.detailsMetaValue {
+  font-size: var(--font-xxs);
+  font-weight: 400;
+  color: var(--text-lp-color);
+  overflow-wrap: break-word;
+}
+
+.detailsMetaLink {
+  font-size: var(--font-xxs);
+  font-weight: 400;
+  color: var(--primary-lp-color);
+  overflow-wrap: break-word;
+}
+
+.detailsTabs {
+  display: flex;
+  gap: 1.5rem;
+  border-bottom: 0.0625rem solid #ddd3c0;
+  margin-bottom: 1.25rem;
+}
+
+.detailsTab {
+  background: none;
+  border: none;
+  border-bottom: 0.125rem solid transparent;
+  padding: 0.65rem 0;
+  font-family: "Lora", serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent-lp-color);
+  cursor: pointer;
+  font-weight: 400;
+}
+
+.detailsTab.active {
+  color: var(--primary-lp-color);
+  border-bottom-color: var(--primary-lp-color);
+  font-weight: 400;
+}
+
+.detailsTabPanel {
+  margin-bottom: 1.5rem;
+}
+
+.detailsDescription {
+  color: var(--text-lp-color);
+  line-height: 1.75;
+  font-size: var(--font-xxs);
+  margin: 0;
+}
+
+.detailsActions {
+  display: flex;
+}
+
+.detailsContributeButton {
+  width: 100%;
+  padding: 0.9rem 2rem;
+  background-color: var(--primary-lp-color);
+  color: #fdfbf7;
+  border: 0.0625rem solid var(--primary-lp-color);
+  font-family: "Lora", serif;
+  font-size: 0.9rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.detailsContributeButton:hover {
+  background-color: #6d5a42;
+}
+
+.detailsStateBox {
+  background-color: #fdfbf7;
+  border: 0.0625rem solid var(--primary-lp-color);
+  border-radius: 0.5rem;
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.3);
+  padding: 3.5rem 2rem;
+  text-align: center;
+  max-width: 30rem;
+  margin: 2rem auto 0;
+  height: fit-content;
+}
+
+.detailsStateTitle {
+  font-family: "Lora", serif;
+  font-size: var(--font-md);
+  font-weight: 400;
+  color: var(--text-lp-color);
+  margin: 0 0 0.75rem 0;
+}
+
+.detailsStateText {
+  font-size: var(--font-xs);
+  color: var(--accent-lp-color);
+  line-height: 1.6;
+  margin: 0 0 1.5rem 0;
+}
+
+.detailsStateButton {
+  padding: 0.7rem 2rem;
+  background-color: var(--primary-lp-color);
+  color: #fdfbf7;
+  border: 0.0625rem solid var(--primary-lp-color);
+  font-family: "Lora", serif;
+  font-size: 0.9rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+@media (max-width: 62.5rem) {
+  .detailsMetaGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 40rem) {
+  .detailsHeader {
+    flex-direction: column;
+  }
+
+  .detailsHeroImage {
+    height: 9rem;
+  }
+}
+
+.detailsReviewList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.detailsReviewCard {
+  background-color: var(--bg-lp-color);
+  border: 0.0625rem solid var(--primary-lp-color);
+  padding: 0.9rem 1.1rem;
+  text-align: left;
+}
+
+.detailsReviewHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.4rem;
+}
+
+.detailsReviewRating {
+  font-size: var(--font-sm);
+  font-weight: 400;
+  color: var(--text-lp-color);
+}
+
+.detailsReviewRatingMax {
+  font-size: var(--font-xxs);
+  font-weight: 400;
+  color: var(--accent-lp-color);
+  margin-left: 0.15rem;
+}
+
+.detailsReviewDate {
+  font-size: 0.8rem;
+  color: var(--accent-lp-color);
+  font-style: italic;
+  white-space: nowrap;
+}
+
+.detailsReviewText {
+  color: var(--text-lp-color);
+  line-height: 1.6;
+  font-size: var(--font-xxs);
+  margin: 0 0 0.4rem 0;
+  text-align: left;
+}
+
+.detailsReviewMeta {
+  font-size: 0.85rem;
+  color: var(--primary-lp-color);
+  font-weight: 400;
+  margin: 0;
+}
+
+.detailsReviewAuthor {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary-lp-color);
+  margin: 0 0 0.4rem 0;
+  text-align: left;
+}

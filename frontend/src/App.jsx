@@ -4,6 +4,7 @@ import { LandingPage } from "./pages/LandingPage/LandingPage";
 import { UserProfile } from "./pages/UserProfilePage/UserProfilePage";
 import { BookmarksPage } from "./pages/BookmarksPage/BookmarksPage";
 import AboutPage from "./pages/AboutPage/AboutPage";
+import { DetailsPage } from "./pages/DetailsPage/DetailsPage";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "./firebase";
 
@@ -18,6 +19,7 @@ function App() {
         <Route path="/UserProfile" element={<UserProfile />} />
         <Route path="/About" element={<AboutPage />} />
         <Route path="/Bookmarks" element={<BookmarksPage />} />
+        <Route path="/Details/:type/:id" element={<DetailsPage />} />
       </Routes>
     </>
   );

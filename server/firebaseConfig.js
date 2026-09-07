@@ -3,7 +3,7 @@ const path = require("path");
 
 if (!admin.apps.length) {
   const serviceAccount = require(
-    path.join(__dirname, "serviceAccountKey.json"),
+    path.join(__dirname, "..", "serviceAccountKey.json"),
   );
 
   admin.initializeApp({

@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import "./LandingPage.css";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase";
 import Hero from "../../components/Hero/Hero";
 import Filter from "../../components/Filter/Filter";
 import LocationCard from "../../components/LocationCard/LocationCard";
-import ContributeModal from "../../components/ContributeModal/ContributeModal";
 import { fetchAllPlaces } from "../../../api/placesApi";
 import { fetchAllActivities } from "../../../api/activitiesApi";
 import { getBookmarks } from "../../../api/bookmarksApi";
 
 export function LandingPage() {
+  const navigate = useNavigate();
   const [user] = useAuthState(auth);
 
   const [filter, setFilter] = useState({
@@ -19,8 +20,6 @@ export function LandingPage() {
   });
 
   const [experiences, setExperiences] = useState([]);
-  const [selectedExperience, setSelectedExperience] = useState(null);
-  const [isContributeOpen, setIsContributeOpen] = useState(false);
   const [bookmarksByPath, setBookmarksByPath] = useState({});
 
   const loadExperiences = useCallback(async () => {
@@ -77,16 +76,7 @@ export function LandingPage() {
   }, [loadExperiences]);
 
   const handleCardClick = (experience) => {
-    setSelectedExperience(experience);
-    setIsContributeOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setIsContributeOpen(false);
-  };
-
-  const handleContributeSuccess = () => {
-    loadExperiences();
+    navigate(`/Details/${experience.type}/${experience.id}`);
   };
 
   const handleBookmarkChange = (itemPath, bookmarkId) => {
@@ -217,12 +207,6 @@ export function LandingPage() {
           </section>
         </aside>
       </section>
-      <ContributeModal
-        isOpen={isContributeOpen}
-        onClose={handleModalClose}
-        target={selectedExperience}
-        onSuccess={handleContributeSuccess}
-      />
     </main>
   );
 }
