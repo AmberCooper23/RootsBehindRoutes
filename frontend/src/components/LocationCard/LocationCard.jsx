@@ -115,7 +115,7 @@ export function LocationCard({
             <dt className="locationCardRating">Local Voices</dt>
             <dd className="locationCardRatingValue">
               <span className="locationCardRatingNumber">
-                {localRating ?? "?"}
+                {localRating ?? "0"}
               </span>
               <span className="locationCardRatingMax">/10</span>
             </dd>
@@ -124,7 +124,7 @@ export function LocationCard({
             <dt className="locationCardRating">Tourist Rating</dt>
             <dd className="locationCardRatingValue">
               <span className="locationCardRatingNumber">
-                {touristRating ?? "?"}
+                {touristRating ?? "0"}
               </span>
               <span className="locationCardRatingMax">/5</span>
             </dd>
