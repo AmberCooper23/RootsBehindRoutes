@@ -8,7 +8,6 @@ import { addUser, fetchUser } from "../../../api/usersApi";
 import "./NavBar.css";
 
 export function NavBar() {
-  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isAddPlaceOpen, setIsAddPlaceOpen] = useState(false);
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
@@ -69,33 +68,16 @@ export function NavBar() {
               </ul>
             </section>
             <section className="navBarRight">
-              {isSearchExpanded ? (
-                <form
-                  className="navBarSearch navBarSearchExpanded"
-                  onSubmit={(e) => e.preventDefault()}
-                >
-                  <input
-                    type="text"
-                    placeholder="Search places..."
-                    className="navBarSearchInput"
-                    aria-label="Search places"
-                    autoFocus
-                    onBlur={() => setIsSearchExpanded(false)}
-                  />
-                  <span className="navBarSearchIcon" aria-hidden="true">
-                    🔍︎
-                  </span>
-                </form>
-              ) : (
-                <button
-                  onClick={() => setIsSearchExpanded(true)}
-                  className="navBarIconButton"
-                  type="button"
-                  aria-label="Search places"
-                >
-                  🔍︎
-                </button>
-              )}
+              {/* Search temporarily removed
+              <button
+                onClick={() => setIsSearchExpanded(true)}
+                className="navBarIconButton"
+                type="button"
+                aria-label="Search places"
+              >
+                🔍︎
+              </button>
+              */}
               <button
                 onClick={() => setIsAddPlaceOpen(true)}
                 className="contributeButton"
