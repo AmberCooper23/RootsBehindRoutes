@@ -1,12 +1,5 @@
-const admin = require("firebase-admin");
-const serviceAccount = require("./serviceAccountKey.json");
+const { db, admin } = require("./firebaseConfig");
 const data = require("./backfill.json");
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
-
-const db = admin.firestore();
 
 async function backfill() {
   for (const entry of data) {
@@ -44,10 +37,13 @@ async function backfill() {
   }
 }
 
-backfill()
-  .then(() => {
-    console.log("✅ Backfill complete!");
-  })
-  .catch((err) => {
-    console.error("❌ Backfill failed:", err);
-  });
+async function run() {
+  await backfill();
+  console.log("✅ Backfill complete!");
+  process.exit(0);
+}
+
+run().catch((err) => {
+  console.error("❌ Backfill failed:", err);
+  process.exit(1);
+});
