@@ -23,8 +23,16 @@ export function LocationCard({
 
   const isBookmarked = !!localBookmarkId;
 
+  // Normalize category labels: if it's a Firestore reference, use its id
+  const normalizeLabel = (label) => {
+    if (label && typeof label === "object" && "id" in label) {
+      return label.id; // Firestore DocumentReference → string id
+    }
+    return String(label || "");
+  };
+
   const formatCategoryLabel = (label) =>
-    label
+    normalizeLabel(label)
       .split("_")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
