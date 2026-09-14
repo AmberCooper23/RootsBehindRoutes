@@ -1,0 +1,247 @@
+[
+  {
+    "id": "review001",
+    "type": "review",
+    "activityId": null,
+    "placeId": "/places/place001",
+    "userId": "/users/user101",
+    "rating": 5,
+    "content": "Skinner was fantastic — great coffee and friendly staff.",
+    "createdAt": "2026-09-14T15:00:00Z"
+  },
+  {
+    "id": "review002",
+    "type": "review",
+    "activityId": null,
+    "placeId": "/places/place001",
+    "userId": "/users/user102",
+    "rating": 3,
+    "content": "Nice vibe but service was slow during peak hours.",
+    "createdAt": "2026-09-14T15:05:00Z"
+  },
+  {
+    "id": "endorsement001",
+    "type": "endorsement",
+    "activityId": null,
+    "placeId": "/places/place001",
+    "userId": "/users/local001",
+    "score": 9,
+    "content": "Skinner is our go-to coffee spot, tourists should definitely try it.",
+    "createdAt": "2026-09-14T16:00:00Z"
+  },
+  {
+    "id": "endorsement002",
+    "type": "endorsement",
+    "activityId": null,
+    "placeId": "/places/place001",
+    "userId": "/users/local002",
+    "score": 5,
+    "content": "It’s nice, but gets overcrowded when tourists flood in.",
+    "createdAt": "2026-09-14T16:05:00Z"
+  },
+
+  {
+    "id": "review003",
+    "type": "review",
+    "activityId": null,
+    "placeId": "/places/place002",
+    "userId": "/users/user103",
+    "rating": 4,
+    "content": "Origins Centre Museum has fascinating exhibits, though signage could be clearer.",
+    "createdAt": "2026-09-14T15:10:00Z"
+  },
+  {
+    "id": "review004",
+    "type": "review",
+    "activityId": null,
+    "placeId": "/places/place002",
+    "userId": "/users/user104",
+    "rating": 2,
+    "content": "Interesting museum but felt overpriced for the size.",
+    "createdAt": "2026-09-14T15:15:00Z"
+  },
+  {
+    "id": "endorsement003",
+    "type": "endorsement",
+    "activityId": null,
+    "placeId": "/places/place002",
+    "userId": "/users/local003",
+    "score": 8,
+    "content": "Origins Centre Museum is a cultural gem — worth visiting.",
+    "createdAt": "2026-09-14T16:10:00Z"
+  },
+  {
+    "id": "endorsement004",
+    "type": "endorsement",
+    "activityId": null,
+    "placeId": "/places/place002",
+    "userId": "/users/local004",
+    "score": 3,
+    "content": "Locals rarely go here, feels more like a tourist trap.",
+    "createdAt": "2026-09-14T16:15:00Z"
+  },
+
+  {
+    "id": "review005",
+    "type": "review",
+    "activityId": null,
+    "placeId": "/places/place003",
+    "userId": "/users/user105",
+    "rating": 5,
+    "content": "Neighbourgoods Market was buzzing — amazing food stalls!",
+    "createdAt": "2026-09-14T15:20:00Z"
+  },
+  {
+    "id": "review006",
+    "type": "review",
+    "activityId": null,
+    "placeId": "/places/place003",
+    "userId": "/users/user106",
+    "rating": 3,
+    "content": "Fun atmosphere but very crowded, hard to find seating.",
+    "createdAt": "2026-09-14T15:25:00Z"
+  },
+  {
+    "id": "endorsement005",
+    "type": "endorsement",
+    "activityId": null,
+    "placeId": "/places/place003",
+    "userId": "/users/local005",
+    "score": 10,
+    "content": "Neighbourgoods Market is the heart of Braamfontein weekends!",
+    "createdAt": "2026-09-14T16:20:00Z"
+  },
+  {
+    "id": "endorsement006",
+    "type": "endorsement",
+    "activityId": null,
+    "placeId": "/places/place003",
+    "userId": "/users/local006",
+    "score": 6,
+    "content": "Good food, but tourists sometimes drive prices up.",
+    "createdAt": "2026-09-14T16:25:00Z"
+  },
+
+  {
+    "id": "review007",
+    "type": "review",
+    "activityId": "/activities/activity001",
+    "placeId": null,
+    "userId": "/users/user107",
+    "rating": 5,
+    "content": "BraamByBike was the highlight of my trip — friendly guide and great route.",
+    "createdAt": "2026-09-14T15:30:00Z"
+  },
+  {
+    "id": "review008",
+    "type": "review",
+    "activityId": "/activities/activity001",
+    "placeId": null,
+    "userId": "/users/user108",
+    "rating": 2,
+    "content": "Bike tour was tiring and not well paced for beginners.",
+    "createdAt": "2026-09-14T15:35:00Z"
+  },
+  {
+    "id": "endorsement007",
+    "type": "endorsement",
+    "activityId": "/activities/activity001",
+    "placeId": null,
+    "userId": "/users/local007",
+    "score": 7,
+    "content": "BraamByBike is fun, locals enjoy showing off the city.",
+    "createdAt": "2026-09-14T16:30:00Z"
+  },
+  {
+    "id": "endorsement008",
+    "type": "endorsement",
+    "activityId": "/activities/activity001",
+    "placeId": null,
+    "userId": "/users/local008",
+    "score": 4,
+    "content": "Tourists crowd the streets during the bike tours, not ideal.",
+    "createdAt": "2026-09-14T16:35:00Z"
+  },
+
+  {
+    "id": "review009",
+    "type": "review",
+    "activityId": "/activities/activity002",
+    "placeId": null,
+    "userId": "/users/user109",
+    "rating": 4,
+    "content": "The Playground had great food variety, loved the live music.",
+    "createdAt": "2026-09-14T15:40:00Z"
+  },
+  {
+    "id": "review010",
+    "type": "review",
+    "activityId": "/activities/activity002",
+    "placeId": null,
+    "userId": "/users/user110",
+    "rating": 3,
+    "content": "Fun but very busy, hard to move around comfortably.",
+    "createdAt": "2026-09-14T15:45:00Z"
+  },
+  {
+    "id": "endorsement009",
+    "type": "endorsement",
+    "activityId": "/activities/activity002",
+    "placeId": null,
+    "userId": "/users/local009",
+    "score": 9,
+    "content": "The Playground is lively and locals love the vibe.",
+    "createdAt": "2026-09-14T16:40:00Z"
+  },
+  {
+    "id": "endorsement010",
+    "type": "endorsement",
+    "activityId": "/activities/activity002",
+    "placeId": null,
+    "userId": "/users/local010",
+    "score": 5,
+    "content": "Good spot, but tourists sometimes overwhelm the space.",
+    "createdAt": "2026-09-14T16:45:00Z"
+  },
+
+  {
+    "id": "review011",
+    "type": "review",
+    "activityId": "/activities/activity003",
+    "placeId": null,
+    "userId": "/users/user111",
+    "rating": 5,
+    "content": "Rosebank Sunday Market is perfect for weekend shopping.",
+    "createdAt": "2026-09-14T15:50:00Z"
+  },
+  {
+    "id": "review012",
+    "type": "review",
+    "activityId": "/activities/activity003",
+    "placeId": null,
+    "userId": "/users/user112",
+    "rating": 3,
+    "content": "Charming but prices felt high compared to other markets.",
+    "createdAt": "2026-09-14T15:55:00Z"
+  },
+  {
+    "id": "endorsement011",
+    "type": "endorsement",
+    "activityId": "/activities/activity003",
+    "placeId": null,
+    "userId": "/users/local011",
+    "score": 8,
+    "content": "Rosebank Sunday Market is a proud local tradition.",
+    "createdAt": "2026-09-14T16:45:00Z"
+  },
+  {
+    "id": "endorsement012",
+    "type": "endorsement",
+    "activityId": "/activities/activity003",
+    "placeId": null,
+    "userId": "/users/local012",
+    "score": 2,
+    "content": "Too commercial now, locals feel it’s lost its charm.",
+    "createdAt": "2026-09-14T16:50:00Z"
+  }
+]
