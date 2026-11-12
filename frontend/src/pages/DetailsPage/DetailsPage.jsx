@@ -42,6 +42,17 @@ function formatTime(time24) {
   return `${h12}:${String(m).padStart(2, "0")} ${period}`;
 }
 
+// 👇 NEW: Helper to format both normal dates and Firestore Timestamps
+function formatDate(dateVal) {
+  if (!dateVal) return "";
+  // Check if it's a Firestore serialized timestamp object
+  if (typeof dateVal === "object" && dateVal._seconds !== undefined) {
+    return new Date(dateVal._seconds * 1000).toLocaleDateString();
+  }
+  // Otherwise, parse as standard date string
+  return new Date(dateVal).toLocaleDateString();
+}
+
 function getHoursStatus(hours) {
   if (!hours) return { known: false };
   const now = new Date();
@@ -426,7 +437,6 @@ export function DetailsPage() {
                   {endorsements.map((endorsement) => {
                     const score = endorsement.score ?? endorsement.rating;
                     const text = endorsement.content ?? endorsement.whyEndorse;
-                    // Grab the name from state, fallback to backend data, then "Local Guide"
                     const userName =
                       reviewerNames[endorsement.userId] ||
                       endorsement.userDisplayName ||
@@ -439,15 +449,13 @@ export function DetailsPage() {
                             {score ?? "?"}
                             <span className="detailsReviewRatingMax">/10</span>
                           </span>
+                          {/* 👇 Changed to use formatDate */}
                           {endorsement.createdAt && (
                             <span className="detailsReviewDate">
-                              {new Date(
-                                endorsement.createdAt,
-                              ).toLocaleDateString()}
+                              {formatDate(endorsement.createdAt)}
                             </span>
                           )}
                         </header>
-                        {/* 👇 NEW: Display the user's name */}
                         <div className="detailsReviewAuthor">By {userName}</div>
 
                         {text && <p className="detailsReviewText">{text}</p>}
@@ -475,11 +483,12 @@ export function DetailsPage() {
                 <ul className="detailsReviewList">
                   {reviews.map((review) => {
                     const text = review.content ?? review.review;
-                    // Grab the name from state, fallback to backend data, then "Traveler"
                     const userName =
                       reviewerNames[review.userId] ||
                       review.userDisplayName ||
                       "Traveler";
+                    // 👇 Fallback to createdAt if visitDate is missing (since your backfill didn't include visitDate)
+                    const dateToShow = review.visitDate || review.createdAt;
 
                     return (
                       <li key={review.id} className="detailsReviewCard">
@@ -488,14 +497,13 @@ export function DetailsPage() {
                             {review.rating ?? "?"}
                             <span className="detailsReviewRatingMax">/5</span>
                           </span>
-                          {review.visitDate && (
+                          {/* 👇 Changed to use dateToShow and formatDate */}
+                          {dateToShow && (
                             <span className="detailsReviewDate">
-                              Visited{" "}
-                              {new Date(review.visitDate).toLocaleDateString()}
+                              Visited {formatDate(dateToShow)}
                             </span>
                           )}
                         </header>
-                        {/* 👇 NEW: Display the user's name */}
                         <div className="detailsReviewAuthor">By {userName}</div>
 
                         {text && <p className="detailsReviewText">{text}</p>}

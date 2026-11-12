@@ -7,43 +7,56 @@ const cleanId = (id) => {
 };
 
 async function backfill() {
-  console.log("🔍 Fetching real users...");
+  console.log("🔍 Fetching real users and sorting by role...");
 
-  // 1. Get all real users from your database
   const usersSnap = await db.collection("users").get();
-  const realUsers = [];
+  const touristUsers = [];
+  const localUsers = [];
 
   usersSnap.forEach((doc) => {
     const userData = doc.data();
-    // Only add users that actually have a displayName
-    if (userData.displayName) {
-      realUsers.push({
-        id: doc.id,
-        name: userData.displayName,
-      });
+    if (!userData.displayName) return;
+
+    const userObj = { id: doc.id, name: userData.displayName };
+
+    // Sort them based on the 'role' field in your database
+    if (userData.role === "local") {
+      localUsers.push(userObj);
+    } else {
+      // Default to tourist if role is missing or set to tourist
+      touristUsers.push(userObj);
     }
   });
 
-  if (realUsers.length === 0) {
-    console.log(
-      "❌ No real users found in the database. Please create a user first.",
-    );
-    process.exit(1);
-  }
-
   console.log(
-    `✅ Found ${realUsers.length} real user(s). Assigning reviews to them...\n`,
+    `✅ Found ${touristUsers.length} Tourist(s) and ${localUsers.length} Local(s).\n`,
   );
 
-  let userIndex = 0;
+  let tIndex = 0;
+  let lIndex = 0;
 
   for (const entry of data) {
     const cleanPlaceId = cleanId(entry.placeId);
     const cleanActivityId = cleanId(entry.activityId);
 
-    // 2. Pick the next real user in the list (loops back to start if we run out)
-    const assignedUser = realUsers[userIndex % realUsers.length];
-    userIndex++;
+    let assignedUser = { id: cleanId(entry.userId), name: "Anonymous" };
+
+    // Strictly separate the logic based on the entry type
+    if (entry.type === "review") {
+      if (touristUsers.length > 0) {
+        assignedUser = touristUsers[tIndex % touristUsers.length];
+        tIndex++;
+      } else {
+        assignedUser.name = "Traveler";
+      }
+    } else if (entry.type === "endorsement") {
+      if (localUsers.length > 0) {
+        assignedUser = localUsers[lIndex % localUsers.length];
+        lIndex++;
+      } else {
+        assignedUser.name = "Local Guide";
+      }
+    }
 
     if (entry.type === "review") {
       await db
@@ -52,15 +65,17 @@ async function backfill() {
         .set({
           activityId: cleanActivityId,
           placeId: cleanPlaceId,
-          userId: assignedUser.id, // 👈 Real UID
-          userDisplayName: assignedUser.name, // 👈 Real Name
+          userId: assignedUser.id,
+          userDisplayName: assignedUser.name,
           rating: entry.rating,
           content: entry.content,
           createdAt: admin.firestore.Timestamp.fromDate(
             new Date(entry.createdAt),
           ),
         });
-      console.log(`Inserted review: ${entry.id} (by ${assignedUser.name})`);
+      console.log(
+        `Inserted review: ${entry.id} (by Tourist: ${assignedUser.name})`,
+      );
     } else if (entry.type === "endorsement") {
       await db
         .collection("endorsements")
@@ -68,8 +83,8 @@ async function backfill() {
         .set({
           activityId: cleanActivityId,
           placeId: cleanPlaceId,
-          userId: assignedUser.id, // 👈 Real UID
-          userDisplayName: assignedUser.name, // 👈 Real Name
+          userId: assignedUser.id,
+          userDisplayName: assignedUser.name,
           score: entry.score,
           content: entry.content,
           createdAt: admin.firestore.Timestamp.fromDate(
@@ -77,7 +92,7 @@ async function backfill() {
           ),
         });
       console.log(
-        `Inserted endorsement: ${entry.id} (by ${assignedUser.name})`,
+        `Inserted endorsement: ${entry.id} (by Local: ${assignedUser.name})`,
       );
     }
   }
@@ -85,9 +100,7 @@ async function backfill() {
 
 async function run() {
   await backfill();
-  console.log(
-    "\n✅ Backfill complete! All reviews are now linked to real users.",
-  );
+  console.log("\n✅ Backfill complete!");
   process.exit(0);
 }
 
