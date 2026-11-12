@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../../firebase";
+import { signInWithPopup } from "firebase/auth";
+import { auth, provider } from "../../firebase";
 import { fetchPlace } from "../../../api/placesApi";
 import { fetchActivity } from "../../../api/activitiesApi";
 import { fetchUser } from "../../../api/usersApi";
@@ -51,6 +52,17 @@ function formatDate(dateVal) {
     return new Date(dateVal._seconds * 1000).toLocaleDateString();
   }
   return new Date(dateVal).toLocaleDateString();
+}
+
+// 👇 Helper for the circular avatars
+function getInitials(name) {
+  if (!name || name === "Anonymous") return "?";
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .substring(0, 2)
+    .toUpperCase();
 }
 
 function getHoursStatus(hours) {
@@ -199,7 +211,21 @@ export function DetailsPage() {
     }
   };
 
-  // --- UPDATED: Handle Reply Submission ---
+  const handleStartReply = async (targetId) => {
+    if (!user) {
+      try {
+        await signInWithPopup(auth, provider);
+        setReplyingToId(targetId);
+        setReplyText("");
+      } catch (error) {
+        console.error("Login failed:", error);
+      }
+    } else {
+      setReplyingToId(targetId);
+      setReplyText("");
+    }
+  };
+
   const handleReplySubmit = async (e, targetId, isEndorsement) => {
     e.preventDefault();
     if (!replyText.trim() || !user) return;
@@ -214,9 +240,7 @@ export function DetailsPage() {
 
     try {
       if (isEndorsement) {
-        // 1. Save to backend
         const savedReply = await addEndorsementReply(targetId, replyData);
-        // 2. Update local state instantly so the UI refreshes without a page reload
         setEndorsements((prev) =>
           prev.map((end) => {
             if (end.id === targetId) {
@@ -226,9 +250,7 @@ export function DetailsPage() {
           }),
         );
       } else {
-        // 1. Save to backend
         const savedReply = await addReviewReply(targetId, replyData);
-        // 2. Update local state instantly
         setReviews((prev) =>
           prev.map((rev) => {
             if (rev.id === targetId) {
@@ -239,12 +261,11 @@ export function DetailsPage() {
         );
       }
 
-      // Clear the input box and close the reply form
       setReplyText("");
       setReplyingToId(null);
     } catch (err) {
       console.error("Failed to post reply:", err);
-      alert("Failed to post reply. Did you restart your backend server?");
+      alert("Failed to post reply.");
     } finally {
       setIsSubmittingReply(false);
     }
@@ -516,37 +537,64 @@ export function DetailsPage() {
 
                     return (
                       <li key={endorsement.id} className="detailsReviewCard">
+                        {/* 👇 Updated Header Structure */}
                         <header className="detailsReviewHeader">
+                          <div className="detailsReviewUser">
+                            <div className="detailsReviewAvatar">
+                              {getInitials(userName)}
+                            </div>
+                            <div className="detailsReviewAuthorInfo">
+                              <span className="detailsReviewAuthor">
+                                {userName}
+                              </span>
+                              {endorsement.createdAt && (
+                                <span className="detailsReviewDate">
+                                  {formatDate(endorsement.createdAt)}
+                                </span>
+                              )}
+                            </div>
+                          </div>
                           <span className="detailsReviewRating">
                             {score ?? "?"}
                             <span className="detailsReviewRatingMax">/10</span>
                           </span>
-                          {endorsement.createdAt && (
-                            <span className="detailsReviewDate">
-                              {formatDate(endorsement.createdAt)}
-                            </span>
-                          )}
                         </header>
-                        <div className="detailsReviewAuthor">By {userName}</div>
 
-                        {text && <p className="detailsReviewText">{text}</p>}
-                        {endorsement.culturalSensitivity && (
-                          <p className="detailsReviewMeta">
-                            Cultural note: {endorsement.culturalSensitivity}
-                          </p>
-                        )}
+                        <div className="detailsReviewContent">
+                          {text && <p className="detailsReviewText">{text}</p>}
+                          {endorsement.culturalSensitivity && (
+                            <p className="detailsReviewMeta">
+                              Cultural note: {endorsement.culturalSensitivity}
+                            </p>
+                          )}
+                        </div>
 
+                        {/* 👇 Threaded Replies Structure */}
                         <div className="detailsReplySection">
-                          {endorsement.replies?.map((reply) => (
-                            <div key={reply.id} className="detailsReplyBubble">
-                              <span className="detailsReplyAuthor">
-                                {reply.userDisplayName}
-                              </span>
-                              <p className="detailsReplyText">
-                                {reply.content}
-                              </p>
-                            </div>
-                          ))}
+                          <div className="detailsReplyList">
+                            {endorsement.replies?.map((reply) => (
+                              <div key={reply.id} className="detailsReplyItem">
+                                <div className="detailsReplyAvatar">
+                                  {getInitials(reply.userDisplayName)}
+                                </div>
+                                <div className="detailsReplyContent">
+                                  <div className="detailsReplyHeader">
+                                    <span className="detailsReplyAuthor">
+                                      {reply.userDisplayName}
+                                    </span>
+                                    {reply.createdAt && (
+                                      <span className="detailsReplyDate">
+                                        {formatDate(reply.createdAt)}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="detailsReplyText">
+                                    {reply.content}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
 
                           {replyingToId === endorsement.id ? (
                             <form
@@ -581,10 +629,7 @@ export function DetailsPage() {
                           ) : (
                             <button
                               className="detailsReplyBtn"
-                              onClick={() => {
-                                setReplyingToId(endorsement.id);
-                                setReplyText("");
-                              }}
+                              onClick={() => handleStartReply(endorsement.id)}
                             >
                               <svg
                                 viewBox="0 0 24 24"
@@ -631,39 +676,66 @@ export function DetailsPage() {
 
                     return (
                       <li key={review.id} className="detailsReviewCard">
+                        {/* 👇 Updated Header Structure */}
                         <header className="detailsReviewHeader">
+                          <div className="detailsReviewUser">
+                            <div className="detailsReviewAvatar">
+                              {getInitials(userName)}
+                            </div>
+                            <div className="detailsReviewAuthorInfo">
+                              <span className="detailsReviewAuthor">
+                                {userName}
+                              </span>
+                              {dateToShow && (
+                                <span className="detailsReviewDate">
+                                  Visited {formatDate(dateToShow)}
+                                </span>
+                              )}
+                            </div>
+                          </div>
                           <span className="detailsReviewRating">
                             {review.rating ?? "?"}
                             <span className="detailsReviewRatingMax">/5</span>
                           </span>
-                          {dateToShow && (
-                            <span className="detailsReviewDate">
-                              Visited {formatDate(dateToShow)}
-                            </span>
-                          )}
                         </header>
-                        <div className="detailsReviewAuthor">By {userName}</div>
 
-                        {text && <p className="detailsReviewText">{text}</p>}
-                        {typeof review.wouldRecommend === "boolean" && (
-                          <p className="detailsReviewMeta">
-                            {review.wouldRecommend
-                              ? "👍 Would recommend"
-                              : "👎 Would not recommend"}
-                          </p>
-                        )}
+                        <div className="detailsReviewContent">
+                          {text && <p className="detailsReviewText">{text}</p>}
+                          {typeof review.wouldRecommend === "boolean" && (
+                            <p className="detailsReviewMeta">
+                              {review.wouldRecommend
+                                ? "👍 Would recommend"
+                                : "👎 Would not recommend"}
+                            </p>
+                          )}
+                        </div>
 
+                        {/* 👇 Threaded Replies Structure */}
                         <div className="detailsReplySection">
-                          {review.replies?.map((reply) => (
-                            <div key={reply.id} className="detailsReplyBubble">
-                              <span className="detailsReplyAuthor">
-                                {reply.userDisplayName}
-                              </span>
-                              <p className="detailsReplyText">
-                                {reply.content}
-                              </p>
-                            </div>
-                          ))}
+                          <div className="detailsReplyList">
+                            {review.replies?.map((reply) => (
+                              <div key={reply.id} className="detailsReplyItem">
+                                <div className="detailsReplyAvatar">
+                                  {getInitials(reply.userDisplayName)}
+                                </div>
+                                <div className="detailsReplyContent">
+                                  <div className="detailsReplyHeader">
+                                    <span className="detailsReplyAuthor">
+                                      {reply.userDisplayName}
+                                    </span>
+                                    {reply.createdAt && (
+                                      <span className="detailsReplyDate">
+                                        {formatDate(reply.createdAt)}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="detailsReplyText">
+                                    {reply.content}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
 
                           {replyingToId === review.id ? (
                             <form
@@ -698,10 +770,7 @@ export function DetailsPage() {
                           ) : (
                             <button
                               className="detailsReplyBtn"
-                              onClick={() => {
-                                setReplyingToId(review.id);
-                                setReplyText("");
-                              }}
+                              onClick={() => handleStartReply(review.id)}
                             >
                               <svg
                                 viewBox="0 0 24 24"
