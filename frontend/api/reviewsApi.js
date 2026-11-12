@@ -21,3 +21,13 @@ export async function addReview(data) {
   if (!res.ok) throw new Error("Failed to create review");
   return res.json();
 }
+
+export async function addReviewReply(reviewId, data) {
+  const res = await fetch(`${BASE_URL}/${reviewId}/replies`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error("Failed to add reply");
+  return res.json();
+}

@@ -7,7 +7,6 @@ function normalizeRef(value) {
   return value ?? null;
 }
 
-// Fallback: If an old review doesn't have the name, fetch it dynamically
 async function attachUserDisplayName(review) {
   if (review.userDisplayName) return review;
   if (!review.userId) return review;
@@ -39,7 +38,6 @@ async function createReview(data) {
   let userDisplayName = "Traveler";
   const uid = normalizeRef(data.userId);
 
-  // 1. Grab the user's display name before saving the review
   if (uid) {
     try {
       const userSnap = await db.collection("users").doc(uid).get();
@@ -51,7 +49,6 @@ async function createReview(data) {
     }
   }
 
-  // 2. Save the review with the userDisplayName embedded
   const reviewData = { ...data, userDisplayName };
   const docRef = await db.collection("reviews").add(reviewData);
 
@@ -111,8 +108,25 @@ async function getAllReviews() {
   return Promise.all(reviews.map(attachUserDisplayName));
 }
 
+async function addReplyToReview(reviewId, replyData) {
+  const reviewRef = db.collection("reviews").doc(reviewId);
+
+  const newReply = {
+    id: Date.now().toString(),
+    ...replyData,
+    createdAt: new Date().toISOString(),
+  };
+
+  await reviewRef.update({
+    replies: admin.firestore.FieldValue.arrayUnion(newReply),
+  });
+
+  return newReply;
+}
+
 module.exports = {
   createReview,
   getReview,
   getAllReviews,
+  addReplyToReview,
 };

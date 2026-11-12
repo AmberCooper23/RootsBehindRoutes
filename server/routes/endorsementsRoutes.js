@@ -3,14 +3,25 @@ const {
   createEndorsement,
   getEndorsement,
   getAllEndorsements,
+  addReplyToEndorsement,
 } = require("../services/endorsementsService.js");
 
 const router = express.Router();
 
 router.post("/", async (req, res) => {
   try {
-    const id = await createEndorsement(req.body);
-    res.status(201).send({ message: "Endorsement created", id });
+    const endorsement = await createEndorsement(req.body);
+    res.status(201).send(endorsement); // Send full object
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
+// Route to add a reply to a specific endorsement
+router.post("/:id/replies", async (req, res) => {
+  try {
+    const reply = await addReplyToEndorsement(req.params.id, req.body);
+    res.status(201).send(reply);
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
@@ -38,5 +49,4 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ CommonJS export
 module.exports = router;

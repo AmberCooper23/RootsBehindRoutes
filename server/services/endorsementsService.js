@@ -1,14 +1,29 @@
 const { db, admin } = require("../firebaseConfig.js");
 
-// placeId/activityId can be stored either as a plain string ID or as a
-// Firestore DocumentReference (e.g. docs created manually in the console).
-// Normalize to a plain string so the rest of the app can compare/filter
-// consistently regardless of how a given document was created.
 function normalizeRef(value) {
   if (value && typeof value === "object" && typeof value.id === "string") {
     return value.id;
   }
   return value ?? null;
+}
+
+// Fallback for endorsements missing names
+async function attachUserDisplayName(endorsement) {
+  if (endorsement.userDisplayName) return endorsement;
+  if (!endorsement.userId) return endorsement;
+
+  try {
+    const userSnap = await db.collection("users").doc(endorsement.userId).get();
+    if (userSnap.exists) {
+      return {
+        ...endorsement,
+        userDisplayName: userSnap.data().displayName || "Local Guide",
+      };
+    }
+  } catch (err) {
+    console.error("❌ Error fetching user for endorsement:", err);
+  }
+  return { ...endorsement, userDisplayName: "Local Guide" };
 }
 
 function normalizeEndorsement(data) {
@@ -21,20 +36,33 @@ function normalizeEndorsement(data) {
 }
 
 async function createEndorsement(data) {
-  const docRef = await db.collection("endorsements").add(data);
+  let userDisplayName = "Local Guide";
+  const uid = normalizeRef(data.userId);
 
-  if (data.placeId) {
-    await syncTargetRating("places", "placeId", data.placeId, docRef.id);
-  } else if (data.activityId) {
-    await syncTargetRating(
-      "activities",
-      "activityId",
-      data.activityId,
-      docRef.id,
-    );
+  if (uid) {
+    try {
+      const userSnap = await db.collection("users").doc(uid).get();
+      if (userSnap.exists && userSnap.data().displayName) {
+        userDisplayName = userSnap.data().displayName;
+      }
+    } catch (err) {
+      console.error("Failed to fetch user for new endorsement:", err);
+    }
   }
 
-  return normalizeEndorsement({ id: docRef.id, ...data });
+  const endorsementData = { ...data, userDisplayName };
+  const docRef = await db.collection("endorsements").add(endorsementData);
+
+  const placeId = normalizeRef(data.placeId);
+  const activityId = normalizeRef(data.activityId);
+
+  if (placeId) {
+    await syncTargetRating("places", "placeId", placeId, docRef.id);
+  } else if (activityId) {
+    await syncTargetRating("activities", "activityId", activityId, docRef.id);
+  }
+
+  return normalizeEndorsement({ id: docRef.id, ...endorsementData });
 }
 
 async function syncTargetRating(
@@ -72,20 +100,38 @@ async function syncTargetRating(
 
 async function getEndorsement(id) {
   const snap = await db.collection("endorsements").doc(id).get();
-  return snap.exists
-    ? normalizeEndorsement({ id: snap.id, ...snap.data() })
-    : null;
+  if (!snap.exists) return null;
+  const endorsement = normalizeEndorsement({ id: snap.id, ...snap.data() });
+  return attachUserDisplayName(endorsement);
 }
 
 async function getAllEndorsements() {
   const snapshot = await db.collection("endorsements").get();
-  return snapshot.docs.map((docSnap) =>
+  const endorsements = snapshot.docs.map((docSnap) =>
     normalizeEndorsement({ id: docSnap.id, ...docSnap.data() }),
   );
+  return Promise.all(endorsements.map(attachUserDisplayName));
+}
+
+async function addReplyToEndorsement(endorsementId, replyData) {
+  const endorsementRef = db.collection("endorsements").doc(endorsementId);
+
+  const newReply = {
+    id: Date.now().toString(),
+    ...replyData,
+    createdAt: new Date().toISOString(),
+  };
+
+  await endorsementRef.update({
+    replies: admin.firestore.FieldValue.arrayUnion(newReply),
+  });
+
+  return newReply;
 }
 
 module.exports = {
   createEndorsement,
   getEndorsement,
   getAllEndorsements,
+  addReplyToEndorsement,
 };
