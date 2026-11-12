@@ -54,7 +54,6 @@ function formatDate(dateVal) {
   return new Date(dateVal).toLocaleDateString();
 }
 
-// 👇 Helper for the circular avatars
 function getInitials(name) {
   if (!name || name === "Anonymous") return "?";
   return name
@@ -537,7 +536,6 @@ export function DetailsPage() {
 
                     return (
                       <li key={endorsement.id} className="detailsReviewCard">
-                        {/* 👇 Updated Header Structure */}
                         <header className="detailsReviewHeader">
                           <div className="detailsReviewUser">
                             <div className="detailsReviewAvatar">
@@ -569,7 +567,6 @@ export function DetailsPage() {
                           )}
                         </div>
 
-                        {/* 👇 Threaded Replies Structure */}
                         <div className="detailsReplySection">
                           <div className="detailsReplyList">
                             {endorsement.replies?.map((reply) => (
@@ -676,7 +673,6 @@ export function DetailsPage() {
 
                     return (
                       <li key={review.id} className="detailsReviewCard">
-                        {/* 👇 Updated Header Structure */}
                         <header className="detailsReviewHeader">
                           <div className="detailsReviewUser">
                             <div className="detailsReviewAvatar">
@@ -710,7 +706,6 @@ export function DetailsPage() {
                           )}
                         </div>
 
-                        {/* 👇 Threaded Replies Structure */}
                         <div className="detailsReplySection">
                           <div className="detailsReplyList">
                             {review.replies?.map((reply) => (

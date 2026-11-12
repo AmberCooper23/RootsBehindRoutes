@@ -9,8 +9,6 @@ import { TypeSelector } from "./TypeSelector";
 import { LocalContributorForm } from "./LocalContributorForm";
 import { TouristReviewForm } from "./TouristReviewForm";
 
-// target: the place/activity being endorsed or reviewed, e.g. { id, type: "place" | "activity", name }
-// onSuccess: called after a successful submit so the parent can refetch and show the updated rating
 export function ContributeModal({ isOpen, onClose, target, onSuccess }) {
   const [userType, setUserType] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -110,8 +108,8 @@ export function ContributeModal({ isOpen, onClose, target, onSuccess }) {
   };
 
   return (
-    <aside className="contributeModalOverlay">
-      <article className="contributeModal">
+    <aside className="contributeModalOverlay" onClick={handleClose}>
+      <article className="contributeModal" onClick={(e) => e.stopPropagation()}>
         <header
           className={`contributeModalHeader ${
             userType === "tourist" ? "contributeModalHeaderTourist" : ""

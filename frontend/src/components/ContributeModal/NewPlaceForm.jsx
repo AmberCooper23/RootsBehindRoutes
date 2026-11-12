@@ -15,14 +15,12 @@ const INITIAL_FORM_DATA = {
 
 export function NewPlaceForm({ onSubmit, onCancel }) {
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
-
   const [interests, setInterests] = useState([]);
 
   useEffect(() => {
     async function loadInterests() {
       try {
         const data = await fetchAllInterests();
-
         setInterests(data);
       } catch (error) {
         console.error("Failed to load interests:", error);
@@ -41,7 +39,6 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
     <>
       <aside className="contributeModalAlert">
         <h3 className="contributeModalAlertTitle">Before You Submit</h3>
-
         <p className="contributeModalAlertDescription">
           As a local contributor, your voice shapes how visitors experience our
           culture. Please only add places where you genuinely welcome respectful
@@ -54,7 +51,6 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
           <label htmlFor="placeName" className="contributeModalLabel">
             Place Name *
           </label>
-
           <input
             id="placeName"
             type="text"
@@ -75,7 +71,6 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
           <label htmlFor="city" className="contributeModalLabel">
             City *
           </label>
-
           <input
             id="city"
             type="text"
@@ -96,7 +91,6 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
           <label htmlFor="region" className="contributeModalLabel">
             Region *
           </label>
-
           <input
             id="region"
             type="text"
@@ -117,7 +111,6 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
           <label htmlFor="interest" className="contributeModalLabel">
             Interest *
           </label>
-
           <section className="contributeModalInputWrapper">
             <select
               id="interest"
@@ -132,7 +125,6 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
               required
             >
               <option value="">Select an interest</option>
-
               {interests.map((interest) => (
                 <option key={interest.id} value={interest.id}>
                   {interest.name}
@@ -146,7 +138,6 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
           <label htmlFor="description" className="contributeModalLabel">
             Description *
           </label>
-
           <textarea
             id="description"
             value={formData.description}
@@ -167,7 +158,6 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
           <label htmlFor="whyEndorse" className="contributeModalLabel">
             Why Do You Endorse This Place? *
           </label>
-
           <textarea
             id="whyEndorse"
             value={formData.whyEndorse}
@@ -188,7 +178,6 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
           <label htmlFor="localRating" className="contributeModalLabel">
             Your Local Endorsement (1-10) *
           </label>
-
           <section className="contributeModalRangeWrapper">
             <input
               id="localRating"
@@ -204,17 +193,13 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
               }
               className="contributeModalRange"
             />
-
             <section className="contributeModalRangeLabels">
               <span className="contributeModalRangeLabelLeft">
                 Prefer visitors didn't come
               </span>
-
               <output className="contributeModalRangeValue">
-                {formData.localRating}
-                /10
+                {formData.localRating}/10
               </output>
-
               <span className="contributeModalRangeLabelRight">
                 Wish they could experience it
               </span>
@@ -226,7 +211,6 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
           <label htmlFor="culturalSensitivity" className="contributeModalLabel">
             Cultural Sensitivity Notes
           </label>
-
           <textarea
             id="culturalSensitivity"
             value={formData.culturalSensitivity}
@@ -246,7 +230,6 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
           <button type="submit" className="contributeModalSubmit">
             Submit Place
           </button>
-
           <button
             type="button"
             onClick={onCancel}
