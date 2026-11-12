@@ -234,7 +234,6 @@
 .detailsHoursStatusDot.open {
   background-color: #4a7c4e;
 }
-
 .detailsHoursStatusDot.closed {
   background-color: #b5473a;
 }
@@ -268,7 +267,6 @@
 .detailsHoursDay {
   color: var(--accent-lp-color);
 }
-
 .detailsHoursTime {
   color: var(--text-lp-color);
   font-weight: 400;
@@ -423,11 +421,14 @@
   .detailsHeader {
     flex-direction: column;
   }
-
   .detailsHeroImage {
     height: 9rem;
   }
 }
+
+/* =========================================
+   REVIEWS & ENDORSEMENTS STYLES
+   ========================================= */
 
 .detailsReviewList {
   list-style: none;
@@ -441,8 +442,9 @@
 .detailsReviewCard {
   background-color: var(--bg-lp-color);
   border: 0.0625rem solid var(--primary-lp-color);
-  padding: 0.9rem 1.1rem;
+  padding: 1rem 1.2rem;
   text-align: left;
+  border-radius: 0.25rem;
 }
 
 .detailsReviewHeader {
@@ -450,7 +452,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.2rem;
 }
 
 .detailsReviewRating {
@@ -473,11 +475,21 @@
   white-space: nowrap;
 }
 
+/* 👇 This is the new name styling */
+.detailsReviewAuthor {
+  font-family: "Lora", serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary-lp-color);
+  margin-bottom: 0.6rem;
+  letter-spacing: 0.02em;
+}
+
 .detailsReviewText {
   color: var(--text-lp-color);
   line-height: 1.6;
   font-size: var(--font-xxs);
-  margin: 0 0 0.4rem 0;
+  margin: 0 0 0.6rem 0;
   text-align: left;
 }
 
@@ -486,12 +498,8 @@
   color: var(--primary-lp-color);
   font-weight: 400;
   margin: 0;
-}
-
-.detailsReviewAuthor {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--primary-lp-color);
-  margin: 0 0 0.4rem 0;
-  text-align: left;
+  background-color: rgba(255, 255, 255, 0.4);
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.25rem;
+  display: inline-block;
 }

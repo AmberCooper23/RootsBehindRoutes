@@ -7,17 +7,23 @@ function normalizeRef(value) {
   return value ?? null;
 }
 
+// Fallback: If an old review doesn't have the name, fetch it dynamically
 async function attachUserDisplayName(review) {
+  if (review.userDisplayName) return review;
   if (!review.userId) return review;
+
   try {
     const userSnap = await db.collection("users").doc(review.userId).get();
     if (userSnap.exists) {
-      return { ...review, userDisplayName: userSnap.data().displayName };
+      return {
+        ...review,
+        userDisplayName: userSnap.data().displayName || "Traveler",
+      };
     }
   } catch (err) {
     console.error("❌ Error fetching user for review:", err);
   }
-  return { ...review, userDisplayName: null };
+  return { ...review, userDisplayName: "Traveler" };
 }
 
 function normalizeReview(data) {
@@ -30,7 +36,24 @@ function normalizeReview(data) {
 }
 
 async function createReview(data) {
-  const docRef = await db.collection("reviews").add(data);
+  let userDisplayName = "Traveler";
+  const uid = normalizeRef(data.userId);
+
+  // 1. Grab the user's display name before saving the review
+  if (uid) {
+    try {
+      const userSnap = await db.collection("users").doc(uid).get();
+      if (userSnap.exists && userSnap.data().displayName) {
+        userDisplayName = userSnap.data().displayName;
+      }
+    } catch (err) {
+      console.error("Failed to fetch user for new review:", err);
+    }
+  }
+
+  // 2. Save the review with the userDisplayName embedded
+  const reviewData = { ...data, userDisplayName };
+  const docRef = await db.collection("reviews").add(reviewData);
 
   const placeId = normalizeRef(data.placeId);
   const activityId = normalizeRef(data.activityId);
@@ -41,8 +64,7 @@ async function createReview(data) {
     await syncTargetRating("activities", "activityId", activityId, docRef.id);
   }
 
-  const review = normalizeReview({ id: docRef.id, ...data });
-  return attachUserDisplayName(review);
+  return normalizeReview({ id: docRef.id, ...reviewData });
 }
 
 async function syncTargetRating(
@@ -61,7 +83,6 @@ async function syncTargetRating(
     .collection("reviews")
     .where(foreignKeyField, "==", targetId)
     .get();
-
   const ratings = snap.docs
     .map((d) => d.data().rating)
     .filter((r) => typeof r === "number");

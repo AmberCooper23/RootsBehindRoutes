@@ -24,7 +24,6 @@ const DAY_KEYS = [
   "friday",
   "saturday",
 ];
-
 const DAY_LABELS = {
   sunday: "Sunday",
   monday: "Monday",
@@ -45,14 +44,10 @@ function formatTime(time24) {
 
 function getHoursStatus(hours) {
   if (!hours) return { known: false };
-
   const now = new Date();
   const todayKey = DAY_KEYS[now.getDay()];
   const today = hours[todayKey];
-
-  if (!today) {
-    return { known: true, isOpen: false, todayLabel: "Closed today" };
-  }
+  if (!today) return { known: true, isOpen: false, todayLabel: "Closed today" };
 
   const [openH, openM] = today.open.split(":").map(Number);
   const [closeH, closeM] = today.close.split(":").map(Number);
@@ -149,7 +144,6 @@ export function DetailsPage() {
             const profile = await fetchUser(uid);
             return [uid, profile?.displayName || "Anonymous"];
           } catch (err) {
-            console.error("❌ Failed to load reviewer profile:", uid, err);
             return [uid, "Anonymous"];
           }
         }),
@@ -163,11 +157,9 @@ export function DetailsPage() {
   useEffect(() => {
     loadItem();
   }, [loadItem]);
-
   useEffect(() => {
     loadBookmarkStatus();
   }, [loadBookmarkStatus]);
-
   useEffect(() => {
     loadContributions();
   }, [loadContributions]);
@@ -208,7 +200,6 @@ export function DetailsPage() {
     item?.location?.city && item?.location?.region
       ? `${item.location.city}, ${item.location.region}`
       : "";
-
   const hoursStatus = getHoursStatus(item?.hours);
 
   if (loading) {
@@ -280,11 +271,7 @@ export function DetailsPage() {
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    d="M12 21l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
-                       2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
-                       C13.09 3.81 14.76 3 16.5 3
-                       19.58 3 22 5.42 22 8.5
-                       c0 3.78-3.4 6.86-8.55 11.18L12 21z"
+                    d="M12 21l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.18L12 21z"
                   />
                 </svg>
               </button>
@@ -325,9 +312,7 @@ export function DetailsPage() {
               <span className="detailsHoursLeft">
                 {hoursStatus.known ? (
                   <span
-                    className={`detailsHoursStatusDot ${
-                      hoursStatus.isOpen ? "open" : "closed"
-                    }`}
+                    className={`detailsHoursStatusDot ${hoursStatus.isOpen ? "open" : "closed"}`}
                     aria-hidden="true"
                   />
                 ) : null}
@@ -343,24 +328,20 @@ export function DetailsPage() {
                 </span>
               )}
             </button>
-
             {isHoursExpanded && hoursStatus.known && (
               <ul className="detailsHoursList">
-                {DAY_KEYS.map((dayKey) => {
-                  const dayHours = item.hours?.[dayKey];
-                  return (
-                    <li key={dayKey} className="detailsHoursRow">
-                      <span className="detailsHoursDay">
-                        {DAY_LABELS[dayKey]}
-                      </span>
-                      <span className="detailsHoursTime">
-                        {dayHours
-                          ? `${formatTime(dayHours.open)} – ${formatTime(dayHours.close)}`
-                          : "Closed"}
-                      </span>
-                    </li>
-                  );
-                })}
+                {DAY_KEYS.map((dayKey) => (
+                  <li key={dayKey} className="detailsHoursRow">
+                    <span className="detailsHoursDay">
+                      {DAY_LABELS[dayKey]}
+                    </span>
+                    <span className="detailsHoursTime">
+                      {item.hours?.[dayKey]
+                        ? `${formatTime(item.hours[dayKey].open)} – ${formatTime(item.hours[dayKey].close)}`
+                        : "Closed"}
+                    </span>
+                  </li>
+                ))}
               </ul>
             )}
           </section>
@@ -445,6 +426,12 @@ export function DetailsPage() {
                   {endorsements.map((endorsement) => {
                     const score = endorsement.score ?? endorsement.rating;
                     const text = endorsement.content ?? endorsement.whyEndorse;
+                    // Grab the name from state, fallback to backend data, then "Local Guide"
+                    const userName =
+                      reviewerNames[endorsement.userId] ||
+                      endorsement.userDisplayName ||
+                      "Local Guide";
+
                     return (
                       <li key={endorsement.id} className="detailsReviewCard">
                         <header className="detailsReviewHeader">
@@ -460,6 +447,9 @@ export function DetailsPage() {
                             </span>
                           )}
                         </header>
+                        {/* 👇 NEW: Display the user's name */}
+                        <div className="detailsReviewAuthor">By {userName}</div>
+
                         {text && <p className="detailsReviewText">{text}</p>}
                         {endorsement.culturalSensitivity && (
                           <p className="detailsReviewMeta">
@@ -485,6 +475,12 @@ export function DetailsPage() {
                 <ul className="detailsReviewList">
                   {reviews.map((review) => {
                     const text = review.content ?? review.review;
+                    // Grab the name from state, fallback to backend data, then "Traveler"
+                    const userName =
+                      reviewerNames[review.userId] ||
+                      review.userDisplayName ||
+                      "Traveler";
+
                     return (
                       <li key={review.id} className="detailsReviewCard">
                         <header className="detailsReviewHeader">
@@ -499,12 +495,15 @@ export function DetailsPage() {
                             </span>
                           )}
                         </header>
+                        {/* 👇 NEW: Display the user's name */}
+                        <div className="detailsReviewAuthor">By {userName}</div>
+
                         {text && <p className="detailsReviewText">{text}</p>}
                         {typeof review.wouldRecommend === "boolean" && (
                           <p className="detailsReviewMeta">
                             {review.wouldRecommend
-                              ? "Would recommend"
-                              : "Would not recommend"}
+                              ? "👍 Would recommend"
+                              : "👎 Would not recommend"}
                           </p>
                         )}
                       </li>
