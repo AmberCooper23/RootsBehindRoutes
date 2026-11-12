@@ -1,134 +1,135 @@
 :root {
-    --primary-filter-color: #8B7355;
-    --secondary-filter-color: white;
-    --accent-filter-color: #555;
+  --primary-filter-color: #8b7355;
+  --secondary-filter-color: white;
+  --accent-filter-color: #555;
 
-    --font-xl: 3rem;
-    --font-lg: 2.25rem;
-    --font-md: 1.5rem;
-    --font-sm: 1.25rem;
-    --font-xs: 1.125rem;
-    --font-xxs: 1rem;
+  --font-xl: 3rem;
+  --font-lg: 2.25rem;
+  --font-md: 1.5rem;
+  --font-sm: 1.25rem;
+  --font-xs: 1.125rem;
+  --font-xxs: 1rem;
 }
 
 .filterBar {
-    background-color: var(--secondary-filter-color);
-    border-bottom: 0.125rem solid var(--primary-filter-color);
+  background-color: var(--secondary-filter-color);
+  border-bottom: 0.125rem solid var(--primary-filter-color);
 }
 
 .filterBarContainer {
-    max-width: 80rem;
-    margin: 0 auto;
-    padding: 1rem 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 1rem;
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
-.filterBarCategories {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    list-style: none;
-    padding: 0;
-    margin: 0;
+.filterBarInterests {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.filterBarCategoryButton {
-    padding: 0.5rem 1rem;
-    font-size: var(--font-xxs);
-    text-transform: uppercase;
-    color: var(--primary-filter-color);
-    background-color: var(--secondary-filter-color);
-    border: 0.125rem solid var(--primary-filter-color);
-    cursor: pointer;
+.filterBarInterestButton {
+  padding: 0.5rem 1rem;
+  font-size: var(--font-xxs);
+  text-transform: uppercase;
+  color: var(--primary-filter-color);
+  background-color: var(--secondary-filter-color);
+  border: 0.125rem solid var(--primary-filter-color);
+  cursor: pointer;
 }
 
-.filterBarCategoryButtonActive {
-    background-color: var(--primary-filter-color);
-    color: var(--secondary-filter-color);
+.filterBarInterestButtonActive {
+  background-color: var(--primary-filter-color);
+  color: var(--secondary-filter-color);
 }
 
-.filterBarCategoryButton:hover:not(.filterBarCategoryButtonActive) {
-    border-color: var(--primary-filter-color);
-    background-color: var(--primary-filter-color);
-    color: var(--secondary-filter-color);
+.filterBarInterestButton:hover:not(.filterBarInterestButtonActive) {
+  border-color: var(--primary-filter-color);
+  background-color: var(--primary-filter-color);
+  color: var(--secondary-filter-color);
 }
 
 .filterBarSort {
-    position: relative;
+  position: relative;
 }
 
 .filterBarSortButton {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border: 0.125rem solid var(--primary-filter-color);
-    background-color: var(--secondary-filter-color);
-    font-size: var(--font-xxs);
-    text-transform: uppercase;
-    color: var(--primary-filter-color);
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 0.125rem solid var(--primary-filter-color);
+  background-color: var(--secondary-filter-color);
+  font-size: var(--font-xxs);
+  text-transform: uppercase;
+  color: var(--primary-filter-color);
+  cursor: pointer;
 }
 
 .filterBarSortButton:hover {
-    border-color: var(--primary-filter-color);
-    background-color: var(--primary-filter-color);
-    color: var(--secondary-filter-color);
+  border-color: var(--primary-filter-color);
+  background-color: var(--primary-filter-color);
+  color: var(--secondary-filter-color);
 }
 
 .filterBarDropdown {
-    position: absolute;
-    top: calc(100% + 0.5rem);
-    right: 0;
-    background-color: var(--secondary-filter-color);
-    border: 0.125rem solid var(--primary-filter-color);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    min-width: 12rem;
-    z-index: 50;
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  background-color: var(--secondary-filter-color);
+  border: 0.125rem solid var(--primary-filter-color);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  min-width: 12rem;
+  z-index: 50;
 }
 
 .filterBarDropdownItem {
-    margin: 0;
-    border: 0.125rem solid var(--primary-filter-color);
+  margin: 0;
+  border: 0.125rem solid var(--primary-filter-color);
 }
 
 .filterBarDropdownItem:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .filterBarDropdownButton {
-    width: 100%;
-    text-align: left;
-    padding: 0.75rem 1rem;
-    border: none;
-    font-size: var(--font-xxs);
-    text-transform: uppercase;
-    color: var(--primary-filter-color);
-    cursor: pointer;
+  width: 100%;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border: none;
+  font-size: var(--font-xxs);
+  text-transform: uppercase;
+  color: var(--primary-filter-color);
+  cursor: pointer;
 }
 
 .filterBarDropdownButton:hover {
-    background-color: var(--primary-filter-color);
-    color: var(--secondary-filter-color);
+  background-color: var(--primary-filter-color);
+  color: var(--secondary-filter-color);
 }
 
 .filterBarDropdownButtonActive {
-    background-color: var(--primary-filter-color);
-    color: var(--secondary-filter-color);
+  background-color: var(--primary-filter-color);
+  color: var(--secondary-filter-color);
 }
 
 .filterBarOverlay {
-    position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.2); 
-    border: none;
-    cursor: default;
-    z-index: 40; 
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: none;
+  cursor: default;
+  z-index: 40;
 }

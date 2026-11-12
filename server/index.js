@@ -13,6 +13,7 @@ const endorsementsRoutes = require("./routes/endorsementsRoutes.js");
 const interestsRoutes = require("./routes/interestsRoutes.js");
 const statsRoutes = require("./routes/statsRoutes.js");
 const bookmarksRoutes = require("./routes/bookmarksRoutes.js");
+const managerRoutes = require("./routes/managerRoutes.js");
 
 const app = express();
 app.use(express.json());
@@ -39,6 +40,7 @@ app.use("/api/endorsements", endorsementsRoutes);
 app.use("/api/interests", interestsRoutes);
 app.use("/api/stats", statsRoutes);
 app.use("/api/bookmarks", bookmarksRoutes);
+app.use("/api/manage", managerRoutes);
 
 app.get("/api/healthcheck", (req, res) => {
   res.json({ status: "ok", firebase: true });

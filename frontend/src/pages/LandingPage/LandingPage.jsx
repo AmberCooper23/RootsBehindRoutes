@@ -15,7 +15,7 @@ export function LandingPage() {
   const [user] = useAuthState(auth);
 
   const [filter, setFilter] = useState({
-    category: "All",
+    interest: null, // null = "All" (no filter)
     sort: "Most Endorsed",
   });
 
@@ -91,12 +91,12 @@ export function LandingPage() {
     });
   };
 
-  const filteredExperiences = experiences.filter(
-    (experience) =>
-      filter.category === "All" ||
-      (Array.isArray(experience.categoryLabels) &&
-        experience.categoryLabels.includes(filter.category)),
-  );
+  const filteredExperiences = experiences.filter((experience) => {
+    if (!filter.interest) return true; // "All" — no filter
+    return Array.isArray(experience.interests)
+      ? experience.interests.includes(filter.interest)
+      : experience.interests === filter.interest;
+  });
 
   const sortedExperiences = [...filteredExperiences].sort((a, b) => {
     switch (filter.sort) {
@@ -156,12 +156,12 @@ export function LandingPage() {
             and tourist perspective.
           </p>
           <section className="ratingSystemGrid">
-            <article className="ratingSystemCategory">
+            <article className="ratingSystemInterest">
               <header className="ratingSystemHeader">
                 <section className="ratingSystemIconContainer">
                   <article className="ratingSystemIcon">10</article>
                 </section>
-                <h4 className="ratingSystemCategoryTitle">
+                <h4 className="ratingSystemInterestTitle">
                   Local Endorsement (1-10)
                 </h4>
               </header>
@@ -180,12 +180,12 @@ export function LandingPage() {
                 </li>
               </ul>
             </article>
-            <article className="ratingSystemCategory">
+            <article className="ratingSystemInterest">
               <header className="ratingSystemHeader">
                 <section className="ratingSystemIconContainer">
                   <article className="ratingSystemIcon">★</article>
                 </section>
-                <h4 className="ratingSystemCategoryTitle">
+                <h4 className="ratingSystemInterestTitle">
                   Tourist Rating (1-5)
                 </h4>
               </header>

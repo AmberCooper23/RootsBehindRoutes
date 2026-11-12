@@ -192,15 +192,17 @@ export function DetailsPage() {
     }
   };
 
-  const formatCategoryLabel = (label) =>
-    label
-      ?.split("_")
+  const formatInterestLabel = (label) =>
+    String(label || "")
+      .split("_")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
 
-  const categoryLabel = Array.isArray(item?.categoryLabels)
-    ? item.categoryLabels.map(formatCategoryLabel).join(", ")
-    : "";
+  const interestsLabel = Array.isArray(item?.interests)
+    ? item.interests.map(formatInterestLabel).join(", ")
+    : item?.interests
+      ? formatInterestLabel(item.interests)
+      : "";
 
   const locationLabel =
     item?.location?.city && item?.location?.region
@@ -244,7 +246,7 @@ export function DetailsPage() {
             alt={item.name || "Unknown place"}
             className="detailsHeroImage"
           />
-          <span className="detailsCategoryBadge">{categoryLabel}</span>
+          <span className="detailsInterestBadge">{interestsLabel}</span>
           <button
             className="detailsCloseButton"
             onClick={() => navigate(-1)}

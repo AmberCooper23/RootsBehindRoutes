@@ -5,6 +5,7 @@ import { UserProfile } from "./pages/UserProfilePage/UserProfilePage";
 import { BookmarksPage } from "./pages/BookmarksPage/BookmarksPage";
 import AboutPage from "./pages/AboutPage/AboutPage";
 import { DetailsPage } from "./pages/DetailsPage/DetailsPage";
+import { ManagerDashboardPage } from "./pages/ManagerDashboardPage/ManagerDashboardPage";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "./firebase";
 
@@ -20,6 +21,7 @@ function App() {
         <Route path="/About" element={<AboutPage />} />
         <Route path="/Bookmarks" element={<BookmarksPage />} />
         <Route path="/Details/:type/:id" element={<DetailsPage />} />
+        <Route path="/Dashboard" element={<ManagerDashboardPage />} />
       </Routes>
     </>
   );

@@ -9,13 +9,17 @@ import {
   addUserInterest,
   removeUserInterest,
 } from "../../../api/usersApi";
+
 import "./UserProfilePage.css";
 
 export function UserProfile() {
   const [user] = useAuthState(auth);
-  const [isEditingBio, setIsEditingBio] = useState(false);
+
+  const [profile, setProfile] = useState(null);
   const [bio, setBio] = useState("");
   const [interests, setInterests] = useState([]);
+  const [isEditingBio, setIsEditingBio] = useState(false);
+
   const [stats, setStats] = useState({
     placesVisited: 0,
     savedPlaces: 0,
@@ -24,60 +28,117 @@ export function UserProfile() {
 
   useEffect(() => {
     async function loadProfile() {
-      if (user) {
-        try {
-          const profile = await fetchUser(user.uid);
-          setBio(profile.bio || "");
-          setInterests(profile.interests || []);
-          setStats({
-            placesVisited: profile.placesVisited || 0,
-            savedPlaces: profile.savedPlaces || 0,
-            contributions: profile.contributions || 0,
-          });
-        } catch (error) {
-          console.error("Failed to load profile:", error);
-        }
+      if (!user) return;
+
+      try {
+        const profileData = await fetchUser(user.uid);
+
+        setProfile(profileData);
+
+        setBio(profileData?.bio || "");
+
+        setInterests(
+          profileData?.interests ||
+            profileData?.Interests ||
+            []
+        );
+
+        setStats({
+          placesVisited:
+            profileData?.placesVisited?.length || 0,
+
+          savedPlaces:
+            profileData?.bookmarks?.length || 0,
+
+          contributions:
+            profileData?.activitiesTried?.length || 0,
+        });
+      } catch (error) {
+        console.error(
+          "Failed to load profile:",
+          error
+        );
       }
     }
+
     loadProfile();
   }, [user]);
 
   const handleLogin = async () => {
     try {
-      const result = await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(
+        auth,
+        provider
+      );
+
       const newUser = result.user;
+
       await addUser(newUser.uid, {
         name: newUser.displayName,
         email: newUser.email,
       });
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error(
+        "Login failed:",
+        error
+      );
     }
   };
 
   const handleLogout = async () => {
-    await signOut(auth);
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const saveBio = () => {
     setIsEditingBio(false);
+
+    // Add your update API call here later
   };
 
-  const handleAddInterest = async (interestId) => {
+  const handleAddInterest = async (
+    interestId
+  ) => {
     try {
-      await addUserInterest(user.uid, interestId);
-      setInterests([...interests, interestId]);
+      await addUserInterest(
+        user.uid,
+        interestId
+      );
+
+      setInterests([
+        ...interests,
+        interestId,
+      ]);
     } catch (error) {
-      console.error("Failed to add interest:", error);
+      console.error(
+        "Failed to add interest:",
+        error
+      );
     }
   };
 
-  const handleRemoveInterest = async (interestId) => {
+  const handleRemoveInterest = async (
+    interestId
+  ) => {
     try {
-      await removeUserInterest(user.uid, interestId);
-      setInterests(interests.filter((i) => i !== interestId));
+      await removeUserInterest(
+        user.uid,
+        interestId
+      );
+
+      setInterests(
+        interests.filter(
+          (i) => i !== interestId
+        )
+      );
     } catch (error) {
-      console.error("Failed to remove interest:", error);
+      console.error(
+        "Failed to remove interest:",
+        error
+      );
     }
   };
 
@@ -87,12 +148,19 @@ export function UserProfile() {
         <header className="profileHero">
           <section className="profileHeroInner">
             <figure className="profileAvatarWrapper">
-              <span className="profileAvatarIcon" aria-hidden="true">
+              <span
+                className="profileAvatarIcon"
+                aria-hidden="true"
+              >
                 👤
               </span>
             </figure>
+
             <section className="profileHeroInfo">
-              <h1 className="profileName">Guest User</h1>
+              <h1 className="profileName">
+                Guest User
+              </h1>
+
               <span className="profileRoleBadge">
                 <span className="profileRoleDot" />
                 Explorer
@@ -100,9 +168,17 @@ export function UserProfile() {
             </section>
           </section>
         </header>
+
         <section className="profileLoginPrompt">
-          <p>You need to log in to view your profile.</p>
-          <button onClick={handleLogin} className="profileActionBtn">
+          <p>
+            You need to log in to view
+            your profile.
+          </p>
+
+          <button
+            onClick={handleLogin}
+            className="profileActionBtn"
+          >
             Login with Google
           </button>
         </section>
@@ -110,48 +186,99 @@ export function UserProfile() {
     );
   }
 
+  const displayPhoto =
+    profile?.photoURL || user.photoURL;
+
+  const displayName =
+    profile?.displayName ||
+    profile?.name ||
+    user.displayName ||
+    "Explorer";
+
+  const role =
+    profile?.role || "Explorer";
+
+  const joinDate = profile?.joinDate
+    ? profile.joinDate
+        .toDate()
+        .toLocaleDateString("en-US", {
+          month: "long",
+          year: "numeric",
+        })
+    : "Unknown";
+
   return (
     <main className="profilePage">
       <header className="profileHero">
-        <span className="profileHeroPattern" aria-hidden="true" />
+        <span
+          className="profileHeroPattern"
+          aria-hidden="true"
+        />
+
         <section className="profileHeroInner">
           <figure className="profileAvatarWrapper">
-            {user.photoURL ? (
+            {displayPhoto ? (
               <img
-                src={user.photoURL}
+                src={displayPhoto}
                 alt="Profile"
                 className="profileAvatarImg"
               />
             ) : (
-              <span className="profileAvatarIcon" aria-hidden="true">
+              <span
+                className="profileAvatarIcon"
+                aria-hidden="true"
+              >
                 👤
               </span>
             )}
           </figure>
+
           <section className="profileHeroInfo">
-            <h1 className="profileName">{user.displayName || "Explorer"}</h1>
+            <h1 className="profileName">
+              {displayName}
+            </h1>
+
             <span className="profileRoleBadge">
               <span className="profileRoleDot" />
-              Explorer
+              {role.toUpperCase()}
             </span>
           </section>
         </section>
       </header>
+
       <section className="profileContent">
         <dl className="profileStatsBar">
           <div className="profileStat">
-            <dt className="profileStatLabel">Places Visited</dt>
-            <dd className="profileStatValue">{stats.placesVisited}</dd>
+            <dt className="profileStatLabel">
+              Places Visited
+            </dt>
+
+            <dd className="profileStatValue">
+              {stats.placesVisited}
+            </dd>
           </div>
+
           <div className="profileStat">
-            <dt className="profileStatLabel">Saved Places</dt>
-            <dd className="profileStatValue">{stats.savedPlaces}</dd>
+            <dt className="profileStatLabel">
+              Saved Places
+            </dt>
+
+            <dd className="profileStatValue">
+              {stats.savedPlaces}
+            </dd>
           </div>
+
           <div className="profileStat">
-            <dt className="profileStatLabel">Contributions</dt>
-            <dd className="profileStatValue">{stats.contributions}</dd>
+            <dt className="profileStatLabel">
+              Activities Tried
+            </dt>
+
+            <dd className="profileStatValue">
+              {stats.contributions}
+            </dd>
           </div>
         </dl>
+
         <section className="profileGrid">
           <aside>
             <article className="profileCard">
@@ -159,7 +286,11 @@ export function UserProfile() {
                 <h2 className="profileCardTitle">
                   <button
                     type="button"
-                    onClick={() => setIsEditingBio(!isEditingBio)}
+                    onClick={() =>
+                      setIsEditingBio(
+                        !isEditingBio
+                      )
+                    }
                     className="profileEditToggle"
                     aria-label="Edit About Me"
                   >
@@ -168,13 +299,19 @@ export function UserProfile() {
                   About Me
                 </h2>
               </header>
+
               {isEditingBio ? (
                 <form>
                   <textarea
                     value={bio}
-                    onChange={(e) => setBio(e.target.value)}
+                    onChange={(e) =>
+                      setBio(
+                        e.target.value
+                      )
+                    }
                     className="profileBioEdit"
                   />
+
                   <div className="profileActions">
                     <button
                       type="button"
@@ -183,9 +320,14 @@ export function UserProfile() {
                     >
                       Save
                     </button>
+
                     <button
                       type="button"
-                      onClick={() => setIsEditingBio(false)}
+                      onClick={() =>
+                        setIsEditingBio(
+                          false
+                        )
+                      }
                       className="profileActionBtn profileActionBtnDanger"
                     >
                       Cancel
@@ -193,38 +335,79 @@ export function UserProfile() {
                   </div>
                 </form>
               ) : (
-                <p className="profileBio">{bio}</p>
+                <p className="profileBio">
+                  {bio ||
+                    "Tell people a little about yourself."}
+                </p>
               )}
-              <p className="profileJoinDate">Member since March 2024</p>
+
+              <p className="profileJoinDate">
+                Member since {joinDate}
+              </p>
             </article>
-            <article className="profileCard" style={{ marginTop: "1.25rem" }}>
-              <h2 className="profileCardTitle">Interests</h2>
+
+            <article
+              className="profileCard"
+              style={{
+                marginTop: "1.25rem",
+              }}
+            >
+              <h2 className="profileCardTitle">
+                Interests
+              </h2>
+
               <ul className="profileTags">
-                {interests.map((interest, idx) => (
-                  <li key={idx} className="profileTag">
-                    {interest}
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveInterest(interest)}
-                      className="profileTagRemove"
+                {interests.map(
+                  (interest, idx) => (
+                    <li
+                      key={idx}
+                      className="profileTag"
                     >
-                      ×
-                    </button>
-                  </li>
-                ))}
+                      {typeof interest ===
+                      "string"
+                        ? interest
+                        : "Interest"}
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleRemoveInterest(
+                            interest
+                          )
+                        }
+                        className="profileTagRemove"
+                      >
+                        ×
+                      </button>
+                    </li>
+                  )
+                )}
               </ul>
+
               <button
                 type="button"
-                onClick={() => handleAddInterest("New Interest")}
+                onClick={() =>
+                  handleAddInterest(
+                    "New Interest"
+                  )
+                }
                 className="profileActionBtn"
               >
                 Add Interest
               </button>
             </article>
-            <nav className="profileActions" aria-label="Account actions">
-              <Link to="/settings" className="profileActionBtn">
+
+            <nav
+              className="profileActions"
+              aria-label="Account actions"
+            >
+              <Link
+                to="/settings"
+                className="profileActionBtn"
+              >
                 Account Settings
               </Link>
+
               <button
                 onClick={handleLogout}
                 className="profileActionBtn profileActionBtnDanger"
@@ -233,46 +416,55 @@ export function UserProfile() {
               </button>
             </nav>
           </aside>
+
           <article className="profileCard">
-            <h2 className="profileCardTitle">Recent Activity</h2>
-            <ul className="profileActivityList">
-              <li className="profileActivityItem">
-                <span className="profileActivityDot" aria-hidden="true" />
-                <p className="profileActivityText">
-                  Reviewed <strong>Wits Art Museum</strong> — rated 4 stars
-                </p>
-                <p className="profileActivityMeta">2 days ago · Braamfontein</p>
-              </li>
-              <li className="profileActivityItem">
-                <span className="profileActivityDot" aria-hidden="true" />
-                <p className="profileActivityText">
-                  Saved <strong>Neighbourgoods Market</strong> to your list
-                </p>
-                <p className="profileActivityMeta">5 days ago · Braamfontein</p>
-              </li>
-              <li className="profileActivityItem">
-                <span className="profileActivityDot" aria-hidden="true" />
-                <p className="profileActivityText">
-                  Submitted <strong>Maboneng Precinct Walk</strong> for local
-                  review
-                </p>
-                <p className="profileActivityMeta">1 week ago · Maboneng</p>
-              </li>
-              <li className="profileActivityItem">
-                <span className="profileActivityDot" aria-hidden="true" />
-                <p className="profileActivityText">
-                  Endorsed <strong>The Cosmopolitan</strong> — local score 9/10
-                </p>
-                <p className="profileActivityMeta">2 weeks ago · Newtown</p>
-              </li>
-              <li className="profileActivityItem">
-                <span className="profileActivityDot" aria-hidden="true" />
-                <p className="profileActivityText">
-                  Visited <strong>Constitution Hill</strong>
-                </p>
-                <p className="profileActivityMeta">3 weeks ago · Hillbrow</p>
-              </li>
-            </ul>
+            <h2 className="profileCardTitle">
+              Profile Summary
+            </h2>
+
+            <div
+              style={{
+                display: "grid",
+                gap: "1rem",
+              }}
+            >
+              <p>
+                <strong>Name:</strong>{" "}
+                {displayName}
+              </p>
+
+              <p>
+                <strong>Email:</strong>{" "}
+                {profile?.email ||
+                  user.email}
+              </p>
+
+              <p>
+                <strong>Role:</strong>{" "}
+                {role}
+              </p>
+
+              <p>
+                <strong>
+                  Places Visited:
+                </strong>{" "}
+                {stats.placesVisited}
+              </p>
+
+              <p>
+                <strong>
+                  Activities Tried:
+                </strong>{" "}
+                {stats.contributions}
+              </p>
+
+              <p>
+                <strong>
+                  Interests:
+                </strong>{" "}
+                {interests.length}
+              </p>
+            </div>
           </article>
         </section>
       </section>

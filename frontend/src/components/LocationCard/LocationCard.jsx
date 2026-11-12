@@ -8,7 +8,7 @@ export function LocationCard({
   location,
   localRating,
   touristRating,
-  categoryLabels,
+  interests,
   onClick,
   userId,
   itemPath,
@@ -23,24 +23,24 @@ export function LocationCard({
 
   const isBookmarked = !!localBookmarkId;
 
-  // Normalize category labels: if it's a Firestore reference, use its id
-  const normalizeLabel = (label) => {
-    if (label && typeof label === "object" && "id" in label) {
-      return label.id; // Firestore DocumentReference → string id
+  const normalizeInterest = (interest) => {
+    if (interest && typeof interest === "object" && "id" in interest) {
+      return interest.id;
     }
-    return String(label || "");
+
+    return String(interest || "");
   };
 
-  const formatCategoryLabel = (label) =>
-    normalizeLabel(label)
+  const formatInterest = (interest) =>
+    normalizeInterest(interest)
       .split("_")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
 
-  const categoryLabel = Array.isArray(categoryLabels)
-    ? categoryLabels.map(formatCategoryLabel).join(", ")
-    : categoryLabels
-      ? formatCategoryLabel(categoryLabels)
+  const interestLabel = Array.isArray(interests)
+    ? interests.map(formatInterest).join(", ")
+    : interests
+      ? formatInterest(interests)
       : "";
 
   const locationLabel =
@@ -54,18 +54,24 @@ export function LocationCard({
 
   const toggleBookmark = async (e) => {
     e.stopPropagation();
+
     if (!userId) {
       console.warn("Cannot bookmark: user not logged in");
       return;
     }
+
     try {
       if (isBookmarked && localBookmarkId) {
         await removeBookmark(localBookmarkId);
+
         setLocalBookmarkId(null);
+
         onBookmarkChange?.(itemPath, null);
       } else {
         const res = await addBookmark(userId, itemPath);
+
         setLocalBookmarkId(res.id || null);
+
         onBookmarkChange?.(itemPath, res.id || null);
       }
     } catch (error) {
@@ -86,6 +92,7 @@ export function LocationCard({
           alt={name || "Unknown place"}
           className="locationCardImage"
         />
+
         {userId && (
           <button
             className={`locationCardSaveButton ${isBookmarked ? "active" : ""}`}
@@ -113,32 +120,42 @@ export function LocationCard({
             </svg>
           </button>
         )}
-        <article className="locationCardCategory">{categoryLabel}</article>
+
+        <article className="locationCardInterest">{interestLabel}</article>
       </figure>
+
       <section className="locationCardContent">
         <h3 className="locationCardTitle">{name || "Unnamed Place"}</h3>
+
         <address className="locationCardSubtitle">{locationLabel}</address>
+
         <dl className="locationCardRatings">
           <section className="locationCardRatingsContainer">
             <dt className="locationCardRating">Local Voices</dt>
+
             <dd className="locationCardRatingValue">
               <span className="locationCardRatingNumber">
                 {localRating ?? "0"}
               </span>
+
               <span className="locationCardRatingMax">/10</span>
             </dd>
           </section>
+
           <section className="locationCardRatingsContainer">
             <dt className="locationCardRating">Tourist Rating</dt>
+
             <dd className="locationCardRatingValue">
               <span className="locationCardRatingNumber">
                 {touristRating ?? "0"}
               </span>
+
               <span className="locationCardRatingMax">/5</span>
             </dd>
           </section>
         </dl>
       </section>
+
       <article className="locationCardAccent" aria-hidden="true" />
     </section>
   );

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../firebase";
@@ -10,6 +11,7 @@ import HeroImage from "../../assets/RedTaxiImage.jpg";
 export function Hero() {
   const [user] = useAuthState(auth);
   const [stats, setStats] = useState({ places: 0, voices: 0, travelers: 0 });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadStats = async () => {
@@ -61,7 +63,12 @@ export function Hero() {
                 Continue Exploring
               </button>
             )}
-            <button className="ctaButtonOutline">Our Story</button>
+            <button
+              className="ctaButtonOutline"
+              onClick={() => navigate("/About")}
+            >
+              Our Story
+            </button>
           </section>
           <dl className="heroStats">
             <article>

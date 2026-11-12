@@ -1,18 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { fetchAllInterests } from "../../../api/interestsApi";
 import "./Filter.css";
 
 export function Filter({ filter, setFilter }) {
-  const categories = [
-    "All",
-    "museum",
-    "market",
-    "restaurant",
-    "festival",
-    "tour",
-    "heritage_site",
-    "cultural_center",
-    "cultural_event",
-  ];
+  const [isSortOpen, setIsSortOpen] = useState(false);
+  const [interests, setInterests] = useState([]);
+
+  useEffect(() => {
+    async function loadInterests() {
+      try {
+        const data = await fetchAllInterests();
+
+        setInterests([
+          {
+            id: "all",
+            name: "All",
+          },
+          ...data,
+        ]);
+      } catch (error) {
+        console.error("Failed to load interests:", error);
+      }
+    }
+
+    loadInterests();
+  }, []);
+
   const sortOptions = [
     "Most Endorsed",
     "Most Reviewed",
@@ -21,37 +34,45 @@ export function Filter({ filter, setFilter }) {
     "Oldest",
     "Alphabetical",
   ];
-  const [isSortOpen, setIsSortOpen] = React.useState(false);
 
-  const handleCategoryChange = (category) => {
-    setFilter({ category, sort: filter.sort });
+  const handleInterestChange = (interest) => {
+    setFilter({
+      interest: interest === "all" ? null : interest,
+      sort: filter.sort,
+    });
   };
 
   const handleSortChange = (option) => {
-    setFilter({ category: filter.category, sort: option });
+    setFilter({
+      interest: filter.interest,
+      sort: option,
+    });
+
     setIsSortOpen(false);
   };
 
   return (
     <main className="filterBar">
       <nav className="filterBarContainer">
-        <ul className="filterBarCategories">
-          {categories.map((category) => (
-            <li key={category} className="filterBarCategoryItem">
+        <ul className="filterBarInterests">
+          {interests.map((interest) => (
+            <li key={interest.id} className="filterBarInterestItem">
               <button
-                onClick={() => handleCategoryChange(category)}
-                className={`filterBarCategoryButton ${
-                  filter.category === category
-                    ? "filterBarCategoryButtonActive"
+                type="button"
+                onClick={() => handleInterestChange(interest.id)}
+                className={`filterBarInterestButton ${
+                  filter.interest === interest.id ||
+                  (interest.id === "all" && !filter.interest)
+                    ? "filterBarInterestButtonActive"
                     : ""
                 }`}
-                type="button"
               >
-                {category}
+                {interest.name}
               </button>
             </li>
           ))}
         </ul>
+
         <section className="filterBarSort">
           <button
             className="filterBarSortButton"
@@ -61,18 +82,19 @@ export function Filter({ filter, setFilter }) {
           >
             {filter.sort} ▼
           </button>
+
           {isSortOpen && (
             <ul className="filterBarDropdown">
               {sortOptions.map((option) => (
                 <li key={option} className="filterBarDropdownItem">
                   <button
+                    type="button"
                     onClick={() => handleSortChange(option)}
                     className={`filterBarDropdownButton ${
                       filter.sort === option
                         ? "filterBarDropdownButtonActive"
                         : ""
                     }`}
-                    type="button"
                   >
                     {option}
                   </button>
@@ -82,6 +104,7 @@ export function Filter({ filter, setFilter }) {
           )}
         </section>
       </nav>
+
       {isSortOpen && (
         <button
           className="filterBarOverlay"
