@@ -10,7 +10,11 @@ import HeroImage from "../../assets/RedTaxiImage.jpg";
 
 export function Hero() {
   const [user] = useAuthState(auth);
-  const [stats, setStats] = useState({ places: 0, voices: 0, travelers: 0 });
+  const [stats, setStats] = useState({
+    places: 0,
+    voices: 0,
+    travellers: 0,
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -81,7 +85,7 @@ export function Hero() {
             </article>
             <article>
               <dt className="heroStatValue">{stats.travellers}</dt>
-              <dd className="heroStatLabel">Happy Travelers</dd>
+              <dd className="heroStatLabel">Happy Travellers</dd>
             </article>
           </dl>
         </section>
