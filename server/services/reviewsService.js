@@ -9,9 +9,13 @@ function normalizeRef(value) {
 
 async function attachUserDisplayName(review) {
   if (!review.userId) return review;
-  const userSnap = await db.collection("users").doc(review.userId).get();
-  if (userSnap.exists) {
-    return { ...review, userDisplayName: userSnap.data().displayName };
+  try {
+    const userSnap = await db.collection("users").doc(review.userId).get();
+    if (userSnap.exists) {
+      return { ...review, userDisplayName: userSnap.data().displayName };
+    }
+  } catch (err) {
+    console.error("❌ Error fetching user for review:", err);
   }
   return { ...review, userDisplayName: null };
 }
@@ -28,15 +32,13 @@ function normalizeReview(data) {
 async function createReview(data) {
   const docRef = await db.collection("reviews").add(data);
 
-  if (data.placeId) {
-    await syncTargetRating("places", "placeId", data.placeId, docRef.id);
-  } else if (data.activityId) {
-    await syncTargetRating(
-      "activities",
-      "activityId",
-      data.activityId,
-      docRef.id,
-    );
+  const placeId = normalizeRef(data.placeId);
+  const activityId = normalizeRef(data.activityId);
+
+  if (placeId) {
+    await syncTargetRating("places", "placeId", placeId, docRef.id);
+  } else if (activityId) {
+    await syncTargetRating("activities", "activityId", activityId, docRef.id);
   }
 
   const review = normalizeReview({ id: docRef.id, ...data });

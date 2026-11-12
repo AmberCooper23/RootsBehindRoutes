@@ -9,8 +9,8 @@ const router = express.Router();
 
 router.post("/", async (req, res) => {
   try {
-    const id = await createReview(req.body);
-    res.status(201).send({ message: "Review created", id });
+    const review = await createReview(req.body);
+    res.status(201).send(review);
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
@@ -38,5 +38,4 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ CommonJS export
 module.exports = router;
