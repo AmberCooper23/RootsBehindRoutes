@@ -10,8 +10,11 @@ import {
   addBookmark,
   removeBookmark,
 } from "../../../api/bookmarksApi";
-import { fetchAllEndorsements } from "../../../api/endorsementsApi";
-import { fetchAllReviews } from "../../../api/reviewsApi";
+import {
+  fetchAllEndorsements,
+  addEndorsementReply,
+} from "../../../api/endorsementsApi";
+import { fetchAllReviews, addReviewReply } from "../../../api/reviewsApi";
 import ContributeModal from "../../components/ContributeModal/ContributeModal";
 import "./DetailsPage.css";
 
@@ -44,11 +47,9 @@ function formatTime(time24) {
 
 function formatDate(dateVal) {
   if (!dateVal) return "";
-  // Check if it's a Firestore serialized timestamp object
   if (typeof dateVal === "object" && dateVal._seconds !== undefined) {
     return new Date(dateVal._seconds * 1000).toLocaleDateString();
   }
-  // Otherwise, parse as standard date string
   return new Date(dateVal).toLocaleDateString();
 }
 
@@ -90,6 +91,10 @@ export function DetailsPage() {
   const [endorsements, setEndorsements] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [reviewerNames, setReviewerNames] = useState({});
+
+  const [replyingToId, setReplyingToId] = useState(null);
+  const [replyText, setReplyText] = useState("");
+  const [isSubmittingReply, setIsSubmittingReply] = useState(false);
 
   const itemPath = `${type}/${id}`;
 
@@ -194,6 +199,57 @@ export function DetailsPage() {
     }
   };
 
+  // --- UPDATED: Handle Reply Submission ---
+  const handleReplySubmit = async (e, targetId, isEndorsement) => {
+    e.preventDefault();
+    if (!replyText.trim() || !user) return;
+
+    setIsSubmittingReply(true);
+    const newReplyContent = replyText.trim();
+    const replyData = {
+      userId: user.uid,
+      userDisplayName: user.displayName || "User",
+      content: newReplyContent,
+    };
+
+    try {
+      if (isEndorsement) {
+        // 1. Save to backend
+        const savedReply = await addEndorsementReply(targetId, replyData);
+        // 2. Update local state instantly so the UI refreshes without a page reload
+        setEndorsements((prev) =>
+          prev.map((end) => {
+            if (end.id === targetId) {
+              return { ...end, replies: [...(end.replies || []), savedReply] };
+            }
+            return end;
+          }),
+        );
+      } else {
+        // 1. Save to backend
+        const savedReply = await addReviewReply(targetId, replyData);
+        // 2. Update local state instantly
+        setReviews((prev) =>
+          prev.map((rev) => {
+            if (rev.id === targetId) {
+              return { ...rev, replies: [...(rev.replies || []), savedReply] };
+            }
+            return rev;
+          }),
+        );
+      }
+
+      // Clear the input box and close the reply form
+      setReplyText("");
+      setReplyingToId(null);
+    } catch (err) {
+      console.error("Failed to post reply:", err);
+      alert("Failed to post reply. Did you restart your backend server?");
+    } finally {
+      setIsSubmittingReply(false);
+    }
+  };
+
   const formatInterestLabel = (label) =>
     String(label || "")
       .split("_")
@@ -211,6 +267,21 @@ export function DetailsPage() {
       ? `${item.location.city}, ${item.location.region}`
       : "";
   const hoursStatus = getHoursStatus(item?.hours);
+
+  const dynamicTouristRating =
+    reviews.length > 0
+      ? (
+          reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length
+        ).toFixed(1)
+      : (item?.touristRating ?? "?");
+
+  const dynamicLocalRating =
+    endorsements.length > 0
+      ? (
+          endorsements.reduce((sum, e) => sum + (e.score ?? e.rating ?? 0), 0) /
+          endorsements.length
+        ).toFixed(1)
+      : (item?.localRating ?? "?");
 
   if (loading) {
     return (
@@ -292,22 +363,24 @@ export function DetailsPage() {
             <article className="detailsRatingBox">
               <span className="detailsRatingLabel">Local Voice</span>
               <span className="detailsRatingValue">
-                {item.localRating ?? "?"}
+                {dynamicLocalRating}
                 <span className="detailsRatingMax">/10</span>
               </span>
               <span className="detailsRatingCaption">
-                Locals wish you could experience it
+                {endorsements.length > 0
+                  ? `Based on ${endorsements.length} endorsement${endorsements.length === 1 ? "" : "s"}`
+                  : "Locals wish you could experience it"}
               </span>
             </article>
             <article className="detailsRatingBox">
               <span className="detailsRatingLabel">Traveler Rating</span>
               <span className="detailsRatingValue">
-                {item.touristRating ?? "?"}
+                {dynamicTouristRating}
                 <span className="detailsRatingMax">/5</span>
               </span>
               <span className="detailsRatingCaption">
-                {item.reviewCount
-                  ? `Based on ${item.reviewCount} review${item.reviewCount === 1 ? "" : "s"}`
+                {reviews.length > 0
+                  ? `Based on ${reviews.length} review${reviews.length === 1 ? "" : "s"}`
                   : "No reviews yet"}
               </span>
             </article>
@@ -406,13 +479,13 @@ export function DetailsPage() {
               onClick={() => setActiveTab("localReviews")}
             >
               Local Reviews{" "}
-              {endorsements.length ? `(${endorsements.length})` : ""}
+              {endorsements.length > 0 ? `(${endorsements.length})` : ""}
             </button>
             <button
               className={`detailsTab ${activeTab === "touristReviews" ? "active" : ""}`}
               onClick={() => setActiveTab("touristReviews")}
             >
-              Tourist Reviews {item.reviewCount ? `(${item.reviewCount})` : ""}
+              Tourist Reviews {reviews.length > 0 ? `(${reviews.length})` : ""}
             </button>
           </nav>
 
@@ -462,6 +535,75 @@ export function DetailsPage() {
                             Cultural note: {endorsement.culturalSensitivity}
                           </p>
                         )}
+
+                        <div className="detailsReplySection">
+                          {endorsement.replies?.map((reply) => (
+                            <div key={reply.id} className="detailsReplyBubble">
+                              <span className="detailsReplyAuthor">
+                                {reply.userDisplayName}
+                              </span>
+                              <p className="detailsReplyText">
+                                {reply.content}
+                              </p>
+                            </div>
+                          ))}
+
+                          {replyingToId === endorsement.id ? (
+                            <form
+                              onSubmit={(e) =>
+                                handleReplySubmit(e, endorsement.id, true)
+                              }
+                              className="detailsReplyForm"
+                            >
+                              <input
+                                type="text"
+                                value={replyText}
+                                onChange={(e) => setReplyText(e.target.value)}
+                                placeholder="Write a reply..."
+                                className="detailsReplyInput"
+                                autoFocus
+                              />
+                              <button
+                                type="submit"
+                                disabled={isSubmittingReply}
+                                className="detailsReplySubmit"
+                              >
+                                Send
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setReplyingToId(null)}
+                                className="detailsReplyCancel"
+                              >
+                                Cancel
+                              </button>
+                            </form>
+                          ) : (
+                            <button
+                              className="detailsReplyBtn"
+                              onClick={() => {
+                                setReplyingToId(endorsement.id);
+                                setReplyText("");
+                              }}
+                            >
+                              <svg
+                                viewBox="0 0 24 24"
+                                width="16"
+                                height="16"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+                                />
+                              </svg>
+                              Reply
+                            </button>
+                          )}
+                        </div>
                       </li>
                     );
                   })}
@@ -494,7 +636,6 @@ export function DetailsPage() {
                             {review.rating ?? "?"}
                             <span className="detailsReviewRatingMax">/5</span>
                           </span>
-                          {/* 👇 Changed to use dateToShow and formatDate */}
                           {dateToShow && (
                             <span className="detailsReviewDate">
                               Visited {formatDate(dateToShow)}
@@ -511,6 +652,75 @@ export function DetailsPage() {
                               : "👎 Would not recommend"}
                           </p>
                         )}
+
+                        <div className="detailsReplySection">
+                          {review.replies?.map((reply) => (
+                            <div key={reply.id} className="detailsReplyBubble">
+                              <span className="detailsReplyAuthor">
+                                {reply.userDisplayName}
+                              </span>
+                              <p className="detailsReplyText">
+                                {reply.content}
+                              </p>
+                            </div>
+                          ))}
+
+                          {replyingToId === review.id ? (
+                            <form
+                              onSubmit={(e) =>
+                                handleReplySubmit(e, review.id, false)
+                              }
+                              className="detailsReplyForm"
+                            >
+                              <input
+                                type="text"
+                                value={replyText}
+                                onChange={(e) => setReplyText(e.target.value)}
+                                placeholder="Write a reply..."
+                                className="detailsReplyInput"
+                                autoFocus
+                              />
+                              <button
+                                type="submit"
+                                disabled={isSubmittingReply}
+                                className="detailsReplySubmit"
+                              >
+                                Send
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setReplyingToId(null)}
+                                className="detailsReplyCancel"
+                              >
+                                Cancel
+                              </button>
+                            </form>
+                          ) : (
+                            <button
+                              className="detailsReplyBtn"
+                              onClick={() => {
+                                setReplyingToId(review.id);
+                                setReplyText("");
+                              }}
+                            >
+                              <svg
+                                viewBox="0 0 24 24"
+                                width="16"
+                                height="16"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"
+                                />
+                              </svg>
+                              Reply
+                            </button>
+                          )}
+                        </div>
                       </li>
                     );
                   })}
