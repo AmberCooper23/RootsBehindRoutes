@@ -42,7 +42,6 @@ function formatTime(time24) {
   return `${h12}:${String(m).padStart(2, "0")} ${period}`;
 }
 
-// 👇 NEW: Helper to format both normal dates and Firestore Timestamps
 function formatDate(dateVal) {
   if (!dateVal) return "";
   // Check if it's a Firestore serialized timestamp object
@@ -449,7 +448,6 @@ export function DetailsPage() {
                             {score ?? "?"}
                             <span className="detailsReviewRatingMax">/10</span>
                           </span>
-                          {/* 👇 Changed to use formatDate */}
                           {endorsement.createdAt && (
                             <span className="detailsReviewDate">
                               {formatDate(endorsement.createdAt)}
@@ -487,7 +485,6 @@ export function DetailsPage() {
                       reviewerNames[review.userId] ||
                       review.userDisplayName ||
                       "Traveler";
-                    // 👇 Fallback to createdAt if visitDate is missing (since your backfill didn't include visitDate)
                     const dateToShow = review.visitDate || review.createdAt;
 
                     return (
