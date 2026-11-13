@@ -11,7 +11,7 @@ import HeroImage from "../../assets/RedTaxiImage.jpg";
 export function Hero() {
   const [user] = useAuthState(auth);
   const [stats, setStats] = useState({
-    places: 0,
+    experiences: 0,
     voices: 0,
     travellers: 0,
   });
@@ -76,15 +76,15 @@ export function Hero() {
           </section>
           <dl className="heroStats">
             <article>
-              <dt className="heroStatValue">{stats.places}</dt>
-              <dd className="heroStatLabel">Authentic Places</dd>
+              <dt className="heroStatValue">{stats.experiences ?? 0}</dt>
+              <dd className="heroStatLabel">Authentic Experiences</dd>
             </article>
             <article>
-              <dt className="heroStatValue">{stats.voices}</dt>
+              <dt className="heroStatValue">{stats.voices ?? 0}</dt>
               <dd className="heroStatLabel">Local Voices</dd>
             </article>
             <article>
-              <dt className="heroStatValue">{stats.travellers}</dt>
+              <dt className="heroStatValue">{stats.travellers ?? 0}</dt>
               <dd className="heroStatLabel">Happy Travellers</dd>
             </article>
           </dl>

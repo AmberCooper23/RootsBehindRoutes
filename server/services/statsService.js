@@ -3,6 +3,7 @@ const { db } = require("../firebaseConfig.js");
 async function getStats() {
   try {
     const placesSnap = await db.collection("places").get();
+    const activitiesSnap = await db.collection("activities").get();
 
     const touristsSnap = await db
       .collection("users")
@@ -15,7 +16,7 @@ async function getStats() {
       .get();
 
     return {
-      places: placesSnap.size,
+      experiences: placesSnap.size + activitiesSnap.size,
       voices: localsSnap.size,
       travellers: touristsSnap.size,
     };
