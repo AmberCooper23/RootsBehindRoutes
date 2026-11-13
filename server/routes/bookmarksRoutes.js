@@ -5,12 +5,17 @@ const { db, admin } = require("../firebaseConfig.js");
 router.post("/", async (req, res) => {
   try {
     const { userId, itemPath } = req.body;
-    const docId = `bookmark_${userId}_${Date.now()}`;
+
+    // 👇 Create a fixed, unique ID (e.g. "bookmark_user123_place_place001")
+    const safeItemPath = itemPath.replace(/\//g, "_");
+    const docId = `bookmark_${userId}_${safeItemPath}`;
+
     await db.collection("bookmarks").doc(docId).set({
       userId: userId,
       itemId: itemPath,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
+
     res.json({ success: true, id: docId });
   } catch (err) {
     res.status(500).json({ error: err.message });
