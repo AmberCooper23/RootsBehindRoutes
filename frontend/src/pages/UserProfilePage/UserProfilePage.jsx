@@ -103,15 +103,16 @@ export function UserProfile() {
           ...myEndorsements.map((e) => e.activityId).filter(Boolean),
         ]);
 
-        const uniqueBookmarks = (
-          Array.isArray(myBookmarks) ? myBookmarks : []
-        ).filter(
-          (v, i, a) => a.findIndex((v2) => v2.itemId === v.itemId) === i,
+        // 👇 Bulletproof deduplication: Extract just the IDs into a Set
+        const uniqueSavedIds = new Set(
+          (Array.isArray(myBookmarks) ? myBookmarks : [])
+            .map((b) => b.itemId || b.itemPath || b.placeId)
+            .filter(Boolean),
         );
 
         setStats({
           placesVisited: visitedPlaceIds.size + visitedActivityIds.size,
-          savedPlaces: uniqueBookmarks.length,
+          savedPlaces: uniqueSavedIds.size, // 👈 The Set size guarantees no duplicates
           contributions: profileData?.activitiesTried?.length || 0,
         });
 
