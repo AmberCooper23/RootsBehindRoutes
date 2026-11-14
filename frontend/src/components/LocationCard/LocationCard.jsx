@@ -2,6 +2,68 @@ import "./LocationCard.css";
 import { useState, useEffect } from "react";
 import { addBookmark, removeBookmark } from "../../../api/bookmarksApi";
 
+const DAY_KEYS = [
+  "sunday",
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+];
+
+function getOpenStatus(hours) {
+  if (!hours) return null;
+
+  const now = new Date();
+  const todayKey = DAY_KEYS[now.getDay()];
+  const today = hours[todayKey];
+
+  if (!today || !today.open || !today.close) return null;
+
+  const [openH, openM] = today.open.split(":").map(Number);
+  const [closeH, closeM] = today.close.split(":").map(Number);
+
+  const nowMinutes = now.getHours() * 60 + now.getMinutes();
+  const openMinutes = openH * 60 + openM;
+  const closeMinutes = closeH * 60 + closeM;
+
+  const isOvernight = closeMinutes < openMinutes;
+
+  let isOpen = false;
+  if (isOvernight) {
+    isOpen = nowMinutes >= openMinutes || nowMinutes < closeMinutes;
+  } else {
+    isOpen = nowMinutes >= openMinutes && nowMinutes < closeMinutes;
+  }
+
+  if (isOpen) {
+    let minsToClose;
+    if (isOvernight && nowMinutes >= openMinutes) {
+      minsToClose = 1440 - nowMinutes + closeMinutes;
+    } else if (isOvernight && nowMinutes < closeMinutes) {
+      minsToClose = closeMinutes - nowMinutes;
+    } else {
+      minsToClose = closeMinutes - nowMinutes;
+    }
+
+    if (minsToClose <= 60 && minsToClose > 0) {
+      return { type: "closing-soon", label: "Closes soon" };
+    }
+    return { type: "open", label: "Open now" };
+  } else {
+    let minsToOpen = Infinity;
+    if (nowMinutes < openMinutes) {
+      minsToOpen = openMinutes - nowMinutes;
+    }
+
+    if (minsToOpen <= 60 && minsToOpen > 0) {
+      return { type: "opening-soon", label: "Opens soon" };
+    }
+    return { type: "closed", label: "Closed" };
+  }
+}
+
 export function LocationCard({
   image,
   name,
@@ -9,6 +71,7 @@ export function LocationCard({
   localRating,
   touristRating,
   interests,
+  hours,
   onClick,
   userId,
   itemPath,
@@ -22,12 +85,12 @@ export function LocationCard({
   }, [bookmarkId]);
 
   const isBookmarked = !!localBookmarkId;
+  const openStatus = getOpenStatus(hours);
 
   const normalizeInterest = (interest) => {
     if (interest && typeof interest === "object" && "id" in interest) {
       return interest.id;
     }
-
     return String(interest || "");
   };
 
@@ -63,15 +126,11 @@ export function LocationCard({
     try {
       if (isBookmarked && localBookmarkId) {
         await removeBookmark(localBookmarkId);
-
         setLocalBookmarkId(null);
-
         onBookmarkChange?.(itemPath, null);
       } else {
         const res = await addBookmark(userId, itemPath);
-
         setLocalBookmarkId(res.id || null);
-
         onBookmarkChange?.(itemPath, res.id || null);
       }
     } catch (error) {
@@ -127,29 +186,34 @@ export function LocationCard({
       <section className="locationCardContent">
         <h3 className="locationCardTitle">{name || "Unnamed Place"}</h3>
 
-        <address className="locationCardSubtitle">{locationLabel}</address>
+        <div className="locationCardMetaRow">
+          <address className="locationCardSubtitle">{locationLabel}</address>
+          {openStatus && (
+            <span
+              className={`locationCardStatus locationCardStatus-${openStatus.type}`}
+            >
+              {openStatus.label}
+            </span>
+          )}
+        </div>
 
         <dl className="locationCardRatings">
           <section className="locationCardRatingsContainer">
             <dt className="locationCardRating">Local Voices</dt>
-
             <dd className="locationCardRatingValue">
               <span className="locationCardRatingNumber">
                 {localRating ?? "0"}
               </span>
-
               <span className="locationCardRatingMax">/10</span>
             </dd>
           </section>
 
           <section className="locationCardRatingsContainer">
             <dt className="locationCardRating">Tourist Rating</dt>
-
             <dd className="locationCardRatingValue">
               <span className="locationCardRatingNumber">
                 {touristRating ?? "0"}
               </span>
-
               <span className="locationCardRatingMax">/5</span>
             </dd>
           </section>
