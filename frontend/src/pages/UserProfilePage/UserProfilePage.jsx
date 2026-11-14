@@ -13,6 +13,7 @@ import { fetchAllPlaces } from "../../../api/placesApi";
 import { fetchAllActivities } from "../../../api/activitiesApi";
 import { fetchAllReviews } from "../../../api/reviewsApi";
 import { fetchAllEndorsements } from "../../../api/endorsementsApi";
+import { fetchAllInterests } from "../../../api/interestsApi";
 import { getBookmarks } from "../../../api/bookmarksApi";
 
 import ProfileHeader from "./ProfileHeader";
@@ -32,6 +33,7 @@ export function UserProfile() {
   const [birthday, setBirthday] = useState("");
   const [area, setArea] = useState("");
   const [interests, setInterests] = useState([]);
+  const [allInterests, setAllInterests] = useState([]);
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [visitedExperiences, setVisitedExperiences] = useState([]);
 
@@ -60,13 +62,17 @@ export function UserProfile() {
           allReviews,
           allEndorsements,
           myBookmarks,
+          databaseInterests,
         ] = await Promise.all([
           fetchAllPlaces(),
           fetchAllActivities(),
           fetchAllReviews(),
           fetchAllEndorsements(),
           getBookmarks(user.uid),
+          fetchAllInterests(),
         ]);
+
+        setAllInterests(databaseInterests);
 
         const myReviews = allReviews.filter((r) => r.userId === user.uid);
         const myEndorsements = allEndorsements.filter(
@@ -181,6 +187,7 @@ export function UserProfile() {
   };
 
   const handleAddInterest = async (interestId) => {
+    if (interests.includes(interestId)) return;
     try {
       await addUserInterest(user.uid, interestId);
       setInterests([...interests, interestId]);
@@ -246,6 +253,7 @@ export function UserProfile() {
             />
             <InterestsCard
               interests={interests}
+              allInterests={allInterests}
               handleRemoveInterest={handleRemoveInterest}
               handleAddInterest={handleAddInterest}
             />
