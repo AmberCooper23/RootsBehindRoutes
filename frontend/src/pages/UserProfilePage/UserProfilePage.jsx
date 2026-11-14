@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, provider } from "../../firebase";
+import { auth, provider, storage } from "../../firebase";
 import { signInWithPopup, signOut } from "firebase/auth";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
   fetchUser,
   addUser,
@@ -36,6 +37,7 @@ export function UserProfile() {
   const [allInterests, setAllInterests] = useState([]);
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [visitedExperiences, setVisitedExperiences] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   const [stats, setStats] = useState({
     placesVisited: 0,
@@ -175,6 +177,27 @@ export function UserProfile() {
     }
   };
 
+  const handleUpdatePhoto = async (file) => {
+    if (!file) return;
+    try {
+      setIsUploading(true);
+      const storageRef = ref(
+        storage,
+        `profile_pictures/${user.uid}_${Date.now()}`,
+      );
+      await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(storageRef);
+
+      await addUser(user.uid, { photoURL: downloadURL });
+      setProfile((prev) => ({ ...prev, photoURL: downloadURL }));
+    } catch (error) {
+      console.error("Failed to upload photo:", error);
+      alert("Failed to upload photo. Ensure Firebase Storage is enabled.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const saveBio = async (e) => {
     e.preventDefault();
     setIsEditingBio(false);
@@ -230,6 +253,8 @@ export function UserProfile() {
         displayPhoto={displayPhoto}
         displayName={displayName}
         role={role}
+        onUpdatePhoto={handleUpdatePhoto}
+        isUploading={isUploading}
       />
 
       <section className="profileContent">
