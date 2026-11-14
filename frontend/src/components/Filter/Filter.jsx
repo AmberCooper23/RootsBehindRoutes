@@ -55,33 +55,31 @@ export function Filter({ filter, setFilter }) {
   const handleClear = () => {
     setDraftInterests([]);
     setDraftSort("Most Endorsed");
-    setFilter({ interests: [], sort: "Most Endorsed" }); // 👈 Auto-apply clear
+    setFilter({ interests: [], sort: "Most Endorsed" });
   };
 
   return (
-    <main className="filterBar">
-      <div className="filterBarContainer">
-        <button
-          className={`filterBarTrigger ${
-            isOpen || hasActiveFilters ? "filterBarTriggerFilled" : ""
-          }`}
-          onClick={() => setIsOpen(!isOpen)}
+    <div className="filterWrapper">
+      <button
+        className={`filterBarTrigger ${
+          isOpen || hasActiveFilters ? "filterBarTriggerFilled" : ""
+        }`}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <svg
+          viewBox="0 0 24 24"
+          width="18"
+          height="18"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         >
-          <svg
-            viewBox="0 0 24 24"
-            width="20"
-            height="20"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-          </svg>
-          Filters & Sort
-        </button>
-      </div>
+          <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+        </svg>
+        Filters & Sort
+      </button>
 
       {isOpen && (
         <>
@@ -149,7 +147,7 @@ export function Filter({ filter, setFilter }) {
           </div>
         </>
       )}
-    </main>
+    </div>
   );
 }
 

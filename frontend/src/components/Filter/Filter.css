@@ -13,32 +13,21 @@
   --font-xxs: 1rem;
 }
 
-.filterBar {
-  background-color: var(--secondary-filter-color);
-  border-bottom: 0.125rem solid rgba(139, 115, 85, 0.2);
+.filterWrapper {
   position: relative;
   z-index: 100;
 }
 
-.filterBarContainer {
-  max-width: 80rem;
-  margin: 0 auto;
-  padding: 1rem 1.5rem;
-  display: flex;
-  justify-content: flex-end;
-}
-
-/* Outlined state (Default) */
 .filterBarTrigger {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.6rem 1.25rem;
+  padding: 0.5rem 1rem;
   background-color: transparent;
   border: 0.125rem solid var(--primary-filter-color);
   color: var(--primary-filter-color);
   font-family: "Lora", serif;
-  font-size: var(--font-xxs);
+  font-size: var(--font-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -51,7 +40,6 @@
   background-color: rgba(139, 115, 85, 0.1);
 }
 
-/* Filled state (Active or Open) */
 .filterBarTriggerFilled {
   background-color: var(--primary-filter-color);
   color: var(--secondary-filter-color);
@@ -60,11 +48,6 @@
 .filterBarTriggerFilled:hover {
   background-color: #6d5a42;
   border-color: #6d5a42;
-}
-
-.filterBarTrigger svg {
-  width: 1.25rem;
-  height: 1.25rem;
 }
 
 .filterBarOverlay {
@@ -78,8 +61,8 @@
 
 .filterDropdownPanel {
   position: absolute;
-  top: 100%;
-  right: max(1.5rem, calc((100vw - 80rem) / 2 + 1.5rem));
+  top: calc(100% + 0.5rem);
+  right: 0;
   width: 32rem;
   background-color: var(--secondary-filter-color);
   border: 0.0625rem solid rgba(139, 115, 85, 0.2);
@@ -216,13 +199,9 @@
 }
 
 @media (max-width: 48rem) {
-  .filterBarContainer {
-    justify-content: center;
-  }
-
   .filterDropdownPanel {
-    right: 1rem;
-    left: 1rem;
-    width: auto;
+    right: auto;
+    left: 0;
+    width: calc(100vw - 3rem);
   }
 }

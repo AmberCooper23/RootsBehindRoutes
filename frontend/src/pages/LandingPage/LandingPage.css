@@ -32,11 +32,13 @@
 
 .discoverHeader {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
   border-bottom: 2px solid var(--primary-lp-color);
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .discoverHeaderText {
@@ -59,15 +61,24 @@
   margin-top: 0.2rem;
 }
 
+.discoverHeaderActions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
+}
+
 .discoverCount {
-  font-size: var(--font-md);
+  font-size: var(--font-sm);
   color: var(--accent-lp-color);
+  margin: 0;
+  font-style: italic;
 }
 
 .discoverCountNumber {
-  font-weight: 500;
+  font-weight: 700;
   color: var(--primary-lp-color);
-  font-size: var(--font-lg);
+  font-size: 1rem;
 }
 
 .discoverGrid {
@@ -136,6 +147,7 @@
   align-items: center;
   justify-content: center;
 }
+
 .ratingSystemIcon {
   color: var(--primary-lp-color);
   font-weight: 600;
@@ -165,4 +177,11 @@
 .ratingSystemItem strong {
   color: var(--primary-lp-color);
   font-size: var(--font-sm);
+}
+
+@media (max-width: 48rem) {
+  .discoverHeaderActions {
+    align-items: flex-start;
+    width: 100%;
+  }
 }

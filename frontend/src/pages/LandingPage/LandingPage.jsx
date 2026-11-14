@@ -157,7 +157,6 @@ export function LandingPage() {
   return (
     <main className="discoverPage">
       <Hero />
-      <Filter filter={filter} setFilter={setFilter} />
       <section id="discoverContainer" className="discoverContainer">
         <header className="discoverHeader">
           <span className="discoverHeaderText">
@@ -165,16 +164,21 @@ export function LandingPage() {
               Discover Authentic Experiences
             </h2>
             <p className="discoverSubtitle">
-              Endorsed by locals, experienced by travellers like you
+              Endorsed by locals, experienced by travelers like you
             </p>
           </span>
-          <p className="discoverCount">
-            <span className="discoverCountNumber">
-              {sortedExperiences.length}
-            </span>{" "}
-            experiences found
-          </p>
+
+          <div className="discoverHeaderActions">
+            <Filter filter={filter} setFilter={setFilter} />
+            <p className="discoverCount">
+              <span className="discoverCountNumber">
+                {sortedExperiences.length}
+              </span>{" "}
+              experiences found
+            </p>
+          </div>
         </header>
+
         <section className="discoverGrid">
           {sortedExperiences.map((experience) => {
             const itemPath = `${experience.type}/${experience.id}`;
@@ -191,6 +195,7 @@ export function LandingPage() {
             );
           })}
         </section>
+
         <aside className="ratingSystem">
           <h3 className="ratingSystemTitle">Understanding our rating system</h3>
           <article className="ratingSystemDivider" aria-hidden="true"></article>
