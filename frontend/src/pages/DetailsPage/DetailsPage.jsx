@@ -56,12 +56,7 @@ function formatDate(dateVal) {
 
 function getInitials(name) {
   if (!name || name === "Anonymous") return "?";
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .substring(0, 2)
-    .toUpperCase();
+  return name.charAt(0).toUpperCase();
 }
 
 function formatRating(val) {
@@ -241,6 +236,7 @@ export function DetailsPage() {
     const replyData = {
       userId: user.uid,
       userDisplayName: user.displayName || "User",
+      userPhotoURL: user.photoURL || null,
       content: newReplyContent,
     };
 
@@ -591,7 +587,15 @@ export function DetailsPage() {
                             {endorsement.replies?.map((reply) => (
                               <div key={reply.id} className="detailsReplyItem">
                                 <div className="detailsReplyAvatar">
-                                  {getInitials(reply.userDisplayName)}
+                                  {reply.userPhotoURL ? (
+                                    <img
+                                      src={reply.userPhotoURL}
+                                      alt={reply.userDisplayName}
+                                      className="detailsReplyAvatarImg"
+                                    />
+                                  ) : (
+                                    getInitials(reply.userDisplayName)
+                                  )}
                                 </div>
                                 <div className="detailsReplyContent">
                                   <div className="detailsReplyHeader">
@@ -730,7 +734,15 @@ export function DetailsPage() {
                             {review.replies?.map((reply) => (
                               <div key={reply.id} className="detailsReplyItem">
                                 <div className="detailsReplyAvatar">
-                                  {getInitials(reply.userDisplayName)}
+                                  {reply.userPhotoURL ? (
+                                    <img
+                                      src={reply.userPhotoURL}
+                                      alt={reply.userDisplayName}
+                                      className="detailsReplyAvatarImg"
+                                    />
+                                  ) : (
+                                    getInitials(reply.userDisplayName)
+                                  )}
                                 </div>
                                 <div className="detailsReplyContent">
                                   <div className="detailsReplyHeader">

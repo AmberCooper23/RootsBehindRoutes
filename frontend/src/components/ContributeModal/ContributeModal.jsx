@@ -1,24 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, provider } from "../../firebase";
 import { signInWithPopup } from "firebase/auth";
+import { fetchUser } from "../../../api/usersApi";
 import { addEndorsement } from "../../../api/endorsementsApi";
 import { addReview } from "../../../api/reviewsApi";
 import "./ContributeModal.css";
-import { TypeSelector } from "./TypeSelector";
 import { LocalContributorForm } from "./LocalContributorForm";
 import { TouristReviewForm } from "./TouristReviewForm";
 
 export function ContributeModal({ isOpen, onClose, target, onSuccess }) {
   const [userType, setUserType] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [user] = useAuthState(auth);
+  const [user, authLoading] = useAuthState(auth);
+  const [isLoadingRole, setIsLoadingRole] = useState(false);
 
-  const resetForm = () => setUserType(null);
+  useEffect(() => {
+    async function determineRole() {
+      if (!isOpen || !user) {
+        setUserType(null);
+        return;
+      }
+
+      setIsLoadingRole(true);
+      try {
+        const profile = await fetchUser(user.uid);
+        setUserType(profile?.role === "local" ? "local" : "tourist");
+      } catch (error) {
+        console.error("Failed to fetch user role:", error);
+        setUserType("tourist");
+      } finally {
+        setIsLoadingRole(false);
+      }
+    }
+
+    determineRole();
+  }, [isOpen, user]);
 
   const handleClose = () => {
     onClose();
-    setTimeout(() => resetForm(), 300);
+    setTimeout(() => {
+      setIsSubmitted(false);
+      setUserType(null);
+    }, 300);
   };
 
   const buildTargetRef = () =>
@@ -30,14 +54,17 @@ export function ContributeModal({ isOpen, onClose, target, onSuccess }) {
     try {
       if (userType === "local") {
         await addEndorsement({
+          userId: user.uid,
           ...buildTargetRef(),
           rating: data.localRating,
           whyEndorse: data.whyEndorse,
           culturalSensitivity: data.culturalSensitivity,
+          visitDate: data.visitDate,
           createdAt: new Date().toISOString(),
         });
       } else {
         await addReview({
+          userId: user.uid,
           ...buildTargetRef(),
           rating: data.rating,
           review: data.review,
@@ -52,23 +79,18 @@ export function ContributeModal({ isOpen, onClose, target, onSuccess }) {
       setTimeout(() => {
         setIsSubmitted(false);
         onClose();
-        resetForm();
       }, 2000);
     } catch (error) {
       console.error("Submission failed:", error);
     }
   };
 
-  const handleSelectType = async (role) => {
-    if (!user) {
-      try {
-        await signInWithPopup(auth, provider);
-      } catch (error) {
-        console.error("Login failed:", error);
-        return;
-      }
+  const handleLogin = async () => {
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      console.error("Login failed:", error);
     }
-    setUserType(role);
   };
 
   if (!isOpen || !target) return null;
@@ -81,23 +103,56 @@ export function ContributeModal({ isOpen, onClose, target, onSuccess }) {
           <p className="contributeModalSuccessMessage">
             {userType === "local"
               ? "Your endorsement has been submitted and this place's local rating has been updated."
-              : "Your review has been submitted and will help future travellers make informed decisions."}
+              : "Your review has been submitted and will help future travelers make informed decisions."}
           </p>
         </section>
       );
     }
-    if (!userType) {
-      return <TypeSelector onSelectType={handleSelectType} />;
+
+    if (!user) {
+      return (
+        <section
+          className="contributeModalSuccess"
+          style={{ textAlign: "center", padding: "2rem 1rem" }}
+        >
+          <h3 className="contributeModalSuccessTitle">Sign In Required</h3>
+          <p
+            className="contributeModalSuccessMessage"
+            style={{ marginBottom: "1.5rem" }}
+          >
+            You need to be logged in to contribute your voice.
+          </p>
+          <button
+            onClick={handleLogin}
+            className="contributeModalSubmit"
+            style={{ maxWidth: "250px", margin: "0 auto" }}
+          >
+            Login with Google
+          </button>
+        </section>
+      );
     }
+
+    if (isLoadingRole || authLoading) {
+      return (
+        <section className="contributeModalSuccess">
+          <p className="contributeModalSuccessMessage">
+            Loading your profile...
+          </p>
+        </section>
+      );
+    }
+
     if (userType === "local") {
       return (
         <LocalContributorForm
           targetName={target.name}
           onSubmit={handleSubmit}
-          onCancel={onClose}
+          onCancel={handleClose}
         />
       );
     }
+
     return (
       <TouristReviewForm
         targetName={target.name}
@@ -123,24 +178,20 @@ export function ContributeModal({ isOpen, onClose, target, onSuccess }) {
           >
             X
           </button>
-          {userType && (
-            <button
-              onClick={() => setUserType(null)}
-              className="contributeModalBack"
-              type="button"
-            >
-              ← Back
-            </button>
-          )}
+
           <h2 className="contributeModalTitle">
-            {!userType && `Share Your Voice on ${target.name}`}
-            {userType === "local" && `Endorse ${target.name}`}
-            {userType === "tourist" && `Review ${target.name}`}
+            {!user
+              ? "Contribute"
+              : userType === "local"
+                ? `Endorse ${target.name}`
+                : `Review ${target.name}`}
           </h2>
           <p className="contributeModalSubtitle">
-            {!userType && "Help others discover authentic experiences"}
-            {userType === "local" && "Share why locals value this place"}
-            {userType === "tourist" && "Your feedback helps future travellers"}
+            {!user
+              ? "Sign in to share your experience"
+              : userType === "local"
+                ? "Share why locals value this place"
+                : "Your feedback helps future travelers"}
           </p>
         </header>
         <section className="contributeModalBody">{renderBody()}</section>
