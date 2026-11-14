@@ -64,6 +64,13 @@ function getInitials(name) {
     .toUpperCase();
 }
 
+function formatRating(val) {
+  if (val === undefined || val === null || val === "?") return "?";
+  const num = Number(val);
+  if (isNaN(num)) return val;
+  return parseFloat(num.toFixed(1));
+}
+
 function getHoursStatus(hours) {
   if (!hours) return { known: false };
   const now = new Date();
@@ -290,18 +297,18 @@ export function DetailsPage() {
 
   const dynamicTouristRating =
     reviews.length > 0
-      ? (
-          reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length
-        ).toFixed(1)
-      : (item?.touristRating ?? "?");
+      ? formatRating(
+          reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length,
+        )
+      : formatRating(item?.touristRating);
 
   const dynamicLocalRating =
     endorsements.length > 0
-      ? (
+      ? formatRating(
           endorsements.reduce((sum, e) => sum + (e.score ?? e.rating ?? 0), 0) /
-          endorsements.length
-        ).toFixed(1)
-      : (item?.localRating ?? "?");
+            endorsements.length,
+        )
+      : formatRating(item?.localRating);
 
   if (loading) {
     return (
@@ -339,12 +346,24 @@ export function DetailsPage() {
             className="detailsHeroImage"
           />
           <span className="detailsInterestBadge">{interestsLabel}</span>
+
           <button
             className="detailsCloseButton"
             onClick={() => navigate(-1)}
             aria-label="Close details"
           >
-            ×
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
           </button>
         </figure>
 
@@ -553,7 +572,7 @@ export function DetailsPage() {
                             </div>
                           </div>
                           <span className="detailsReviewRating">
-                            {score ?? "?"}
+                            {formatRating(score)}
                             <span className="detailsReviewRatingMax">/10</span>
                           </span>
                         </header>
@@ -690,7 +709,7 @@ export function DetailsPage() {
                             </div>
                           </div>
                           <span className="detailsReviewRating">
-                            {review.rating ?? "?"}
+                            {formatRating(review.rating)}
                             <span className="detailsReviewRatingMax">/5</span>
                           </span>
                         </header>
