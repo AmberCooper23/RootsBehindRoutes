@@ -18,7 +18,7 @@ function formatShortDate(dateVal) {
 export default function VisitedExperiences({ visitedExperiences }) {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 3;
+  const itemsPerPage = 4;
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;

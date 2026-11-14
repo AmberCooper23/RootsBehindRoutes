@@ -5,8 +5,8 @@
   --text-lp-color: #000000;
   --bg-lp-color: #fdfbf7;
 
-  --font-xl: 3rem;
-  --font-lg: 2.25rem;
+  --font-xl: 2.5rem;
+  --font-lg: 2rem;
   --font-md: 1.5rem;
   --font-sm: 1.25rem;
   --font-xs: 1.125rem;
@@ -21,7 +21,7 @@
 
 .profileHero {
   background-color: var(--primary-lp-color);
-  padding: 4rem 2rem 6rem;
+  padding: 1rem 1rem 2rem;
   position: relative;
   overflow: hidden;
 }
@@ -41,25 +41,25 @@
 
 .profileHeroInner {
   position: relative;
-  max-width: 56rem;
+  max-width: 75rem;
   margin: 0 auto;
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 .profileAvatarWrapper {
   flex-shrink: 0;
-  width: 8rem;
-  height: 8rem;
+  width: 6.5rem;
+  height: 6.5rem;
   background-color: var(--secondary-lp-color);
-  border: 0.25rem solid rgba(253, 251, 247, 0.4);
+  border: 0.2rem solid rgba(253, 251, 247, 0.4);
   border-radius: 50%;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.2);
 }
 
 .profileAvatarImg {
@@ -69,7 +69,7 @@
 }
 
 .profileAvatarIcon {
-  font-size: 4rem;
+  font-size: 3rem;
   color: var(--primary-lp-color);
   line-height: 1;
 }
@@ -78,7 +78,6 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-bottom: 0.5rem;
 }
 
 .profileName {
@@ -86,7 +85,7 @@
   font-size: var(--font-xl);
   font-weight: 700;
   color: var(--secondary-lp-color);
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.25rem 0;
   line-height: 1.1;
   text-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
 }
@@ -98,26 +97,26 @@
   background-color: rgba(253, 251, 247, 0.15);
   border: 0.0625rem solid rgba(253, 251, 247, 0.3);
   color: rgba(253, 251, 247, 0.9);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  padding: 0.35rem 1rem;
+  padding: 0.25rem 0.75rem;
   border-radius: 2rem;
   width: fit-content;
 }
 
 .profileRoleDot {
-  width: 0.5rem;
-  height: 0.5rem;
+  width: 0.4rem;
+  height: 0.4rem;
   border-radius: 50%;
   background-color: #d4a574;
 }
 
 .profileContent {
-  max-width: 56rem;
+  max-width: 75rem;
   margin: 0 auto;
-  padding: 0 2rem 4rem;
-  transform: translateY(-3rem);
+  padding: 0 2rem 3rem;
+  transform: translateY(-2rem);
 }
 
 .profileStatsBar {
@@ -125,8 +124,8 @@
   grid-template-columns: repeat(3, 1fr);
   background-color: var(--secondary-lp-color);
   border: 0.0625rem solid rgba(139, 115, 85, 0.2);
-  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.07);
-  margin-bottom: 2.5rem;
+  box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.07);
+  margin-bottom: 1.5rem;
   border-radius: 0.5rem;
   overflow: hidden;
 }
@@ -135,8 +134,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
-  padding: 1.5rem 1rem;
+  gap: 0.25rem;
+  padding: 1rem;
   border-right: 0.0625rem solid rgba(139, 115, 85, 0.15);
 }
 
@@ -153,7 +152,7 @@
 }
 
 .profileStatLabel {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #7a6552;
   text-transform: uppercase;
   letter-spacing: 0.1em;
@@ -164,14 +163,14 @@
 
 .profileGrid {
   display: grid;
-  grid-template-columns: 1fr 1.5fr;
-  gap: 2rem;
+  grid-template-columns: 1fr 2fr;
+  gap: 1.5rem;
 }
 
 .profileCard {
   background-color: var(--secondary-lp-color);
   border: 0.0625rem solid rgba(139, 115, 85, 0.18);
-  padding: 1.5rem;
+  padding: 1.25rem;
   border-radius: 0.5rem;
   box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.03);
 }
@@ -184,14 +183,14 @@
   color: var(--primary-lp-color);
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  margin: 0 0 1rem 0;
-  padding-bottom: 0.75rem;
+  margin: 0 0 0.75rem 0;
+  padding-bottom: 0.5rem;
   border-bottom: 0.0625rem solid rgba(139, 115, 85, 0.18);
   width: 100%;
 }
 
 .profileVisitedHeader {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .profileVisitedTitle {
@@ -201,7 +200,7 @@
 }
 
 .profileCardSubtitle {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   color: #7a6552;
   margin: 0;
   font-style: italic;
@@ -209,7 +208,7 @@
 }
 
 .profileInterestsCard {
-  margin-top: 1.5rem;
+  margin-top: 1rem;
 }
 
 .profileInterestSelectWrapper {
@@ -221,7 +220,7 @@
 
 .profileInterestSelect {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.5rem;
   border: 0.0625rem solid rgba(139, 115, 85, 0.3);
   border-radius: 0.25rem;
   font-family: "Lora", serif;
@@ -237,29 +236,30 @@
 }
 
 .profileInterestCancel {
-  padding: 0.5rem;
+  padding: 0.4rem;
   font-size: 0.85rem;
 }
 
 .profileBio {
   font-size: var(--font-xxs);
   color: var(--text-lp-color);
-  line-height: 1.6;
-  margin: 0 0 1rem 0;
+  line-height: 1.5;
+  margin: 0 0 0.75rem 0;
   font-style: italic;
+  text-align: left;
 }
 
 .profileBioForm {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .profileEditToggle {
   background: none;
   border: none;
   color: var(--primary-lp-color);
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   cursor: pointer;
   padding: 0;
   line-height: 1;
@@ -272,11 +272,11 @@
 
 .profileBioEdit {
   width: 100%;
-  min-height: 4rem;
+  min-height: 3rem;
   font-size: var(--font-xxs);
-  padding: 0.75rem;
+  padding: 0.5rem;
   border: 0.0625rem solid rgba(139, 115, 85, 0.3);
-  border-radius: 0.5rem;
+  border-radius: 0.25rem;
   font-family: "Lora", serif;
   background-color: var(--bg-lp-color);
   color: var(--text-lp-color);
@@ -291,46 +291,46 @@
 
 .profileBioActions {
   display: flex;
-  gap: 0.75rem;
+  gap: 0.5rem;
   margin-bottom: 0;
 }
 
 .profileAboutGrid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-  padding-top: 0.75rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding-top: 0.5rem;
   border-top: 0.0625rem solid rgba(139, 115, 85, 0.1);
 }
 
 .profileAboutItem {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.1rem;
 }
 
 .profileAboutLabel {
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   color: #7a6552;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  font-weight: 600;
+  font-weight: bold;
 }
 
 .profileAboutValue {
-  font-size: var(--font-xxs);
+  font-size: 0.85rem;
   color: var(--text-lp-color);
   font-weight: 500;
 }
 
 .profileAboutInput {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.4rem;
   border: 0.0625rem solid rgba(139, 115, 85, 0.3);
-  border-radius: 0.5rem;
+  border-radius: 0.25rem;
   font-family: "Lora", serif;
-  font-size: var(--font-xxs);
+  font-size: 0.85rem;
   background-color: var(--bg-lp-color);
   color: var(--text-lp-color);
   box-sizing: border-box;
@@ -349,11 +349,11 @@
 }
 
 .profileJoinDate {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #9a8878;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.25rem;
   margin: 0;
 }
 
@@ -371,10 +371,10 @@
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.25rem 0.5rem;
+  padding: 0.2rem 0.5rem;
   background-color: #f5efe7;
   border: 0.0625rem solid rgba(139, 115, 85, 0.25);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #5c4e3a;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -385,7 +385,7 @@
   background: none;
   border: none;
   color: #9a8878;
-  font-size: 1rem;
+  font-size: 0.9rem;
   line-height: 1;
   cursor: pointer;
   padding: 0;
@@ -403,8 +403,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 1.5rem;
+  height: 1.5rem;
   border-radius: 50%;
   border: 0.0625rem solid rgba(139, 115, 85, 0.5);
   background-color: transparent;
@@ -422,22 +422,22 @@
 }
 
 .profileAddInterestIconBtn svg {
-  width: 0.85rem;
-  height: 0.85rem;
+  width: 0.75rem;
+  height: 0.75rem;
 }
 
 .profileNavActions {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
+  gap: 0.5rem;
+  margin-top: 1rem;
 }
 
 .profileActionBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.875rem 1rem;
+  padding: 0.6rem 1rem;
   background-color: transparent;
   border: 0.0625rem solid rgba(139, 115, 85, 0.3);
   border-radius: 0.25rem;
@@ -476,14 +476,14 @@
 
 .profileVisitedGrid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
 }
 
 .visitedPlaceCard {
   position: relative;
-  height: 8.75rem;
-  border-radius: 1.25rem;
+  height: 8.5rem;
+  border-radius: 1rem;
   overflow: hidden;
   cursor: pointer;
   box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.15);
@@ -520,9 +520,9 @@
 
 .visitedPlaceCardContent {
   position: absolute;
-  bottom: 1rem;
-  left: 1.25rem;
-  right: 4rem;
+  bottom: 0.75rem;
+  left: 1rem;
+  right: 3.5rem;
   z-index: 3;
   display: flex;
   flex-direction: column;
@@ -532,9 +532,9 @@
 .visitedPlaceCardTitle {
   color: var(--secondary-lp-color);
   font-family: "Lora", serif;
-  font-size: var(--font-md);
+  font-size: 1.3rem;
   font-weight: 700;
-  margin: 0 0 0.35rem 0;
+  margin: 0 0 0.2rem 0;
   text-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5);
   white-space: nowrap;
   overflow: hidden;
@@ -545,7 +545,7 @@
 
 .visitedPlaceCardMeta {
   display: flex;
-  gap: 0.4rem;
+  gap: 0.3rem;
   flex-wrap: wrap;
 }
 
@@ -554,19 +554,19 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   color: var(--secondary-lp-color);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 500;
-  padding: 0.2rem 0.6rem;
+  padding: 0.15rem 0.5rem;
   border-radius: 2rem;
   border: 0.0625rem solid rgba(255, 255, 255, 0.1);
 }
 
 .visitedPlaceCardArrow {
   position: absolute;
-  bottom: 1rem;
-  right: 1rem;
-  width: 2.25rem;
-  height: 2.25rem;
+  bottom: 0.75rem;
+  right: 0.75rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(8px);
@@ -588,7 +588,7 @@
 .profilePaginationWrapper {
   display: flex;
   justify-content: center;
-  margin-top: 1.5rem;
+  margin-top: 1rem;
 }
 
 .profilePagination {
@@ -597,7 +597,7 @@
   gap: 0.5rem;
   background-color: #f5efe7;
   border: 0.0625rem solid rgba(139, 115, 85, 0.15);
-  padding: 0.25rem;
+  padding: 0.2rem;
   border-radius: 2rem;
 }
 
@@ -606,8 +606,8 @@
   border: none;
   cursor: pointer;
   color: var(--primary-lp-color);
-  width: 2rem;
-  height: 2rem;
+  width: 1.75rem;
+  height: 1.75rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -627,10 +627,10 @@
 }
 
 .profilePaginationText {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--text-lp-color);
   font-weight: 600;
-  min-width: 3rem;
+  min-width: 2.5rem;
   text-align: center;
 }
 
@@ -640,7 +640,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 4rem 2rem;
+  padding: 3rem 1.5rem;
   background-color: var(--bg-lp-color);
   border: 0.0625rem dashed rgba(139, 115, 85, 0.3);
   border-radius: 0.5rem;
@@ -649,19 +649,19 @@
 }
 
 .profileEmptyIcon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
   opacity: 0.7;
 }
 
 .profileEmptyState p {
   margin: 0;
-  font-size: var(--font-xxs);
+  font-size: 0.9rem;
   font-style: italic;
 }
 
 .profileEmptyStateBtn {
-  margin-top: 1rem;
+  margin-top: 0.75rem;
 }
 
 @media (max-width: 48rem) {
@@ -690,5 +690,13 @@
 
   .profileStat:last-child {
     border-bottom: none;
+  }
+
+  .profileAboutGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .profileVisitedGrid {
+    grid-template-columns: 1fr;
   }
 }
