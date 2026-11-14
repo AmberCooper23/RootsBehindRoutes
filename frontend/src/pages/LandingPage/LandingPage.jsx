@@ -10,12 +10,40 @@ import { fetchAllPlaces } from "../../../api/placesApi";
 import { fetchAllActivities } from "../../../api/activitiesApi";
 import { getBookmarks } from "../../../api/bookmarksApi";
 
+const DAY_KEYS = [
+  "sunday",
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+];
+
+function isCurrentlyOpen(hours) {
+  if (!hours) return false;
+  const now = new Date();
+  const todayKey = DAY_KEYS[now.getDay()];
+  const today = hours[todayKey];
+
+  if (!today || !today.open || !today.close) return false;
+
+  const [openH, openM] = today.open.split(":").map(Number);
+  const [closeH, closeM] = today.close.split(":").map(Number);
+
+  const nowMinutes = now.getHours() * 60 + now.getMinutes();
+  const openMinutes = openH * 60 + openM;
+  const closeMinutes = closeH * 60 + closeM;
+
+  return nowMinutes >= openMinutes && nowMinutes < closeMinutes;
+}
+
 export function LandingPage() {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
 
   const [filter, setFilter] = useState({
-    interest: null, // null = "All" (no filter)
+    interests: [],
     sort: "Most Endorsed",
   });
 
@@ -92,14 +120,32 @@ export function LandingPage() {
   };
 
   const filteredExperiences = experiences.filter((experience) => {
-    if (!filter.interest) return true; // "All" — no filter
-    return Array.isArray(experience.interests)
-      ? experience.interests.includes(filter.interest)
-      : experience.interests === filter.interest;
+    // 1. Interest Filter
+    if (filter.interests.length > 0) {
+      if (!experience.interests) return false;
+      const expInterests = Array.isArray(experience.interests)
+        ? experience.interests
+        : [experience.interests];
+      if (
+        !filter.interests.every((interest) => expInterests.includes(interest))
+      ) {
+        return false;
+      }
+    }
+
+    // 2. Now Open Filter
+    if (filter.sort === "Now Open") {
+      if (!isCurrentlyOpen(experience.hours)) return false;
+    }
+
+    return true;
   });
 
   const sortedExperiences = [...filteredExperiences].sort((a, b) => {
     switch (filter.sort) {
+      case "Now Open":
+        // Since we already filtered out closed places, just sort by local rating
+        return (b.localRating ?? 0) - (a.localRating ?? 0);
       case "Highest Rated":
         return (b.touristRating ?? 0) - (a.touristRating ?? 0);
       case "Most Endorsed":
