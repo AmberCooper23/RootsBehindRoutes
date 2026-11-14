@@ -259,9 +259,6 @@ export function UserProfile() {
             />
 
             <nav className="profileNavActions" aria-label="Account actions">
-              <Link to="/settings" className="profileActionBtn">
-                Account Settings
-              </Link>
               <button
                 onClick={handleLogout}
                 className="profileActionBtn profileActionBtnDanger"
