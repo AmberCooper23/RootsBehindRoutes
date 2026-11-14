@@ -189,7 +189,6 @@ export function BookmarksPage() {
                 }`
               : "Your Saved List"}
           </h2>
-          <hr className="bookmarksBodyDivider" />
         </header>
         {renderContent()}
       </section>
