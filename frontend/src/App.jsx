@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { NavBar } from "./components/NavBar/NavBar";
+import { ScrollToTop } from "./components/ScrollToTop/ScrollToTop";
 import { LandingPage } from "./pages/LandingPage/LandingPage";
 import { UserProfile } from "./pages/UserProfilePage/UserProfilePage";
 import { BookmarksPage } from "./pages/BookmarksPage/BookmarksPage";
@@ -14,6 +15,7 @@ function App() {
 
   return (
     <>
+      <ScrollToTop />
       <NavBar user={user} />
       <Routes>
         <Route path="/" element={<LandingPage user={user} />} />
