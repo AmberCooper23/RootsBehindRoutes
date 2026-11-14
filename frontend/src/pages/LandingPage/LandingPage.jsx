@@ -120,7 +120,6 @@ export function LandingPage() {
   };
 
   const filteredExperiences = experiences.filter((experience) => {
-    // 1. Interest Filter
     if (filter.interests.length > 0) {
       if (!experience.interests) return false;
       const expInterests = Array.isArray(experience.interests)
@@ -133,7 +132,6 @@ export function LandingPage() {
       }
     }
 
-    // 2. Now Open Filter
     if (filter.sort === "Now Open") {
       if (!isCurrentlyOpen(experience.hours)) return false;
     }
@@ -144,7 +142,6 @@ export function LandingPage() {
   const sortedExperiences = [...filteredExperiences].sort((a, b) => {
     switch (filter.sort) {
       case "Now Open":
-        // Since we already filtered out closed places, just sort by local rating
         return (b.localRating ?? 0) - (a.localRating ?? 0);
       case "Highest Rated":
         return (b.touristRating ?? 0) - (a.touristRating ?? 0);
@@ -168,7 +165,7 @@ export function LandingPage() {
               Discover Authentic Experiences
             </h2>
             <p className="discoverSubtitle">
-              Endorsed by locals, experienced by travelers like you
+              Endorsed by locals, experienced by travellers like you
             </p>
           </span>
           <p className="discoverCount">

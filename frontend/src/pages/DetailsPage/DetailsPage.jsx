@@ -393,7 +393,7 @@ export function DetailsPage() {
               </span>
             </article>
             <article className="detailsRatingBox">
-              <span className="detailsRatingLabel">Traveler Rating</span>
+              <span className="detailsRatingLabel">traveller Rating</span>
               <span className="detailsRatingValue">
                 {dynamicTouristRating}
                 <span className="detailsRatingMax">/5</span>
@@ -659,7 +659,7 @@ export function DetailsPage() {
               {reviews.length === 0 ? (
                 <p className="detailsDescription">
                   No tourist reviews yet. Share your experience to help future
-                  travelers.
+                  travellers.
                 </p>
               ) : (
                 <ul className="detailsReviewList">
@@ -668,7 +668,7 @@ export function DetailsPage() {
                     const userName =
                       reviewerNames[review.userId] ||
                       review.userDisplayName ||
-                      "Traveler";
+                      "traveller";
                     const dateToShow = review.visitDate || review.createdAt;
 
                     return (

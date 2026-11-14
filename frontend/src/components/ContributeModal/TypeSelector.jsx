@@ -36,7 +36,7 @@ export function TypeSelector({ onSelectType }) {
           <h4 className="contributeModalTypeButtonTitle">Local</h4>
           <p className="contributeModalTypeButtonDescription">
             Endorse this place based on your local knowledge and connection to
-            the culture, so travelers know it's genuinely worth visiting.
+            the culture, so travellers know it's genuinely worth visiting.
           </p>
           <section className="contributeModalTypeButtonInfo">
             <p className="contributeModalTypeButtonInfoTitle">
@@ -64,7 +64,7 @@ export function TypeSelector({ onSelectType }) {
           <h4 className="contributeModalTypeButtonTitle">Tourist</h4>
           <p className="contributeModalTypeButtonDescription">
             Share your experience visiting places in Johannesburg to help other
-            travelers make informed decisions.
+            travellers make informed decisions.
           </p>
           <section className="contributeModalTypeButtonInfo contributeModalTypeButtonInfoTourist">
             <p className="contributeModalTypeButtonInfoTitle">

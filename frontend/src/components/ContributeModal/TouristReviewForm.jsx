@@ -31,7 +31,7 @@ export function TouristReviewForm({ targetName, onSubmit, onCancel }) {
       <aside className="contributeModalAlert contributeModalAlertTourist">
         <h3 className="contributeModalAlertTitle">Reviewing {targetName}</h3>
         <p className="contributeModalAlertDescription">
-          Share your honest experience to help other travelers. Your feedback on
+          Share your honest experience to help other travellers. Your feedback on
           accessibility, facilities, and overall experience is valuable.
         </p>
       </aside>
@@ -100,7 +100,7 @@ export function TouristReviewForm({ targetName, onSubmit, onCancel }) {
             className="contributeModalTextarea"
           />
           <p className="contributeModalTextareaHint">
-            Minimum 50 characters. Be specific and helpful to other travelers.
+            Minimum 50 characters. Be specific and helpful to other travellers.
           </p>
         </fieldset>
         <fieldset className="contributeModalFormGroup">
@@ -124,7 +124,7 @@ export function TouristReviewForm({ targetName, onSubmit, onCancel }) {
                   Yes, I'd recommend it
                 </p>
                 <p className="contributeModalRadioDescription">
-                  Worth visiting for most travelers
+                  Worth visiting for most travellers
                 </p>
               </section>
             </label>
@@ -144,7 +144,7 @@ export function TouristReviewForm({ targetName, onSubmit, onCancel }) {
                   Maybe, depends on preferences
                 </p>
                 <p className="contributeModalRadioDescription">
-                  Good for specific types of travelers
+                  Good for specific types of travellers
                 </p>
               </section>
             </label>

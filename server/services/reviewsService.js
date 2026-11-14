@@ -16,13 +16,13 @@ async function attachUserDisplayName(review) {
     if (userSnap.exists) {
       return {
         ...review,
-        userDisplayName: userSnap.data().displayName || "Traveler",
+        userDisplayName: userSnap.data().displayName || "traveller",
       };
     }
   } catch (err) {
     console.error("❌ Error fetching user for review:", err);
   }
-  return { ...review, userDisplayName: "Traveler" };
+  return { ...review, userDisplayName: "traveller" };
 }
 
 function normalizeReview(data) {
@@ -35,7 +35,7 @@ function normalizeReview(data) {
 }
 
 async function createReview(data) {
-  let userDisplayName = "Traveler";
+  let userDisplayName = "traveller";
   const uid = normalizeRef(data.userId);
 
   if (uid) {

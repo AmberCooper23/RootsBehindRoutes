@@ -81,7 +81,7 @@ export function ContributeModal({ isOpen, onClose, target, onSuccess }) {
           <p className="contributeModalSuccessMessage">
             {userType === "local"
               ? "Your endorsement has been submitted and this place's local rating has been updated."
-              : "Your review has been submitted and will help future travelers make informed decisions."}
+              : "Your review has been submitted and will help future travellers make informed decisions."}
           </p>
         </section>
       );
@@ -140,7 +140,7 @@ export function ContributeModal({ isOpen, onClose, target, onSuccess }) {
           <p className="contributeModalSubtitle">
             {!userType && "Help others discover authentic experiences"}
             {userType === "local" && "Share why locals value this place"}
-            {userType === "tourist" && "Your feedback helps future travelers"}
+            {userType === "tourist" && "Your feedback helps future travellers"}
           </p>
         </header>
         <section className="contributeModalBody">{renderBody()}</section>

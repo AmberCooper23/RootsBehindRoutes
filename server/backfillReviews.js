@@ -19,11 +19,9 @@ async function backfill() {
 
     const userObj = { id: doc.id, name: userData.displayName };
 
-    // Sort them based on the 'role' field in your database
     if (userData.role === "local") {
       localUsers.push(userObj);
     } else {
-      // Default to tourist if role is missing or set to tourist
       touristUsers.push(userObj);
     }
   });
@@ -41,13 +39,12 @@ async function backfill() {
 
     let assignedUser = { id: cleanId(entry.userId), name: "Anonymous" };
 
-    // Strictly separate the logic based on the entry type
     if (entry.type === "review") {
       if (touristUsers.length > 0) {
         assignedUser = touristUsers[tIndex % touristUsers.length];
         tIndex++;
       } else {
-        assignedUser.name = "Traveler";
+        assignedUser.name = "traveller";
       }
     } else if (entry.type === "endorsement") {
       if (localUsers.length > 0) {

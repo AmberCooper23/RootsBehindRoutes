@@ -147,7 +147,7 @@ export function AboutPage() {
           <hr className="aboutCtaDivider" />
           <p className="aboutCtaTagline">
             Whether you're a local who wants to share your culture responsibly,
-            or a traveler seeking authentic experiences, we invite you to be
+            or a traveller seeking authentic experiences, we invite you to be
             part of this journey.
           </p>
 
