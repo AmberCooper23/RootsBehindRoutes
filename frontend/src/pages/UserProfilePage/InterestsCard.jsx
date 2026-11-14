@@ -42,14 +42,38 @@ export default function InterestsCard({
             </button>
           </li>
         ))}
+
+        {!isAdding && availableOptions.length > 0 && (
+          <li>
+            <button
+              type="button"
+              onClick={() => setIsAdding(true)}
+              className="profileAddInterestIconBtn"
+              aria-label="Add Interest"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+            </button>
+          </li>
+        )}
       </ul>
 
-      {isAdding ? (
+      {isAdding && (
         <div className="profileInterestSelectWrapper">
           <select
             className="profileInterestSelect"
             onChange={handleSelect}
             defaultValue=""
+            autoFocus
           >
             <option value="" disabled>
               Select an interest...
@@ -68,17 +92,6 @@ export default function InterestsCard({
             Cancel
           </button>
         </div>
-      ) : (
-        <button
-          type="button"
-          onClick={() => setIsAdding(true)}
-          className="profileActionBtn profileAddInterestBtn"
-          disabled={availableOptions.length === 0}
-        >
-          {availableOptions.length === 0
-            ? "All Interests Added"
-            : "Add Interest"}
-        </button>
       )}
     </article>
   );
