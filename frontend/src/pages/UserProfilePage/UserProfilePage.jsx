@@ -55,6 +55,9 @@ export function UserProfile() {
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [visitedExperiences, setVisitedExperiences] = useState([]);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
+
   const [stats, setStats] = useState({
     placesVisited: 0,
     savedPlaces: 0,
@@ -91,19 +94,18 @@ export function UserProfile() {
           (e) => e.userId === user.uid,
         );
 
-        const visitedPlaceIds = new Set([
+        const uniquePlaceIds = new Set([
           ...(profileData?.placesVisited || []),
           ...myReviews.map((r) => r.placeId).filter(Boolean),
           ...myEndorsements.map((e) => e.placeId).filter(Boolean),
         ]);
 
-        const visitedActivityIds = new Set([
+        const uniqueActivityIds = new Set([
           ...(profileData?.activitiesTried || []),
           ...myReviews.map((r) => r.activityId).filter(Boolean),
           ...myEndorsements.map((e) => e.activityId).filter(Boolean),
         ]);
 
-        // 👇 Bulletproof deduplication: Extract just the IDs into a Set
         const uniqueSavedIds = new Set(
           (Array.isArray(myBookmarks) ? myBookmarks : [])
             .map((b) => b.itemId || b.itemPath || b.placeId)
@@ -111,56 +113,54 @@ export function UserProfile() {
         );
 
         setStats({
-          placesVisited: visitedPlaceIds.size + visitedActivityIds.size,
-          savedPlaces: uniqueSavedIds.size, // 👈 The Set size guarantees no duplicates
+          placesVisited: uniquePlaceIds.size + uniqueActivityIds.size,
+          savedPlaces: uniqueSavedIds.size,
           contributions: profileData?.activitiesTried?.length || 0,
         });
 
-        const combinedExperiences = [
-          ...allPlaces
-            .filter((p) => visitedPlaceIds.has(p.id))
-            .map((p) => ({ ...p, type: "place" })),
-          ...allActivities
-            .filter((a) => visitedActivityIds.has(a.id))
-            .map((a) => ({ ...a, type: "activity" })),
+        const combinedLogs = [
+          ...myReviews.map((r) => ({ ...r, logType: "review" })),
+          ...myEndorsements.map((e) => ({ ...e, logType: "endorsement" })),
         ];
 
-        const formattedExperiences = combinedExperiences.map((item) => {
-          const review = myReviews.find(
-            (r) =>
-              (item.type === "place" && r.placeId === item.id) ||
-              (item.type === "activity" && r.activityId === item.id),
-          );
-          const endorsement = myEndorsements.find(
-            (e) =>
-              (item.type === "place" && e.placeId === item.id) ||
-              (item.type === "activity" && e.activityId === item.id),
-          );
-
-          let rating = null;
-          let scale = "";
-
-          if (review) {
-            rating = review.rating;
-            scale = "/5";
-          } else if (endorsement) {
-            rating = endorsement.score || endorsement.rating;
-            scale = "/10";
-          }
-
-          return {
-            ...item,
-            userRating: rating,
-            ratingScale: scale,
-            userVisitDate:
-              review?.visitDate ||
-              review?.createdAt ||
-              endorsement?.createdAt ||
-              null,
-          };
+        combinedLogs.sort((a, b) => {
+          const dateA = new Date(a.visitDate || a.createdAt || 0).getTime();
+          const dateB = new Date(b.visitDate || b.createdAt || 0).getTime();
+          return dateB - dateA;
         });
 
-        setVisitedExperiences(formattedExperiences);
+        const formattedLogs = combinedLogs
+          .map((log) => {
+            const isPlace = !!log.placeId;
+            const item = isPlace
+              ? allPlaces.find((p) => p.id === log.placeId)
+              : allActivities.find((a) => a.id === log.activityId);
+
+            if (!item) return null;
+
+            let rating = null;
+            let scale = "";
+
+            if (log.logType === "review") {
+              rating = log.rating;
+              scale = "/5";
+            } else if (log.logType === "endorsement") {
+              rating = log.score || log.rating;
+              scale = "/10";
+            }
+
+            return {
+              ...item,
+              type: isPlace ? "place" : "activity",
+              logId: log.id,
+              userRating: rating,
+              ratingScale: scale,
+              userVisitDate: log.visitDate || log.createdAt,
+            };
+          })
+          .filter(Boolean);
+
+        setVisitedExperiences(formattedLogs);
       } catch (error) {
         console.error("Failed to load profile:", error);
       }
@@ -217,6 +217,22 @@ export function UserProfile() {
     } catch (error) {
       console.error("Failed to remove interest:", error);
     }
+  };
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentExperiences = visitedExperiences.slice(
+    indexOfFirstItem,
+    indexOfLastItem,
+  );
+  const totalPages = Math.ceil(visitedExperiences.length / itemsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
   };
 
   if (!user) {
@@ -352,7 +368,7 @@ export function UserProfile() {
               <p className="profileJoinDate">Member since {joinDate}</p>
             </article>
 
-            <article className="profileCard" style={{ marginTop: "1.5rem" }}>
+            <article className="profileCard profileInterestsCard">
               <h2 className="profileCardTitle">Interests</h2>
 
               <ul className="profileTags">
@@ -395,73 +411,134 @@ export function UserProfile() {
           </aside>
 
           <article className="profileCard profileVisitedCard">
-            <h2 className="profileCardTitle">Places & Activities Visited</h2>
+            <div className="profileVisitedHeader">
+              <h2 className="profileCardTitle profileVisitedTitle">
+                Places & Activities Visited
+              </h2>
+              <p className="profileCardSubtitle">
+                You have logged {visitedExperiences.length}{" "}
+                {visitedExperiences.length === 1 ? "experience" : "experiences"}
+              </p>
+            </div>
 
             {visitedExperiences.length > 0 ? (
-              <div className="profileVisitedGrid">
-                {visitedExperiences.map((item) => (
-                  <div
-                    key={`${item.type}-${item.id}`}
-                    className="visitedPlaceCard"
-                    onClick={() => navigate(`/Details/${item.type}/${item.id}`)}
-                  >
-                    <img
-                      src={item.image || "/placeholder.png"}
-                      alt={item.name}
-                      className="visitedPlaceCardImg"
-                    />
-
-                    <div className="visitedPlaceCardOverlay"></div>
-
-                    <div className="visitedPlaceCardContent">
-                      <h3 className="visitedPlaceCardTitle">{item.name}</h3>
-
-                      <div className="visitedPlaceCardMeta">
-                        <span className="visitedPlaceCardPill">
-                          ★{" "}
-                          {item.userRating
-                            ? `${item.userRating}${item.ratingScale}`
-                            : "Not rated"}
-                        </span>
-
-                        {item.userVisitDate && (
-                          <span className="visitedPlaceCardPill">
-                            {formatShortDate(item.userVisitDate)}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    <button
-                      className="visitedPlaceCardArrow"
-                      aria-label="View details"
+              <>
+                <div className="profileVisitedGrid">
+                  {currentExperiences.map((item) => (
+                    <div
+                      key={`${item.type}-${item.logId}`}
+                      className="visitedPlaceCard"
+                      onClick={() =>
+                        navigate(`/Details/${item.type}/${item.id}`)
+                      }
                     >
-                      <svg
-                        viewBox="0 0 24 24"
-                        width="20"
-                        height="20"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
+                      <img
+                        src={item.image || "/placeholder.png"}
+                        alt={item.name}
+                        className="visitedPlaceCardImg"
+                      />
+
+                      <div className="visitedPlaceCardOverlay"></div>
+
+                      <div className="visitedPlaceCardContent">
+                        <h3 className="visitedPlaceCardTitle">{item.name}</h3>
+
+                        <div className="visitedPlaceCardMeta">
+                          <span className="visitedPlaceCardPill">
+                            ★{" "}
+                            {item.userRating
+                              ? `${item.userRating}${item.ratingScale}`
+                              : "Not rated"}
+                          </span>
+
+                          {item.userVisitDate && (
+                            <span className="visitedPlaceCardPill">
+                              {formatShortDate(item.userVisitDate)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <button
+                        className="visitedPlaceCardArrow"
+                        aria-label="View details"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </button>
+                        <svg
+                          viewBox="0 0 24 24"
+                          width="20"
+                          height="20"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                {totalPages > 1 && (
+                  <div className="profilePaginationWrapper">
+                    <div className="profilePagination">
+                      <button
+                        className="profilePaginationBtn"
+                        onClick={handlePrevPage}
+                        disabled={currentPage === 1}
+                      >
+                        <svg
+                          viewBox="0 0 24 24"
+                          width="16"
+                          height="16"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M15 19l-7-7 7-7"
+                          />
+                        </svg>
+                      </button>
+                      <span className="profilePaginationText">
+                        {currentPage} / {totalPages}
+                      </span>
+                      <button
+                        className="profilePaginationBtn"
+                        onClick={handleNextPage}
+                        disabled={currentPage === totalPages}
+                      >
+                        <svg
+                          viewBox="0 0 24 24"
+                          width="16"
+                          height="16"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
-                ))}
-              </div>
+                )}
+              </>
             ) : (
               <div className="profileEmptyState">
                 <span className="profileEmptyIcon">🗺️</span>
                 <p>You haven't explored any places or activities yet.</p>
                 <button
                   onClick={() => navigate("/")}
-                  className="profileActionBtn"
-                  style={{ marginTop: "1rem" }}
+                  className="profileActionBtn profileEmptyStateBtn"
                 >
                   Start Exploring
                 </button>
