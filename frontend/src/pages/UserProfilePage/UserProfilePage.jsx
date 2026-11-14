@@ -258,7 +258,7 @@ export function UserProfile() {
               handleAddInterest={handleAddInterest}
             />
 
-            <nav className="profileNavActions" aria-label="Account actions">
+            <nav className="profileNavActions">
               <button
                 onClick={handleLogout}
                 className="profileActionBtn profileActionBtnDanger"
