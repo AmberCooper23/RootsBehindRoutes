@@ -28,9 +28,13 @@ export function UserProfile() {
 
   const [profile, setProfile] = useState(null);
   const [bio, setBio] = useState("");
+  const [age, setAge] = useState("");
+  const [birthday, setBirthday] = useState("");
+  const [area, setArea] = useState("");
   const [interests, setInterests] = useState([]);
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [visitedExperiences, setVisitedExperiences] = useState([]);
+
   const [stats, setStats] = useState({
     placesVisited: 0,
     savedPlaces: 0,
@@ -45,6 +49,9 @@ export function UserProfile() {
         const profileData = await fetchUser(user.uid);
         setProfile(profileData);
         setBio(profileData?.bio || "");
+        setAge(profileData?.age || "");
+        setBirthday(profileData?.birthday || "");
+        setArea(profileData?.area || "");
         setInterests(profileData?.interests || profileData?.Interests || []);
 
         const [
@@ -166,8 +173,8 @@ export function UserProfile() {
     e.preventDefault();
     setIsEditingBio(false);
     try {
-      await addUser(user.uid, { bio });
-      setProfile((prev) => ({ ...prev, bio }));
+      await addUser(user.uid, { bio, age, birthday, area });
+      setProfile((prev) => ({ ...prev, bio, age, birthday, area }));
     } catch (error) {
       console.error("Failed to save bio:", error);
     }
@@ -226,6 +233,12 @@ export function UserProfile() {
             <AboutMeCard
               bio={bio}
               setBio={setBio}
+              age={age}
+              setAge={setAge}
+              birthday={birthday}
+              setBirthday={setBirthday}
+              area={area}
+              setArea={setArea}
               isEditingBio={isEditingBio}
               setIsEditingBio={setIsEditingBio}
               saveBio={saveBio}

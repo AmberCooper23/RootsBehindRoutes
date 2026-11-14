@@ -17,11 +17,35 @@ function formatJoinDate(dateVal) {
 export default function AboutMeCard({
   bio,
   setBio,
+  age,
+  setAge,
+  birthday,
+  setBirthday,
+  area,
+  setArea,
   isEditingBio,
   setIsEditingBio,
   saveBio,
   joinDate,
 }) {
+  const handleBirthdayChange = (e) => {
+    const val = e.target.value;
+    setBirthday(val);
+
+    if (val) {
+      const birthDate = new Date(val);
+      const today = new Date();
+      let calculatedAge = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        calculatedAge--;
+      }
+      setAge(calculatedAge >= 0 ? calculatedAge.toString() : "");
+    } else {
+      setAge("");
+    }
+  };
+
   return (
     <article className="profileCard">
       <header className="profileCardHeader">
@@ -47,6 +71,39 @@ export default function AboutMeCard({
             placeholder="Tell people a little about yourself..."
           />
 
+          <div className="profileAboutGrid">
+            <div className="profileAboutItem">
+              <label className="profileAboutLabel">Age</label>
+              <input
+                type="number"
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
+                className="profileAboutInput"
+                placeholder="Auto-calculated"
+                readOnly={!!birthday}
+              />
+            </div>
+            <div className="profileAboutItem">
+              <label className="profileAboutLabel">Birthday</label>
+              <input
+                type="date"
+                value={birthday}
+                onChange={handleBirthdayChange}
+                className="profileAboutInput"
+              />
+            </div>
+            <div className="profileAboutItem">
+              <label className="profileAboutLabel">Area</label>
+              <input
+                type="text"
+                value={area}
+                onChange={(e) => setArea(e.target.value)}
+                className="profileAboutInput"
+                placeholder="e.g. Johannesburg"
+              />
+            </div>
+          </div>
+
           <div className="profileBioActions">
             <button type="submit" className="profileActionBtn">
               Save
@@ -61,9 +118,26 @@ export default function AboutMeCard({
           </div>
         </form>
       ) : (
-        <p className="profileBio">
-          {bio || "Tell people a little about yourself."}
-        </p>
+        <>
+          <p className="profileBio">
+            {bio || "Tell people a little about yourself."}
+          </p>
+
+          <div className="profileAboutGrid">
+            <div className="profileAboutItem">
+              <span className="profileAboutLabel">Age</span>
+              <span className="profileAboutValue">{age || "-"}</span>
+            </div>
+            <div className="profileAboutItem">
+              <span className="profileAboutLabel">Birthday</span>
+              <span className="profileAboutValue">{birthday || "-"}</span>
+            </div>
+            <div className="profileAboutItem">
+              <span className="profileAboutLabel">Area</span>
+              <span className="profileAboutValue">{area || "-"}</span>
+            </div>
+          </div>
+        </>
       )}
 
       <p className="profileJoinDate">Member since {formatJoinDate(joinDate)}</p>
