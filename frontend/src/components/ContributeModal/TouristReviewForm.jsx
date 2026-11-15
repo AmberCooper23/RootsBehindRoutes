@@ -28,11 +28,11 @@ export function TouristReviewForm({ targetName, onSubmit, onCancel }) {
 
   return (
     <>
-      <aside className="contributeModalAlert contributeModalAlertTourist">
+      <aside className="contributeModalAlert">
         <h3 className="contributeModalAlertTitle">Reviewing {targetName}</h3>
         <p className="contributeModalAlertDescription">
-          Share your honest experience to help other travellers. Your feedback on
-          accessibility, facilities, and overall experience is valuable.
+          Share your honest experience to help other travellers. Your feedback
+          on accessibility, facilities, and overall experience is valuable.
         </p>
       </aside>
       <form onSubmit={handleSubmit} className="contributeModalForm">
@@ -69,6 +69,7 @@ export function TouristReviewForm({ targetName, onSubmit, onCancel }) {
             {RATING_LABELS[formData.rating]}
           </p>
         </fieldset>
+
         <fieldset className="contributeModalFormGroup">
           <label htmlFor="visitDate" className="contributeModalLabel">
             When Did You Visit? *
@@ -84,6 +85,7 @@ export function TouristReviewForm({ targetName, onSubmit, onCancel }) {
             className="contributeModalInput"
           />
         </fieldset>
+
         <fieldset className="contributeModalFormGroup">
           <label htmlFor="review" className="contributeModalLabel">
             Tell Us About Your Experience *
@@ -95,14 +97,15 @@ export function TouristReviewForm({ targetName, onSubmit, onCancel }) {
               setFormData({ ...formData, review: e.target.value })
             }
             placeholder="Share details about your visit, what you enjoyed, and any tips for future visitors..."
-            rows={6}
+            rows={5}
             required
             className="contributeModalTextarea"
           />
           <p className="contributeModalTextareaHint">
-            Minimum 50 characters. Be specific and helpful to other travellers.
+            Minimum 50 characters. Be specific and helpful.
           </p>
         </fieldset>
+
         <fieldset className="contributeModalFormGroup">
           <legend className="contributeModalLabel">
             Would You Recommend This Place? *
@@ -128,6 +131,7 @@ export function TouristReviewForm({ targetName, onSubmit, onCancel }) {
                 </p>
               </section>
             </label>
+
             <label className="contributeModalRadioLabel">
               <input
                 type="radio"
@@ -148,6 +152,7 @@ export function TouristReviewForm({ targetName, onSubmit, onCancel }) {
                 </p>
               </section>
             </label>
+
             <label className="contributeModalRadioLabel">
               <input
                 type="radio"
@@ -170,6 +175,7 @@ export function TouristReviewForm({ targetName, onSubmit, onCancel }) {
             </label>
           </section>
         </fieldset>
+
         <footer className="contributeModalActions">
           <button
             type="submit"

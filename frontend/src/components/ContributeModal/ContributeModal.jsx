@@ -103,7 +103,7 @@ export function ContributeModal({ isOpen, onClose, target, onSuccess }) {
           <p className="contributeModalSuccessMessage">
             {userType === "local"
               ? "Your endorsement has been submitted and this place's local rating has been updated."
-              : "Your review has been submitted and will help future travelers make informed decisions."}
+              : "Your review has been submitted and will help future travellers make informed decisions."}
           </p>
         </section>
       );
@@ -111,22 +111,12 @@ export function ContributeModal({ isOpen, onClose, target, onSuccess }) {
 
     if (!user) {
       return (
-        <section
-          className="contributeModalSuccess"
-          style={{ textAlign: "center", padding: "2rem 1rem" }}
-        >
+        <section className="contributeModalSuccess">
           <h3 className="contributeModalSuccessTitle">Sign In Required</h3>
-          <p
-            className="contributeModalSuccessMessage"
-            style={{ marginBottom: "1.5rem" }}
-          >
+          <p className="contributeModalSuccessMessage">
             You need to be logged in to contribute your voice.
           </p>
-          <button
-            onClick={handleLogin}
-            className="contributeModalSubmit"
-            style={{ maxWidth: "250px", margin: "0 auto" }}
-          >
+          <button onClick={handleLogin} className="contributeModalSubmit">
             Login with Google
           </button>
         </section>
@@ -165,18 +155,24 @@ export function ContributeModal({ isOpen, onClose, target, onSuccess }) {
   return (
     <aside className="contributeModalOverlay" onClick={handleClose}>
       <article className="contributeModal" onClick={(e) => e.stopPropagation()}>
-        <header
-          className={`contributeModalHeader ${
-            userType === "tourist" ? "contributeModalHeaderTourist" : ""
-          }`}
-        >
+        <header className="contributeModalHeader">
           <button
             onClick={handleClose}
             className="contributeModalClose"
             type="button"
             aria-label="Close modal"
           >
-            X
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
           </button>
 
           <h2 className="contributeModalTitle">
@@ -191,7 +187,7 @@ export function ContributeModal({ isOpen, onClose, target, onSuccess }) {
               ? "Sign in to share your experience"
               : userType === "local"
                 ? "Share why locals value this place"
-                : "Your feedback helps future travelers"}
+                : "Your feedback helps future travellers"}
           </p>
         </header>
         <section className="contributeModalBody">{renderBody()}</section>

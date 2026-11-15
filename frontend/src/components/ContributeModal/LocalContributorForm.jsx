@@ -3,6 +3,7 @@ import { useState } from "react";
 const INITIAL_FORM_DATA = {
   whyEndorse: "",
   localRating: 5,
+  visitDate: "",
   culturalSensitivity: "",
 };
 
@@ -41,6 +42,23 @@ export function LocalContributorForm({ targetName, onSubmit, onCancel }) {
             required
           />
         </fieldset>
+
+        <fieldset className="contributeModalFormGroup">
+          <label htmlFor="visitDate" className="contributeModalLabel">
+            When Did You Last Visit? *
+          </label>
+          <input
+            id="visitDate"
+            type="month"
+            value={formData.visitDate}
+            onChange={(e) =>
+              setFormData({ ...formData, visitDate: e.target.value })
+            }
+            required
+            className="contributeModalInput"
+          />
+        </fieldset>
+
         <fieldset className="contributeModalFormGroup">
           <label htmlFor="localRating" className="contributeModalLabel">
             Your Local Endorsement (1-10) *
@@ -59,9 +77,6 @@ export function LocalContributorForm({ targetName, onSubmit, onCancel }) {
                 })
               }
               className="contributeModalRange"
-              style={{
-                background: `linear-gradient(to right, #8B7355 0%, #8B7355 ${(formData.localRating - 1) * 11.11}%, #E8DCC8 ${(formData.localRating - 1) * 11.11}%, #E8DCC8 100%)`,
-              }}
             />
             <section className="contributeModalRangeLabels">
               <span className="contributeModalRangeLabelLeft">
@@ -76,6 +91,7 @@ export function LocalContributorForm({ targetName, onSubmit, onCancel }) {
             </section>
           </section>
         </fieldset>
+
         <fieldset className="contributeModalFormGroup">
           <label htmlFor="culturalSensitivity" className="contributeModalLabel">
             Cultural Sensitivity Notes
@@ -91,6 +107,7 @@ export function LocalContributorForm({ targetName, onSubmit, onCancel }) {
             className="contributeModalTextarea"
           />
         </fieldset>
+
         <footer className="contributeModalActions">
           <button type="submit" className="contributeModalSubmit">
             Submit Endorsement
