@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { signOut } from "firebase/auth";
 import { auth, storage } from "../../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
@@ -197,6 +198,14 @@ export function UserProfile() {
     loadProfile();
   }, [targetUid, isOwner]);
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleUpdatePhoto = async (file) => {
     if (!file || !isOwner) return;
     try {
@@ -366,6 +375,17 @@ export function UserProfile() {
               handleAddInterest={handleAddInterest}
               isOwner={isOwner}
             />
+
+            {isOwner && (
+              <nav className="profileNavActions">
+                <button
+                  onClick={handleLogout}
+                  className="profileActionBtn profileActionBtnDanger"
+                >
+                  Sign Out
+                </button>
+              </nav>
+            )}
           </aside>
 
           <VisitedExperiences visitedExperiences={visitedExperiences} />
