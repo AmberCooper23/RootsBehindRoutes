@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { GoogleMap, useLoadScript, MarkerF } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  useLoadScript,
+  MarkerF,
+  InfoWindowF,
+} from "@react-google-maps/api";
 import { fetchAllPlaces } from "../../../api/placesApi";
 import { fetchAllActivities } from "../../../api/activitiesApi";
 import "./MapPage.css";
@@ -38,12 +43,41 @@ const center = {
   lng: 28.0473,
 };
 
+const DAY_KEYS = [
+  "sunday",
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+];
+
+function isCurrentlyOpen(hours) {
+  if (!hours) return false;
+  const now = new Date();
+  const todayKey = DAY_KEYS[now.getDay()];
+  const today = hours[todayKey];
+
+  if (!today || !today.open || !today.close) return false;
+
+  const [openH, openM] = today.open.split(":").map(Number);
+  const [closeH, closeM] = today.close.split(":").map(Number);
+
+  const nowMinutes = now.getHours() * 60 + now.getMinutes();
+  const openMinutes = openH * 60 + openM;
+  const closeMinutes = closeH * 60 + closeM;
+
+  return nowMinutes >= openMinutes && nowMinutes < closeMinutes;
+}
+
 export function MapPage() {
   const navigate = useNavigate();
   const [experiences, setExperiences] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
   const [nearbyPlaces, setNearbyPlaces] = useState([]);
   const [mapCenter, setMapCenter] = useState(center);
+  const [hoveredExperienceId, setHoveredExperienceId] = useState(null);
 
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
@@ -57,7 +91,6 @@ export function MapPage() {
           fetchAllActivities(),
         ]);
 
-        // Cast strings to numbers and filter out invalid coordinates
         const validExperiences = [...places, ...activities]
           .map((item) => {
             const lat = Number(item.location?.latitude);
@@ -157,25 +190,56 @@ export function MapPage() {
             <MarkerF
               position={userLocation}
               icon={{
-                url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+                url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
                 scaledSize: new window.google.maps.Size(40, 40),
               }}
             />
           )}
 
           {experiences.map((exp) => (
-            <MarkerF
-              key={exp.id}
-              position={{
-                lat: exp.location.latitude,
-                lng: exp.location.longitude,
-              }}
-              onClick={() => navigate(`/Details/${exp.type}/${exp.id}`)}
-              icon={{
-                url: "https://maps.google.com/mapfiles/ms/icons/brown-dot.png",
-                scaledSize: new window.google.maps.Size(40, 40),
-              }}
-            />
+            <React.Fragment key={exp.id}>
+              <MarkerF
+                position={{
+                  lat: exp.location.latitude,
+                  lng: exp.location.longitude,
+                }}
+                onClick={() => navigate(`/Details/${exp.type}/${exp.id}`)}
+                onMouseOver={() => setHoveredExperienceId(exp.id)}
+                onMouseOut={() => setHoveredExperienceId(null)}
+                icon={{
+                  url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
+                  scaledSize: new window.google.maps.Size(40, 40),
+                }}
+              />
+              {hoveredExperienceId === exp.id && (
+                <InfoWindowF
+                  position={{
+                    lat: exp.location.latitude,
+                    lng: exp.location.longitude,
+                  }}
+                  options={{
+                    pixelOffset: new window.google.maps.Size(0, -35),
+                    disableAutoPan: true,
+                  }}
+                  onCloseClick={() => setHoveredExperienceId(null)}
+                >
+                  <div className="mapInfoWindow">
+                    <h4 className="mapInfoWindowTitle">
+                      {exp.name}
+                      <span
+                        className={`mapInfoWindowDot ${
+                          isCurrentlyOpen(exp.hours) ? "open" : "closed"
+                        }`}
+                      />
+                    </h4>
+                    <p className="mapInfoWindowAddress">
+                      {exp.location?.city}
+                      {exp.location?.region ? `, ${exp.location.region}` : ""}
+                    </p>
+                  </div>
+                </InfoWindowF>
+              )}
+            </React.Fragment>
           ))}
         </GoogleMap>
       </section>
@@ -191,8 +255,12 @@ export function MapPage() {
             nearbyPlaces.map((place, index) => (
               <div
                 key={place.id}
-                className="mapSidebarCard"
+                className={`mapSidebarCard ${
+                  hoveredExperienceId === place.id ? "mapSidebarCardActive" : ""
+                }`}
                 onClick={() => navigate(`/Details/${place.type}/${place.id}`)}
+                onMouseEnter={() => setHoveredExperienceId(place.id)}
+                onMouseLeave={() => setHoveredExperienceId(null)}
               >
                 <div className="mapSidebarCardNumber">{index + 1}</div>
                 <div className="mapSidebarCardContent">

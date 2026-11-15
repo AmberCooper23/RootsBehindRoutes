@@ -73,10 +73,12 @@
   transition: all 0.2s ease;
 }
 
-.mapSidebarCard:hover {
+.mapSidebarCard:hover,
+.mapSidebarCardActive {
   border-color: var(--primary-map-color);
   transform: translateY(-0.125rem);
   box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.05);
+  background-color: #f5f0e6;
 }
 
 .mapSidebarCardNumber {
@@ -110,6 +112,53 @@
   color: var(--accent-map-color);
   font-style: italic;
   margin-top: 2rem;
+}
+
+.mapInfoWindow {
+  font-family: "Lora", serif;
+  padding: 0.5rem;
+}
+
+.mapInfoWindowTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-map-color);
+}
+
+.mapInfoWindowDot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.mapInfoWindowDot.open {
+  background-color: #4a7c4e;
+}
+
+.mapInfoWindowDot.closed {
+  background-color: #b5473a;
+}
+
+.mapInfoWindowAddress {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--accent-map-color);
+  font-style: italic;
+}
+
+.gm-style-iw-c {
+  padding: 0 !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.gm-style-iw-d {
+  overflow: hidden !important;
 }
 
 @media (max-width: 48rem) {
