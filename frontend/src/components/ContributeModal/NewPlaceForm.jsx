@@ -154,7 +154,7 @@ export function NewPlaceForm({
         <h3 className="contributeModalAlertTitle">Before You Submit</h3>
         <p className="contributeModalAlertDescription">
           As a local contributor, your voice shapes how visitors experience our
-          culture. Please only add {formType}s where you genuinely welcome
+          culture. Please only add a {formType} where you genuinely welcome
           respectful visitors and feel the culture is represented authentically.
         </p>
       </aside>
