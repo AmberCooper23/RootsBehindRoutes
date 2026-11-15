@@ -91,7 +91,17 @@ export function MapPage() {
           fetchAllActivities(),
         ]);
 
-        const validExperiences = [...places, ...activities]
+        // 👇 Added the type tagging here
+        const taggedPlaces = places.map((place) => ({
+          ...place,
+          type: "place",
+        }));
+        const taggedActivities = activities.map((activity) => ({
+          ...activity,
+          type: "activity",
+        }));
+
+        const validExperiences = [...taggedPlaces, ...taggedActivities]
           .map((item) => {
             const lat = Number(item.location?.latitude);
             const lng = Number(item.location?.longitude);
@@ -151,10 +161,10 @@ export function MapPage() {
     }
   }, [experiences]);
 
-  function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+  function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon3) {
     const R = 6371;
     const dLat = deg2rad(lat2 - lat1);
-    const dLon = deg2rad(lon2 - lon1);
+    const dLon = deg2rad(lon3 - lon1);
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(deg2rad(lat1)) *
