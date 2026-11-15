@@ -32,6 +32,10 @@ function EditPlaceModal({ isOpen, onClose, place, onSuccess }) {
         },
         interests: [data.interest],
         description: data.description,
+        phone: data.phone,
+        email: data.email,
+        website: data.website,
+        hours: data.hours,
       });
       setIsSubmitted(true);
       setTimeout(() => {
@@ -100,6 +104,10 @@ function EditActivityModal({ isOpen, onClose, activity, onSuccess }) {
         },
         interests: [data.interest],
         description: data.description,
+        phone: data.phone,
+        email: data.email,
+        website: data.website,
+        hours: data.hours,
         duration: data.duration,
       });
       setIsSubmitted(true);

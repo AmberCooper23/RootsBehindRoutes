@@ -3,6 +3,26 @@ import { useJsApiLoader } from "@react-google-maps/api";
 import { fetchAllInterests } from "../../../api/interestsApi";
 import "./NewModal.css";
 
+const DAYS = [
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+  "sunday",
+];
+
+const EMPTY_HOURS = {
+  monday: { open: "", close: "" },
+  tuesday: { open: "", close: "" },
+  wednesday: { open: "", close: "" },
+  thursday: { open: "", close: "" },
+  friday: { open: "", close: "" },
+  saturday: { open: "", close: "" },
+  sunday: { open: "", close: "" },
+};
+
 const INITIAL_FORM_DATA = {
   placeName: "",
   address: "",
@@ -14,6 +34,10 @@ const INITIAL_FORM_DATA = {
   localRating: 5,
   culturalSensitivity: "",
   duration: "",
+  phone: "",
+  email: "",
+  website: "",
+  hours: EMPTY_HOURS,
 };
 
 export function NewPlaceForm({
@@ -42,6 +66,10 @@ export function NewPlaceForm({
         localRating: initialData.localRating || 5,
         culturalSensitivity: initialData.culturalSensitivity || "",
         duration: initialData.duration || "",
+        phone: initialData.phone || "",
+        email: initialData.email || "",
+        website: initialData.website || "",
+        hours: initialData.hours || EMPTY_HOURS,
       };
     }
     return INITIAL_FORM_DATA;
@@ -66,6 +94,19 @@ export function NewPlaceForm({
     }
     loadInterests();
   }, []);
+
+  const handleHourChange = (day, field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      hours: {
+        ...prev.hours,
+        [day]: {
+          ...prev.hours[day],
+          [field]: value,
+        },
+      },
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -96,53 +137,41 @@ export function NewPlaceForm({
     setIsValidating(true);
 
     try {
-      const { AddressValidation } =
-        await window.google.maps.importLibrary("addressValidation");
-
-      const addressLines = [
+      const geocoder = new window.google.maps.Geocoder();
+      const addressQuery = [
         formData.address,
         formData.suburb,
         formData.city,
         "South Africa",
-      ].filter(Boolean);
+      ]
+        .filter(Boolean)
+        .join(", ");
 
-      const result = await AddressValidation.fetchAddressValidation({
-        address: {
-          regionCode: "ZA",
-          languageCode: "en",
-          addressLines: [addressLines.join(", ")],
-        },
-      });
+      const response = await geocoder.geocode({ address: addressQuery });
 
-      const verdict = result.verdict;
+      if (response.results && response.results.length > 0) {
+        const location = response.results[0].geometry.location;
+        const formattedAddress = response.results[0].formatted_address;
 
-      if (!verdict.addressComplete || verdict.hasUnconfirmedComponents) {
-        let errorMsg = "Address could not be fully validated. ";
-        if (verdict.hasUnconfirmedComponents) {
-          errorMsg += "Please double-check the street address and suburb.";
-        }
-        setError(errorMsg);
+        const finalData = {
+          ...formData,
+          type: formType,
+          address: formattedAddress,
+          latitude: location.lat(),
+          longitude: location.lng(),
+        };
+
+        onSubmit(finalData);
+      } else {
+        setError(
+          "Could not find the coordinates for this address. Please check the street address, suburb, and city.",
+        );
         setIsValidating(false);
-        return;
       }
-
-      const lat = result.geocode.location.lat();
-      const lng = result.geocode.location.lng();
-      const formattedAddress = result.address.formattedAddress;
-
-      const finalData = {
-        ...formData,
-        type: formType,
-        address: formattedAddress,
-        latitude: lat,
-        longitude: lng,
-      };
-
-      onSubmit(finalData);
     } catch (err) {
-      console.error("Validation failed:", err);
+      console.error("Geocoding failed:", err);
       setError(
-        "Could not validate this address. Please ensure the address is correct and try again.",
+        "Could not validate this address. Please check your connection and try again.",
       );
       setIsValidating(false);
     }
@@ -154,7 +183,7 @@ export function NewPlaceForm({
         <h3 className="contributeModalAlertTitle">Before You Submit</h3>
         <p className="contributeModalAlertDescription">
           As a local contributor, your voice shapes how visitors experience our
-          culture. Please only add a {formType} where you genuinely welcome
+          culture. Please only add {formType}s where you genuinely welcome
           respectful visitors and feel the culture is represented authentically.
         </p>
       </aside>
@@ -307,6 +336,90 @@ export function NewPlaceForm({
           />
         </fieldset>
 
+        <fieldset className="contributeModalFormGroup">
+          <label className="contributeModalLabel">Operating Hours *</label>
+          <div className="contributeModalHoursGrid">
+            {DAYS.map((day) => (
+              <div key={day} className="contributeModalHoursBlock">
+                <span className="contributeModalHoursDay">
+                  {day.charAt(0).toUpperCase() + day.slice(1)}
+                </span>
+                <div className="contributeModalHoursInputs">
+                  <input
+                    type="time"
+                    value={formData.hours[day]?.open || ""}
+                    onChange={(e) =>
+                      handleHourChange(day, "open", e.target.value)
+                    }
+                    className="contributeModalInput contributeModalTimeInput"
+                    required
+                  />
+                  <span className="contributeModalHoursSeparator">to</span>
+                  <input
+                    type="time"
+                    value={formData.hours[day]?.close || ""}
+                    onChange={(e) =>
+                      handleHourChange(day, "close", e.target.value)
+                    }
+                    className="contributeModalInput contributeModalTimeInput"
+                    required
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </fieldset>
+
+        <div className="contributeModalContactGrid">
+          <fieldset className="contributeModalFormGroup">
+            <label htmlFor="phone" className="contributeModalLabel">
+              Cellphone
+            </label>
+            <input
+              id="phone"
+              type="tel"
+              value={formData.phone}
+              onChange={(e) =>
+                setFormData({ ...formData, phone: e.target.value })
+              }
+              placeholder="e.g., +27 67 676 7676"
+              className="contributeModalInput"
+            />
+          </fieldset>
+
+          <fieldset className="contributeModalFormGroup">
+            <label htmlFor="email" className="contributeModalLabel">
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              placeholder="e.g., hello@place.com"
+              className="contributeModalInput"
+            />
+          </fieldset>
+
+          <fieldset className="contributeModalFormGroup">
+            <label htmlFor="website" className="contributeModalLabel">
+              Website
+            </label>
+            <input
+              id="website"
+              type="url"
+              value={formData.website}
+              onChange={(e) =>
+                setFormData({ ...formData, website: e.target.value })
+              }
+              placeholder="https://..."
+              className="contributeModalInput"
+            />
+          </fieldset>
+        </div>
+
         {!initialData && (
           <>
             <fieldset className="contributeModalFormGroup">
@@ -410,7 +523,7 @@ export function NewPlaceForm({
             disabled={isValidating}
           >
             {isValidating
-              ? "Validating Address..."
+              ? "Locating..."
               : initialData
                 ? "Save Changes"
                 : `Submit ${formType === "activity" ? "Activity" : "Place"}`}

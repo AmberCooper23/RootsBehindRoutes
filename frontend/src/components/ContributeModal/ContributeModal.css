@@ -298,6 +298,7 @@
   padding-top: 1.25rem;
   border-top: 0.0625rem solid rgba(139, 115, 85, 0.1);
   margin-top: 0.5rem;
+  width: 100%;
 }
 
 .contributeModalSubmit {
@@ -503,6 +504,79 @@
   color: var(--secondary-cont-color);
 }
 
+.contributeModalHoursGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background-color: var(--light-secondary-cont-colour);
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+  border: 0.0625rem solid rgba(139, 115, 85, 0.2);
+  margin-top: 0.5rem;
+}
+
+.contributeModalHoursBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.contributeModalHoursDay {
+  font-size: 0.85rem;
+  color: var(--primary-cont-color);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.contributeModalHoursInputs {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.contributeModalTimeInput {
+  flex: 1;
+  padding: 0.6rem 0.75rem;
+  font-family: "Lora", serif;
+  font-size: 0.9rem;
+  color: var(--text-cont-color);
+  background-color: var(--secondary-cont-color);
+  border: 0.0625rem solid var(--primary-cont-color);
+  border-radius: 0.25rem;
+  color-scheme: light;
+}
+
+.contributeModalTimeInput:focus {
+  outline: none;
+  border-color: var(--dark-primary-cont-color);
+  box-shadow: 0 0 0 0.125rem rgba(139, 115, 85, 0.15);
+}
+
+.contributeModalTimeInput::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+  filter: sepia(1) saturate(3) hue-rotate(330deg);
+}
+
+.contributeModalTimeInput::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+.contributeModalHoursSeparator {
+  font-size: 0.9rem;
+  color: var(--accent-cont-color);
+  font-style: italic;
+}
+
+.contributeModalContactGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  width: 100%;
+}
+
 @media (max-width: 48rem) {
   .contributeModal {
     max-height: 95vh;
@@ -516,5 +590,9 @@
   .contributeModalSubmit,
   .contributeModalCancel {
     width: 100%;
+  }
+
+  .contributeModalContactGrid {
+    grid-template-columns: 1fr;
   }
 }

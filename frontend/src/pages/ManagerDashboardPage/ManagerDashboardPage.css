@@ -160,6 +160,7 @@
   color: var(--dash-muted);
   font-size: 0.9rem;
   font-style: italic;
+  text-align: left;
 }
 
 .managerCardRatings {

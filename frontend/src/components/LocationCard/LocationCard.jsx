@@ -106,14 +106,23 @@ export function LocationCard({
       ? formatInterest(interests)
       : "";
 
-  const locationLabel =
-    typeof location === "string"
-      ? location
-      : location?.city && location?.region
-        ? `${location.city}, ${location.region}`
-        : location?.latitude && location?.longitude
-          ? `${location.latitude}, ${location.longitude}`
-          : "";
+  const getLocationLabel = () => {
+    if (typeof location === "string") return location;
+    if (!location) return "";
+
+    if (location.suburb && location.city) {
+      return `${location.suburb}, ${location.city}`;
+    }
+    if (location.city && location.region) {
+      return `${location.city}, ${location.region}`;
+    }
+    if (location.address) {
+      return location.address;
+    }
+    return "";
+  };
+
+  const locationLabel = getLocationLabel();
 
   const toggleBookmark = async (e) => {
     e.stopPropagation();
