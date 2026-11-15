@@ -103,7 +103,7 @@ export function DetailsPage() {
   const [isHoursExpanded, setIsHoursExpanded] = useState(false);
   const [endorsements, setEndorsements] = useState([]);
   const [reviews, setReviews] = useState([]);
-  const [reviewerNames, setReviewerNames] = useState({});
+  const [userProfiles, setUserProfiles] = useState({});
 
   const [replyingToId, setReplyingToId] = useState(null);
   const [replyText, setReplyText] = useState("");
@@ -160,23 +160,33 @@ export function DetailsPage() {
       setEndorsements(filteredEndorsements);
       setReviews(filteredReviews);
 
-      const userIds = new Set(
-        [...filteredEndorsements, ...filteredReviews]
-          .map((entry) => entry.userId)
-          .filter(Boolean),
-      );
+      const userIds = new Set();
+      [...filteredEndorsements, ...filteredReviews].forEach((item) => {
+        if (item.userId) userIds.add(item.userId);
+        if (item.replies) {
+          item.replies.forEach((reply) => {
+            if (reply.userId) userIds.add(reply.userId);
+          });
+        }
+      });
 
-      const nameEntries = await Promise.all(
+      const profileEntries = await Promise.all(
         Array.from(userIds).map(async (uid) => {
           try {
             const profile = await fetchUser(uid);
-            return [uid, profile?.displayName || "Anonymous"];
+            return [
+              uid,
+              {
+                displayName: profile?.displayName || "Anonymous",
+                photoURL: profile?.photoURL || null,
+              },
+            ];
           } catch (err) {
-            return [uid, "Anonymous"];
+            return [uid, { displayName: "Anonymous", photoURL: null }];
           }
         }),
       );
-      setReviewerNames(Object.fromEntries(nameEntries));
+      setUserProfiles(Object.fromEntries(profileEntries));
     } catch (err) {
       console.error("❌ Failed to load reviews/endorsements:", err);
     }
@@ -265,6 +275,8 @@ export function DetailsPage() {
 
       setReplyText("");
       setReplyingToId(null);
+
+      loadContributions();
     } catch (err) {
       console.error("Failed to post reply:", err);
       alert("Failed to post reply.");
@@ -544,17 +556,28 @@ export function DetailsPage() {
                   {endorsements.map((endorsement) => {
                     const score = endorsement.score ?? endorsement.rating;
                     const text = endorsement.content ?? endorsement.whyEndorse;
+
+                    const profile = userProfiles[endorsement.userId] || {};
                     const userName =
-                      reviewerNames[endorsement.userId] ||
+                      profile.displayName ||
                       endorsement.userDisplayName ||
                       "Local Guide";
+                    const userPhoto = profile.photoURL;
 
                     return (
                       <li key={endorsement.id} className="detailsReviewCard">
                         <header className="detailsReviewHeader">
                           <div className="detailsReviewUser">
                             <div className="detailsReviewAvatar">
-                              {getInitials(userName)}
+                              {userPhoto ? (
+                                <img
+                                  src={userPhoto}
+                                  alt={userName}
+                                  className="detailsReviewAvatarImg"
+                                />
+                              ) : (
+                                getInitials(userName)
+                              )}
                             </div>
                             <div className="detailsReviewAuthorInfo">
                               <span className="detailsReviewAuthor">
@@ -584,36 +607,50 @@ export function DetailsPage() {
 
                         <div className="detailsReplySection">
                           <div className="detailsReplyList">
-                            {endorsement.replies?.map((reply) => (
-                              <div key={reply.id} className="detailsReplyItem">
-                                <div className="detailsReplyAvatar">
-                                  {reply.userPhotoURL ? (
-                                    <img
-                                      src={reply.userPhotoURL}
-                                      alt={reply.userDisplayName}
-                                      className="detailsReplyAvatarImg"
-                                    />
-                                  ) : (
-                                    getInitials(reply.userDisplayName)
-                                  )}
-                                </div>
-                                <div className="detailsReplyContent">
-                                  <div className="detailsReplyHeader">
-                                    <span className="detailsReplyAuthor">
-                                      {reply.userDisplayName}
-                                    </span>
-                                    {reply.createdAt && (
-                                      <span className="detailsReplyDate">
-                                        {formatDate(reply.createdAt)}
-                                      </span>
+                            {endorsement.replies?.map((reply) => {
+                              const replyProfile =
+                                userProfiles[reply.userId] || {};
+                              const replyName =
+                                replyProfile.displayName ||
+                                reply.userDisplayName ||
+                                "User";
+                              const replyPhoto =
+                                replyProfile.photoURL || reply.userPhotoURL;
+
+                              return (
+                                <div
+                                  key={reply.id}
+                                  className="detailsReplyItem"
+                                >
+                                  <div className="detailsReplyAvatar">
+                                    {replyPhoto ? (
+                                      <img
+                                        src={replyPhoto}
+                                        alt={replyName}
+                                        className="detailsReplyAvatarImg"
+                                      />
+                                    ) : (
+                                      getInitials(replyName)
                                     )}
                                   </div>
-                                  <p className="detailsReplyText">
-                                    {reply.content}
-                                  </p>
+                                  <div className="detailsReplyContent">
+                                    <div className="detailsReplyHeader">
+                                      <span className="detailsReplyAuthor">
+                                        {replyName}
+                                      </span>
+                                      {reply.createdAt && (
+                                        <span className="detailsReplyDate">
+                                          {formatDate(reply.createdAt)}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <p className="detailsReplyText">
+                                      {reply.content}
+                                    </p>
+                                  </div>
                                 </div>
-                              </div>
-                            ))}
+                              );
+                            })}
                           </div>
 
                           {replyingToId === endorsement.id ? (
@@ -688,10 +725,14 @@ export function DetailsPage() {
                 <ul className="detailsReviewList">
                   {reviews.map((review) => {
                     const text = review.content ?? review.review;
+
+                    const profile = userProfiles[review.userId] || {};
                     const userName =
-                      reviewerNames[review.userId] ||
+                      profile.displayName ||
                       review.userDisplayName ||
                       "traveller";
+                    const userPhoto = profile.photoURL;
+
                     const dateToShow = review.visitDate || review.createdAt;
 
                     return (
@@ -699,7 +740,15 @@ export function DetailsPage() {
                         <header className="detailsReviewHeader">
                           <div className="detailsReviewUser">
                             <div className="detailsReviewAvatar">
-                              {getInitials(userName)}
+                              {userPhoto ? (
+                                <img
+                                  src={userPhoto}
+                                  alt={userName}
+                                  className="detailsReviewAvatarImg"
+                                />
+                              ) : (
+                                getInitials(userName)
+                              )}
                             </div>
                             <div className="detailsReviewAuthorInfo">
                               <span className="detailsReviewAuthor">
@@ -731,36 +780,50 @@ export function DetailsPage() {
 
                         <div className="detailsReplySection">
                           <div className="detailsReplyList">
-                            {review.replies?.map((reply) => (
-                              <div key={reply.id} className="detailsReplyItem">
-                                <div className="detailsReplyAvatar">
-                                  {reply.userPhotoURL ? (
-                                    <img
-                                      src={reply.userPhotoURL}
-                                      alt={reply.userDisplayName}
-                                      className="detailsReplyAvatarImg"
-                                    />
-                                  ) : (
-                                    getInitials(reply.userDisplayName)
-                                  )}
-                                </div>
-                                <div className="detailsReplyContent">
-                                  <div className="detailsReplyHeader">
-                                    <span className="detailsReplyAuthor">
-                                      {reply.userDisplayName}
-                                    </span>
-                                    {reply.createdAt && (
-                                      <span className="detailsReplyDate">
-                                        {formatDate(reply.createdAt)}
-                                      </span>
+                            {review.replies?.map((reply) => {
+                              const replyProfile =
+                                userProfiles[reply.userId] || {};
+                              const replyName =
+                                replyProfile.displayName ||
+                                reply.userDisplayName ||
+                                "User";
+                              const replyPhoto =
+                                replyProfile.photoURL || reply.userPhotoURL;
+
+                              return (
+                                <div
+                                  key={reply.id}
+                                  className="detailsReplyItem"
+                                >
+                                  <div className="detailsReplyAvatar">
+                                    {replyPhoto ? (
+                                      <img
+                                        src={replyPhoto}
+                                        alt={replyName}
+                                        className="detailsReplyAvatarImg"
+                                      />
+                                    ) : (
+                                      getInitials(replyName)
                                     )}
                                   </div>
-                                  <p className="detailsReplyText">
-                                    {reply.content}
-                                  </p>
+                                  <div className="detailsReplyContent">
+                                    <div className="detailsReplyHeader">
+                                      <span className="detailsReplyAuthor">
+                                        {replyName}
+                                      </span>
+                                      {reply.createdAt && (
+                                        <span className="detailsReplyDate">
+                                          {formatDate(reply.createdAt)}
+                                        </span>
+                                      )}
+                                    </div>
+                                    <p className="detailsReplyText">
+                                      {reply.content}
+                                    </p>
+                                  </div>
                                 </div>
-                              </div>
-                            ))}
+                              );
+                            })}
                           </div>
 
                           {replyingToId === review.id ? (
