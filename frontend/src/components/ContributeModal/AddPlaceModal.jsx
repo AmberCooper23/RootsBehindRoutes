@@ -29,8 +29,11 @@ export function AddPlaceModal({ isOpen, onClose, onSuccess }) {
       await addPlace({
         name: data.placeName,
         location: {
+          address: data.address,
           city: data.city,
           region: data.region,
+          latitude: data.latitude,
+          longitude: data.longitude,
         },
         interests: [data.interest],
         description: data.description,
