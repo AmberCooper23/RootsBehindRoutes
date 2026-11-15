@@ -6,8 +6,8 @@ import "./NewModal.css";
 const INITIAL_FORM_DATA = {
   placeName: "",
   address: "",
+  suburb: "",
   city: "",
-  region: "",
   interest: "",
   description: "",
   whyEndorse: "",
@@ -18,7 +18,8 @@ const INITIAL_FORM_DATA = {
 export function NewPlaceForm({ onSubmit, onCancel }) {
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [interests, setInterests] = useState([]);
-  const [isGeocoding, setIsGeocoding] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
+  const [error, setError] = useState("");
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
@@ -36,39 +37,69 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
     loadInterests();
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+
     if (!isLoaded) {
-      alert("Google Maps is still loading. Please try again.");
+      setError(
+        "Google Maps is still loading. Please wait a moment and try again.",
+      );
       return;
     }
 
-    setIsGeocoding(true);
+    setIsValidating(true);
 
-    const addressQuery = `${formData.address}, ${formData.city}, ${formData.region}, South Africa`;
-    const geocoder = new window.google.maps.Geocoder();
+    try {
+      const { AddressValidation } =
+        await window.google.maps.importLibrary("addressValidation");
 
-    geocoder.geocode({ address: addressQuery }, (results, status) => {
-      if (status === "OK" && results[0]) {
-        const location = results[0].geometry.location;
+      const addressLines = [
+        formData.address,
+        formData.suburb,
+        formData.city,
+        "South Africa",
+      ].filter(Boolean);
 
-        const finalData = {
-          ...formData,
-          latitude: location.lat(),
-          longitude: location.lng(),
-        };
+      const result = await AddressValidation.fetchAddressValidation({
+        address: {
+          regionCode: "ZA",
+          languageCode: "en",
+          addressLines: [addressLines.join(", ")],
+        },
+      });
 
-        onSubmit(finalData);
-      } else {
-        console.error(
-          "Geocode was not successful for the following reason: " + status,
-        );
-        alert(
-          "Could not find the coordinates for this address. Please check the street address, city, and region.",
-        );
-        setIsGeocoding(false);
+      const verdict = result.verdict;
+
+      if (!verdict.addressComplete || verdict.hasUnconfirmedComponents) {
+        let errorMsg = "Address could not be fully validated. ";
+        if (verdict.hasUnconfirmedComponents) {
+          errorMsg += "Please double-check the street address and suburb.";
+        }
+        setError(errorMsg);
+        setIsValidating(false);
+        return;
       }
-    });
+
+      const lat = result.geocode.location.lat();
+      const lng = result.geocode.location.lng();
+      const formattedAddress = result.address.formattedAddress;
+
+      const finalData = {
+        ...formData,
+        address: formattedAddress,
+        latitude: lat,
+        longitude: lng,
+      };
+
+      onSubmit(finalData);
+    } catch (err) {
+      console.error("Validation failed:", err);
+      setError(
+        "Could not validate this address. Please ensure the address is correct and try again.",
+      );
+      setIsValidating(false);
+    }
   };
 
   return (
@@ -118,6 +149,23 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
         </fieldset>
 
         <fieldset className="contributeModalFormGroup">
+          <label htmlFor="suburb" className="contributeModalLabel">
+            Suburb *
+          </label>
+          <input
+            id="suburb"
+            type="text"
+            value={formData.suburb}
+            onChange={(e) =>
+              setFormData({ ...formData, suburb: e.target.value })
+            }
+            placeholder="e.g., Braamfontein"
+            className="contributeModalInput"
+            required
+          />
+        </fieldset>
+
+        <fieldset className="contributeModalFormGroup">
           <label htmlFor="city" className="contributeModalLabel">
             City *
           </label>
@@ -126,23 +174,6 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
             type="text"
             value={formData.city}
             onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-            placeholder="e.g., Braamfontein"
-            className="contributeModalInput"
-            required
-          />
-        </fieldset>
-
-        <fieldset className="contributeModalFormGroup">
-          <label htmlFor="region" className="contributeModalLabel">
-            Region *
-          </label>
-          <input
-            id="region"
-            type="text"
-            value={formData.region}
-            onChange={(e) =>
-              setFormData({ ...formData, region: e.target.value })
-            }
             placeholder="e.g., Johannesburg"
             className="contributeModalInput"
             required
@@ -256,19 +287,38 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
           />
         </fieldset>
 
+        {error && (
+          <div className="contributeModalErrorBanner">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            <span>{error}</span>
+          </div>
+        )}
+
         <footer className="contributeModalActions">
           <button
             type="submit"
             className="contributeModalSubmit"
-            disabled={isGeocoding}
+            disabled={isValidating}
           >
-            {isGeocoding ? "Locating..." : "Submit Place"}
+            {isValidating ? "Validating Address..." : "Submit Place"}
           </button>
           <button
             type="button"
             onClick={onCancel}
             className="contributeModalCancel"
-            disabled={isGeocoding}
+            disabled={isValidating}
           >
             Cancel
           </button>

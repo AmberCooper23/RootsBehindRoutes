@@ -462,3 +462,27 @@
     width: 100%;
   }
 }
+
+.contributeModalErrorBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 1rem;
+  background-color: #fdf2f2;
+  border: 0.0625rem solid #f5c6cb;
+  border-left: 0.25rem solid #b5473a;
+  border-radius: 0.25rem;
+  color: #b5473a;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.contributeModalErrorBanner svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  color: #b5473a;
+  margin-top: 0.1rem;
+}
