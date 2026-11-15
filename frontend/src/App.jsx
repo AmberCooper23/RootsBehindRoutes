@@ -9,7 +9,7 @@ import { DetailsPage } from "./pages/DetailsPage/DetailsPage";
 import { ManagerDashboardPage } from "./pages/ManagerDashboardPage/ManagerDashboardPage";
 import { MapPage } from "./pages/MapPage/MapPage";
 import { ProfileSetupPage } from "./pages/ProfileSetupPage/ProfileSetupPage";
-import AdminDashboardPage from "./pages/AdminDashboardPage/AdminDashboardPage";
+import AdminDashboardPage from "./pages/AdminDashboard/AdminDashboard";
 import RequireAdmin from "./components/Admin/RequireAdmin";
 import { AdminProvider } from "./context/AdminContext";
 import { useAuthState } from "react-firebase-hooks/auth";

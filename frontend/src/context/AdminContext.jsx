@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebase";
-import { fetchUser } from "../api/usersApi";
+import { fetchUser } from "../../api/usersApi";
 
 const AdminContext = createContext({ isAdmin: false, loading: true });
 

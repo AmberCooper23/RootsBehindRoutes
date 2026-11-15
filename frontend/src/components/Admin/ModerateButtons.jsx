@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { setContentStatus, deleteContent } from "../../api/adminApi";
+import { setContentStatus, deleteContent } from "../../../api/adminApi";
 import "./ModerateButtons.css";
 
 export default function ModerateButtons({

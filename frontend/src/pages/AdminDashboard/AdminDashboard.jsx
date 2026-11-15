@@ -8,9 +8,9 @@ import {
   unbanUser,
   suspendUser,
   unsuspendUser,
-} from "../../api/adminApi";
+} from "../../../api/adminApi";
 import ModerateButtons from "../../components/Admin/ModerateButtons";
-import "./AdminDashboardPage.css";
+import "./AdminDashboard.css";
 
 function collectionLabel(collection) {
   switch (collection) {
