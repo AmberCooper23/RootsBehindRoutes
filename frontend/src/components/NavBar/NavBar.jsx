@@ -48,6 +48,10 @@ export function NavBar() {
 
         if (!profile?.role) {
           navigate("/ProfileSetup");
+        } else if (profile.role === "admin") {
+          navigate("/Admin");
+        } else if (profile.role === "manager") {
+          navigate("/Dashboard");
         } else {
           navigate("/UserProfile");
         }
@@ -57,6 +61,10 @@ export function NavBar() {
     } else {
       if (!userRole) {
         navigate("/ProfileSetup");
+      } else if (userRole === "admin") {
+        navigate("/Admin");
+      } else if (userRole === "manager") {
+        navigate("/Dashboard");
       } else {
         navigate("/UserProfile");
       }
@@ -64,6 +72,15 @@ export function NavBar() {
   };
 
   const isManager = userRole === "manager";
+  const isAdmin = userRole === "admin";
+
+  const profileLabel = loadingRole
+    ? "Profile"
+    : isAdmin
+      ? "Dashboard"
+      : user
+        ? "Profile"
+        : "Login";
 
   return (
     <>
@@ -105,6 +122,14 @@ export function NavBar() {
                   </li>
                 )}
 
+                {isAdmin && (
+                  <li className="navBarLinkItem">
+                    <NavLink to="/Admin" className="navBarLink">
+                      Moderation
+                    </NavLink>
+                  </li>
+                )}
+
                 <li className="navBarLinkItem">
                   <NavLink to="/About" className="navBarLink">
                     About
@@ -128,10 +153,10 @@ export function NavBar() {
               <button
                 className="navBarIconButton"
                 type="button"
-                aria-label="User profile"
+                aria-label={isAdmin ? "Admin dashboard" : "User profile"}
                 onClick={handleUserClick}
               >
-                {user ? "Profile" : "Login"}
+                {profileLabel}
               </button>
             </section>
           </section>
