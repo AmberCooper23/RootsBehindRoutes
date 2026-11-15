@@ -32,9 +32,21 @@ export function Hero() {
   const handleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-      await addUser(user.uid, { name: user.displayName, email: user.email });
-      await fetchUser(user.uid);
+      const newUser = result.user;
+      await addUser(newUser.uid, {
+        name: newUser.displayName,
+        email: newUser.email,
+      });
+
+      const profile = await fetchUser(newUser.uid);
+      if (!profile?.role) {
+        navigate("/ProfileSetup");
+      } else {
+        const section = document.getElementById("discoverContainer");
+        if (section) {
+          section.scrollIntoView({ behavior: "smooth" });
+        }
+      }
     } catch (error) {
       console.error("Login failed:", error);
     }

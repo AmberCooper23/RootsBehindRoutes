@@ -58,9 +58,10 @@ export function LandingPage() {
       if (user) {
         try {
           const profile = await fetchUser(user.uid);
-          setUserRole(profile?.role);
+          setUserRole(profile?.role || null);
         } catch (err) {
           console.error("Failed to fetch role", err);
+          setUserRole(null);
         }
       }
       setLoadingRole(false);
@@ -111,10 +112,12 @@ export function LandingPage() {
   }, [user?.uid]);
 
   useEffect(() => {
-    if (userRole !== "manager") {
+    if (userRole !== "manager" && userRole !== null) {
+      loadExperiences();
+    } else if (!user) {
       loadExperiences();
     }
-  }, [loadExperiences, userRole]);
+  }, [loadExperiences, userRole, user]);
 
   useEffect(() => {
     loadBookmarks();
@@ -179,6 +182,10 @@ export function LandingPage() {
 
   if (loadingRole) {
     return <div>Loading...</div>;
+  }
+
+  if (user && !userRole) {
+    return <Navigate to="/ProfileSetup" replace />;
   }
 
   if (userRole === "manager") {

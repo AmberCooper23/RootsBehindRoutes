@@ -7,6 +7,11 @@ export default function ProfileHeader({
   isGuest,
   onUpdatePhoto,
   isUploading,
+  isEditingName,
+  setIsEditingName,
+  tempName,
+  setTempName,
+  onNameSave,
 }) {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -52,9 +57,41 @@ export default function ProfileHeader({
         </label>
 
         <section className="profileHeroInfo">
-          <h1 className="profileName">
-            {isGuest ? "Guest User" : displayName}
-          </h1>
+          {isEditingName ? (
+            <form 
+              onSubmit={(e) => { e.preventDefault(); onNameSave(); }} 
+              className="profileNameEditForm"
+            >
+              <input
+                type="text"
+                value={tempName}
+                onChange={(e) => setTempName(e.target.value)}
+                className="profileNameInput"
+                autoFocus
+              />
+              <button type="submit" className="profileNameSaveBtn">Save</button>
+              <button type="button" onClick={() => setIsEditingName(false)} className="profileNameCancelBtn">Cancel</button>
+            </form>
+          ) : (
+            <div className="profileNameWrapper">
+              <h1 className="profileName">
+                {isGuest ? "Guest User" : displayName}
+              </h1>
+              {!isGuest && (
+                <button
+                  className="profileNameEditBtn"
+                  onClick={() => {
+                    setTempName(displayName);
+                    setIsEditingName(true);
+                  }}
+                  aria-label="Edit display name"
+                >
+                  ✎
+                </button>
+              )}
+            </div>
+          )}
+          
           <span className="profileRoleBadge">
             <span className="profileRoleDot" />
             {isGuest ? "Explorer" : role.toUpperCase()}

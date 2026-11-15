@@ -24,10 +24,10 @@ export function NavBar() {
       }
       try {
         const profile = await fetchUser(user.uid);
-        setUserRole(profile?.role || "tourist");
+        setUserRole(profile?.role || null);
       } catch (err) {
         console.error("Failed to fetch user role:", err);
-        setUserRole("tourist");
+        setUserRole(null);
       } finally {
         setLoadingRole(false);
       }
@@ -44,12 +44,22 @@ export function NavBar() {
           name: newUser.displayName,
           email: newUser.email,
         });
-        await fetchUser(newUser.uid);
+        const profile = await fetchUser(newUser.uid);
+
+        if (!profile?.role) {
+          navigate("/ProfileSetup");
+        } else {
+          navigate("/UserProfile");
+        }
       } catch (error) {
         console.error("Login failed:", error);
       }
     } else {
-      navigate("/UserProfile");
+      if (!userRole) {
+        navigate("/ProfileSetup");
+      } else {
+        navigate("/UserProfile");
+      }
     }
   };
 
@@ -81,7 +91,6 @@ export function NavBar() {
                   </NavLink>
                 </li>
 
-                {/* 👇 The Map link is back! */}
                 <li className="navBarLinkItem">
                   <NavLink to="/Map" className="navBarLink">
                     Map

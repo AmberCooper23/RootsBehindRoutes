@@ -39,6 +39,9 @@ export function UserProfile() {
   const [visitedExperiences, setVisitedExperiences] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
 
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [tempName, setTempName] = useState("");
+
   const [stats, setStats] = useState({
     placesVisited: 0,
     savedPlaces: 0,
@@ -198,6 +201,18 @@ export function UserProfile() {
     }
   };
 
+  const handleNameSave = async () => {
+    if (!tempName.trim()) return;
+    try {
+      await addUser(user.uid, { displayName: tempName.trim() });
+      setProfile((prev) => ({ ...prev, displayName: tempName.trim() }));
+      setIsEditingName(false);
+    } catch (error) {
+      console.error("Failed to save name:", error);
+      alert("Failed to save name.");
+    }
+  };
+
   const saveBio = async (e) => {
     e.preventDefault();
     setIsEditingBio(false);
@@ -255,6 +270,11 @@ export function UserProfile() {
         role={role}
         onUpdatePhoto={handleUpdatePhoto}
         isUploading={isUploading}
+        isEditingName={isEditingName}
+        setIsEditingName={setIsEditingName}
+        tempName={tempName}
+        setTempName={setTempName}
+        onNameSave={handleNameSave}
       />
 
       <section className="profileContent">
