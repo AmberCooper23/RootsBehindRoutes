@@ -8,6 +8,10 @@ const {
   removeUserActivity,
   addUserPlace,
   removeUserPlace,
+  followUser,
+  unfollowUser,
+  getFollowers,
+  getFollowing,
 } = require("../services/usersService.js");
 
 const router = express.Router();
@@ -101,5 +105,45 @@ router.delete("/:uid/places/:placeId", async (req, res) => {
   }
 });
 
-// ✅ CommonJS export
+router.post("/:uid/follow", async (req, res) => {
+  try {
+    const { targetUid } = req.body;
+    if (!targetUid) {
+      return res.status(400).send({ error: "targetUid required" });
+    }
+    await followUser(req.params.uid, targetUid);
+    res.status(200).send({ message: "Followed", targetUid });
+  } catch (err) {
+    const status = err.message.includes("Managers") ? 403 : 500;
+    res.status(status).send({ error: err.message });
+  }
+});
+
+router.delete("/:uid/follow/:targetUid", async (req, res) => {
+  try {
+    await unfollowUser(req.params.uid, req.params.targetUid);
+    res
+      .status(200)
+      .send({ message: "Unfollowed", targetUid: req.params.targetUid });
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
+router.get("/:uid/followers", async (req, res) => {
+  try {
+    res.send(await getFollowers(req.params.uid));
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
+router.get("/:uid/following", async (req, res) => {
+  try {
+    res.send(await getFollowing(req.params.uid));
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
 module.exports = router;

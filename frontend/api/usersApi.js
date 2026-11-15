@@ -69,3 +69,33 @@ export async function removeUserPlace(uid, placeId) {
   if (!res.ok) throw new Error("Failed to remove place");
   return res.json();
 }
+
+export async function followUser(uid, targetUid) {
+  const res = await fetch(`${BASE_URL}/${uid}/follow`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ targetUid }),
+  });
+  if (!res.ok) throw new Error("Failed to follow user");
+  return res.json();
+}
+
+export async function unfollowUser(uid, targetUid) {
+  const res = await fetch(`${BASE_URL}/${uid}/follow/${targetUid}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error("Failed to unfollow user");
+  return res.json();
+}
+
+export async function fetchFollowers(uid) {
+  const res = await fetch(`${BASE_URL}/${uid}/followers`);
+  if (!res.ok) throw new Error("Failed to fetch followers");
+  return res.json();
+}
+
+export async function fetchFollowing(uid) {
+  const res = await fetch(`${BASE_URL}/${uid}/following`);
+  if (!res.ok) throw new Error("Failed to fetch following");
+  return res.json();
+}

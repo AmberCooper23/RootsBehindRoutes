@@ -4,7 +4,8 @@ export default function ProfileHeader({
   displayPhoto,
   displayName,
   role,
-  isGuest,
+  isOwner,
+  isManager,
   onUpdatePhoto,
   isUploading,
   isEditingName,
@@ -12,6 +13,12 @@ export default function ProfileHeader({
   tempName,
   setTempName,
   onNameSave,
+  showFollowButton,
+  isFollowing,
+  onToggleFollow,
+  followLoading,
+  followersCount,
+  followingCount,
 }) {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -25,9 +32,9 @@ export default function ProfileHeader({
       <span className="profileHeroPattern" aria-hidden="true" />
       <section className="profileHeroInner">
         <label
-          className={`profileAvatarWrapper ${!isGuest ? "profileAvatarEditable" : ""}`}
+          className={`profileAvatarWrapper ${isOwner ? "profileAvatarEditable" : ""}`}
         >
-          {displayPhoto && !isGuest ? (
+          {displayPhoto ? (
             <img
               src={displayPhoto}
               alt="Profile"
@@ -39,13 +46,13 @@ export default function ProfileHeader({
             </span>
           )}
 
-          {!isGuest && (
+          {isOwner && (
             <div className="profileAvatarOverlay">
               <span>{isUploading ? "Uploading..." : "Change Photo"}</span>
             </div>
           )}
 
-          {!isGuest && (
+          {isOwner && (
             <input
               type="file"
               accept="image/*"
@@ -57,9 +64,12 @@ export default function ProfileHeader({
         </label>
 
         <section className="profileHeroInfo">
-          {isEditingName ? (
-            <form 
-              onSubmit={(e) => { e.preventDefault(); onNameSave(); }} 
+          {isEditingName && isOwner ? (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                onNameSave();
+              }}
               className="profileNameEditForm"
             >
               <input
@@ -69,15 +79,21 @@ export default function ProfileHeader({
                 className="profileNameInput"
                 autoFocus
               />
-              <button type="submit" className="profileNameSaveBtn">Save</button>
-              <button type="button" onClick={() => setIsEditingName(false)} className="profileNameCancelBtn">Cancel</button>
+              <button type="submit" className="profileNameSaveBtn">
+                Save
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsEditingName(false)}
+                className="profileNameCancelBtn"
+              >
+                Cancel
+              </button>
             </form>
           ) : (
             <div className="profileNameWrapper">
-              <h1 className="profileName">
-                {isGuest ? "Guest User" : displayName}
-              </h1>
-              {!isGuest && (
+              <h1 className="profileName">{displayName}</h1>
+              {isOwner && (
                 <button
                   className="profileNameEditBtn"
                   onClick={() => {
@@ -91,12 +107,30 @@ export default function ProfileHeader({
               )}
             </div>
           )}
-          
+
           <span className="profileRoleBadge">
             <span className="profileRoleDot" />
-            {isGuest ? "Explorer" : role.toUpperCase()}
+            {role.toUpperCase()}
           </span>
+
+          {!isManager && (
+            <span className="profileFollowStats">
+              <strong>{followersCount}</strong> Followers
+              <span className="profileFollowStatsDot">·</span>
+              <strong>{followingCount}</strong> Following
+            </span>
+          )}
         </section>
+
+        {showFollowButton && (
+          <button
+            className={`followBtn ${isFollowing ? "following" : ""}`}
+            onClick={onToggleFollow}
+            disabled={followLoading}
+          >
+            {followLoading ? "..." : isFollowing ? "Following" : "Follow"}
+          </button>
+        )}
       </section>
     </header>
   );

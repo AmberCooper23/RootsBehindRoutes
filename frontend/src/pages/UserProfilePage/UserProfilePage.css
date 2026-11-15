@@ -78,6 +78,8 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  flex: 1;
+  min-width: 0;
 }
 
 .profileName {
@@ -110,6 +112,65 @@
   height: 0.4rem;
   border-radius: 50%;
   background-color: #d4a574;
+}
+
+.profileFollowStats {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  color: rgba(253, 251, 247, 0.85);
+  letter-spacing: 0.02em;
+}
+
+.profileFollowStats strong {
+  color: var(--secondary-lp-color);
+  font-weight: 700;
+  font-family: "Playfair Display", serif;
+  font-size: 0.95rem;
+}
+
+.profileFollowStatsDot {
+  color: rgba(253, 251, 247, 0.5);
+  margin: 0 0.15rem;
+}
+
+.followBtn {
+  margin-left: auto;
+  padding: 0.6rem 1.5rem;
+  background-color: var(--secondary-lp-color);
+  color: var(--primary-lp-color);
+  border: 0.125rem solid var(--secondary-lp-color);
+  border-radius: 2rem;
+  font-family: "Lora", serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.followBtn:hover:not(:disabled) {
+  background-color: #f5efe7;
+}
+
+.followBtn.following {
+  background-color: transparent;
+  color: var(--secondary-lp-color);
+  border-color: rgba(253, 251, 247, 0.5);
+}
+
+.followBtn.following:hover:not(:disabled) {
+  background-color: rgba(253, 251, 247, 0.15);
+}
+
+.followBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .profileContent {
@@ -673,6 +734,10 @@
 
   .profileHeroInfo {
     align-items: center;
+  }
+
+  .followBtn {
+    margin-left: 0;
   }
 
   .profileGrid {

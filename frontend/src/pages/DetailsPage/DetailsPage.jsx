@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../firebase";
@@ -275,7 +275,6 @@ export function DetailsPage() {
 
       setReplyText("");
       setReplyingToId(null);
-
       loadContributions();
     } catch (err) {
       console.error("Failed to post reply:", err);
@@ -297,10 +296,21 @@ export function DetailsPage() {
       ? formatInterestLabel(item.interests)
       : "";
 
-  const locationLabel =
-    item?.location?.city && item?.location?.region
-      ? `${item.location.city}, ${item.location.region}`
-      : "";
+  const getLocationLabel = () => {
+    if (!item?.location) return "";
+    if (item.location.suburb && item.location.city) {
+      return `${item.location.suburb}, ${item.location.city}`;
+    }
+    if (item.location.city && item.location.region) {
+      return `${item.location.city}, ${item.location.region}`;
+    }
+    if (item.location.address) {
+      return item.location.address;
+    }
+    return "";
+  };
+
+  const locationLabel = getLocationLabel();
   const hoursStatus = getHoursStatus(item?.hours);
 
   const dynamicTouristRating =
@@ -567,7 +577,11 @@ export function DetailsPage() {
                     return (
                       <li key={endorsement.id} className="detailsReviewCard">
                         <header className="detailsReviewHeader">
-                          <div className="detailsReviewUser">
+                          <Link
+                            to={`/UserProfile/${endorsement.userId}`}
+                            className="detailsReviewUser"
+                            style={{ textDecoration: "none", color: "inherit" }}
+                          >
                             <div className="detailsReviewAvatar">
                               {userPhoto ? (
                                 <img
@@ -589,7 +603,7 @@ export function DetailsPage() {
                                 </span>
                               )}
                             </div>
-                          </div>
+                          </Link>
                           <span className="detailsReviewRating">
                             {formatRating(score)}
                             <span className="detailsReviewRatingMax">/10</span>
@@ -622,22 +636,34 @@ export function DetailsPage() {
                                   key={reply.id}
                                   className="detailsReplyItem"
                                 >
-                                  <div className="detailsReplyAvatar">
-                                    {replyPhoto ? (
-                                      <img
-                                        src={replyPhoto}
-                                        alt={replyName}
-                                        className="detailsReplyAvatarImg"
-                                      />
-                                    ) : (
-                                      getInitials(replyName)
-                                    )}
-                                  </div>
+                                  <Link
+                                    to={`/UserProfile/${reply.userId}`}
+                                    style={{ textDecoration: "none" }}
+                                  >
+                                    <div className="detailsReplyAvatar">
+                                      {replyPhoto ? (
+                                        <img
+                                          src={replyPhoto}
+                                          alt={replyName}
+                                          className="detailsReplyAvatarImg"
+                                        />
+                                      ) : (
+                                        getInitials(replyName)
+                                      )}
+                                    </div>
+                                  </Link>
                                   <div className="detailsReplyContent">
                                     <div className="detailsReplyHeader">
-                                      <span className="detailsReplyAuthor">
+                                      <Link
+                                        to={`/UserProfile/${reply.userId}`}
+                                        className="detailsReplyAuthor"
+                                        style={{
+                                          textDecoration: "none",
+                                          color: "inherit",
+                                        }}
+                                      >
                                         {replyName}
-                                      </span>
+                                      </Link>
                                       {reply.createdAt && (
                                         <span className="detailsReplyDate">
                                           {formatDate(reply.createdAt)}
@@ -738,7 +764,11 @@ export function DetailsPage() {
                     return (
                       <li key={review.id} className="detailsReviewCard">
                         <header className="detailsReviewHeader">
-                          <div className="detailsReviewUser">
+                          <Link
+                            to={`/UserProfile/${review.userId}`}
+                            className="detailsReviewUser"
+                            style={{ textDecoration: "none", color: "inherit" }}
+                          >
                             <div className="detailsReviewAvatar">
                               {userPhoto ? (
                                 <img
@@ -760,7 +790,7 @@ export function DetailsPage() {
                                 </span>
                               )}
                             </div>
-                          </div>
+                          </Link>
                           <span className="detailsReviewRating">
                             {formatRating(review.rating)}
                             <span className="detailsReviewRatingMax">/5</span>
@@ -795,22 +825,34 @@ export function DetailsPage() {
                                   key={reply.id}
                                   className="detailsReplyItem"
                                 >
-                                  <div className="detailsReplyAvatar">
-                                    {replyPhoto ? (
-                                      <img
-                                        src={replyPhoto}
-                                        alt={replyName}
-                                        className="detailsReplyAvatarImg"
-                                      />
-                                    ) : (
-                                      getInitials(replyName)
-                                    )}
-                                  </div>
+                                  <Link
+                                    to={`/UserProfile/${reply.userId}`}
+                                    style={{ textDecoration: "none" }}
+                                  >
+                                    <div className="detailsReplyAvatar">
+                                      {replyPhoto ? (
+                                        <img
+                                          src={replyPhoto}
+                                          alt={replyName}
+                                          className="detailsReplyAvatarImg"
+                                        />
+                                      ) : (
+                                        getInitials(replyName)
+                                      )}
+                                    </div>
+                                  </Link>
                                   <div className="detailsReplyContent">
                                     <div className="detailsReplyHeader">
-                                      <span className="detailsReplyAuthor">
+                                      <Link
+                                        to={`/UserProfile/${reply.userId}`}
+                                        className="detailsReplyAuthor"
+                                        style={{
+                                          textDecoration: "none",
+                                          color: "inherit",
+                                        }}
+                                      >
                                         {replyName}
-                                      </span>
+                                      </Link>
                                       {reply.createdAt && (
                                         <span className="detailsReplyDate">
                                           {formatDate(reply.createdAt)}

@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, provider, storage } from "../../firebase";
-import { signInWithPopup, signOut } from "firebase/auth";
+import { auth, storage } from "../../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {
   fetchUser,
   addUser,
   addUserInterest,
   removeUserInterest,
+  followUser,
+  unfollowUser,
 } from "../../../api/usersApi";
 import { fetchAllPlaces } from "../../../api/placesApi";
 import { fetchAllActivities } from "../../../api/activitiesApi";
@@ -25,10 +26,19 @@ import VisitedExperiences from "./VisitedExperiences";
 
 import "./UserProfilePage.css";
 
+function isManagerRole(role) {
+  return typeof role === "string" && role.toLowerCase() === "manager";
+}
+
 export function UserProfile() {
+  const { uid } = useParams();
   const [user] = useAuthState(auth);
 
+  const targetUid = uid || user?.uid;
+  const isOwner = user?.uid === targetUid;
+
   const [profile, setProfile] = useState(null);
+  const [viewerRole, setViewerRole] = useState(null);
   const [bio, setBio] = useState("");
   const [age, setAge] = useState("");
   const [birthday, setBirthday] = useState("");
@@ -38,9 +48,13 @@ export function UserProfile() {
   const [isEditingBio, setIsEditingBio] = useState(false);
   const [visitedExperiences, setVisitedExperiences] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [isEditingName, setIsEditingName] = useState(false);
   const [tempName, setTempName] = useState("");
+
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
 
   const [stats, setStats] = useState({
     placesVisited: 0,
@@ -49,17 +63,39 @@ export function UserProfile() {
   });
 
   useEffect(() => {
+    if (!user?.uid) {
+      setViewerRole(null);
+      return;
+    }
+    let cancelled = false;
+    fetchUser(user.uid)
+      .then((data) => {
+        if (!cancelled) setViewerRole(data?.role || null);
+      })
+      .catch(() => {
+        if (!cancelled) setViewerRole(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.uid]);
+
+  useEffect(() => {
     async function loadProfile() {
-      if (!user) return;
+      if (!targetUid) return;
 
       try {
-        const profileData = await fetchUser(user.uid);
+        setLoading(true);
+        const profileData = await fetchUser(targetUid);
         setProfile(profileData);
         setBio(profileData?.bio || "");
         setAge(profileData?.age || "");
         setBirthday(profileData?.birthday || "");
         setArea(profileData?.area || "");
         setInterests(profileData?.interests || profileData?.Interests || []);
+        setIsFollowing(
+          user ? (profileData?.followers || []).includes(user.uid) : false,
+        );
 
         const [
           allPlaces,
@@ -73,27 +109,27 @@ export function UserProfile() {
           fetchAllActivities(),
           fetchAllReviews(),
           fetchAllEndorsements(),
-          getBookmarks(user.uid),
+          isOwner ? getBookmarks(targetUid) : Promise.resolve([]),
           fetchAllInterests(),
         ]);
 
         setAllInterests(databaseInterests);
 
-        const myReviews = allReviews.filter((r) => r.userId === user.uid);
-        const myEndorsements = allEndorsements.filter(
-          (e) => e.userId === user.uid,
+        const userReviews = allReviews.filter((r) => r.userId === targetUid);
+        const userEndorsements = allEndorsements.filter(
+          (e) => e.userId === targetUid,
         );
 
         const uniquePlaceIds = new Set([
           ...(profileData?.placesVisited || []),
-          ...myReviews.map((r) => r.placeId).filter(Boolean),
-          ...myEndorsements.map((e) => e.placeId).filter(Boolean),
+          ...userReviews.map((r) => r.placeId).filter(Boolean),
+          ...userEndorsements.map((e) => e.placeId).filter(Boolean),
         ]);
 
         const uniqueActivityIds = new Set([
           ...(profileData?.activitiesTried || []),
-          ...myReviews.map((r) => r.activityId).filter(Boolean),
-          ...myEndorsements.map((e) => e.activityId).filter(Boolean),
+          ...userReviews.map((r) => r.activityId).filter(Boolean),
+          ...userEndorsements.map((e) => e.activityId).filter(Boolean),
         ]);
 
         const uniqueSavedIds = new Set(
@@ -109,8 +145,8 @@ export function UserProfile() {
         });
 
         const combinedLogs = [
-          ...myReviews.map((r) => ({ ...r, logType: "review" })),
-          ...myEndorsements.map((e) => ({ ...e, logType: "endorsement" })),
+          ...userReviews.map((r) => ({ ...r, logType: "review" })),
+          ...userEndorsements.map((e) => ({ ...e, logType: "endorsement" })),
         ];
 
         combinedLogs.sort((a, b) => {
@@ -153,45 +189,26 @@ export function UserProfile() {
         setVisitedExperiences(formattedLogs);
       } catch (error) {
         console.error("Failed to load profile:", error);
+      } finally {
+        setLoading(false);
       }
     }
 
     loadProfile();
-  }, [user]);
-
-  const handleLogin = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const newUser = result.user;
-      await addUser(newUser.uid, {
-        name: newUser.displayName,
-        email: newUser.email,
-      });
-    } catch (error) {
-      console.error("Login failed:", error);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  }, [targetUid, isOwner]);
 
   const handleUpdatePhoto = async (file) => {
-    if (!file) return;
+    if (!file || !isOwner) return;
     try {
       setIsUploading(true);
       const storageRef = ref(
         storage,
-        `profile_pictures/${user.uid}_${Date.now()}`,
+        `profile_pictures/${targetUid}_${Date.now()}`,
       );
       await uploadBytes(storageRef, file);
       const downloadURL = await getDownloadURL(storageRef);
 
-      await addUser(user.uid, { photoURL: downloadURL });
+      await addUser(targetUid, { photoURL: downloadURL });
       setProfile((prev) => ({ ...prev, photoURL: downloadURL }));
     } catch (error) {
       console.error("Failed to upload photo:", error);
@@ -202,9 +219,9 @@ export function UserProfile() {
   };
 
   const handleNameSave = async () => {
-    if (!tempName.trim()) return;
+    if (!tempName.trim() || !isOwner) return;
     try {
-      await addUser(user.uid, { displayName: tempName.trim() });
+      await addUser(targetUid, { displayName: tempName.trim() });
       setProfile((prev) => ({ ...prev, displayName: tempName.trim() }));
       setIsEditingName(false);
     } catch (error) {
@@ -215,9 +232,10 @@ export function UserProfile() {
 
   const saveBio = async (e) => {
     e.preventDefault();
+    if (!isOwner) return;
     setIsEditingBio(false);
     try {
-      await addUser(user.uid, { bio, age, birthday, area });
+      await addUser(targetUid, { bio, age, birthday, area });
       setProfile((prev) => ({ ...prev, bio, age, birthday, area }));
     } catch (error) {
       console.error("Failed to save bio:", error);
@@ -225,9 +243,9 @@ export function UserProfile() {
   };
 
   const handleAddInterest = async (interestId) => {
-    if (interests.includes(interestId)) return;
+    if (!isOwner || interests.includes(interestId)) return;
     try {
-      await addUserInterest(user.uid, interestId);
+      await addUserInterest(targetUid, interestId);
       setInterests([...interests, interestId]);
     } catch (error) {
       console.error("Failed to add interest:", error);
@@ -235,32 +253,68 @@ export function UserProfile() {
   };
 
   const handleRemoveInterest = async (interestId) => {
+    if (!isOwner) return;
     try {
-      await removeUserInterest(user.uid, interestId);
+      await removeUserInterest(targetUid, interestId);
       setInterests(interests.filter((i) => i !== interestId));
     } catch (error) {
       console.error("Failed to remove interest:", error);
     }
   };
 
-  if (!user) {
-    return (
-      <main className="profilePage">
-        <ProfileHeader isGuest={true} />
-        <section className="profileLoginPrompt">
-          <p>You need to log in to view your profile.</p>
-          <button onClick={handleLogin} className="profileActionBtn">
-            Login with Google
-          </button>
-        </section>
-      </main>
-    );
+  const handleToggleFollow = async () => {
+    if (!user || !targetUid || isOwner || followLoading) return;
+    setFollowLoading(true);
+
+    const next = !isFollowing;
+    setIsFollowing(next);
+    setProfile((prev) => ({
+      ...prev,
+      followers: next
+        ? [...(prev.followers || []), user.uid]
+        : (prev.followers || []).filter((id) => id !== user.uid),
+    }));
+
+    try {
+      if (next) {
+        await followUser(user.uid, targetUid);
+      } else {
+        await unfollowUser(user.uid, targetUid);
+      }
+    } catch (error) {
+      console.error("Failed to toggle follow:", error);
+      setIsFollowing(!next);
+      setProfile((prev) => ({
+        ...prev,
+        followers: !next
+          ? [...(prev.followers || []), user.uid]
+          : (prev.followers || []).filter((id) => id !== user.uid),
+      }));
+    } finally {
+      setFollowLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <div>Loading profile...</div>;
   }
 
-  const displayPhoto = profile?.photoURL || user.photoURL;
+  if (!profile) {
+    return <div>Profile not found.</div>;
+  }
+
+  const displayPhoto = profile?.photoURL || (isOwner ? user?.photoURL : null);
   const displayName =
-    profile?.displayName || profile?.name || user.displayName || "Explorer";
+    profile?.displayName ||
+    profile?.name ||
+    (isOwner ? user?.displayName : null) ||
+    "Explorer";
   const role = profile?.role || "Explorer";
+
+  const viewerIsManager = isManagerRole(viewerRole);
+  const targetIsManager = isManagerRole(profile?.role);
+  const showFollowButton =
+    !isOwner && !!user && !viewerIsManager && !targetIsManager;
 
   return (
     <main className="profilePage">
@@ -268,6 +322,8 @@ export function UserProfile() {
         displayPhoto={displayPhoto}
         displayName={displayName}
         role={role}
+        isOwner={isOwner}
+        isManager={targetIsManager}
         onUpdatePhoto={handleUpdatePhoto}
         isUploading={isUploading}
         isEditingName={isEditingName}
@@ -275,6 +331,12 @@ export function UserProfile() {
         tempName={tempName}
         setTempName={setTempName}
         onNameSave={handleNameSave}
+        showFollowButton={showFollowButton}
+        isFollowing={isFollowing}
+        onToggleFollow={handleToggleFollow}
+        followLoading={followLoading}
+        followersCount={profile?.followers?.length || 0}
+        followingCount={profile?.following?.length || 0}
       />
 
       <section className="profileContent">
@@ -295,22 +357,15 @@ export function UserProfile() {
               setIsEditingBio={setIsEditingBio}
               saveBio={saveBio}
               joinDate={profile?.joinDate}
+              isOwner={isOwner}
             />
             <InterestsCard
               interests={interests}
               allInterests={allInterests}
               handleRemoveInterest={handleRemoveInterest}
               handleAddInterest={handleAddInterest}
+              isOwner={isOwner}
             />
-
-            <nav className="profileNavActions">
-              <button
-                onClick={handleLogout}
-                className="profileActionBtn profileActionBtnDanger"
-              >
-                Sign Out
-              </button>
-            </nav>
           </aside>
 
           <VisitedExperiences visitedExperiences={visitedExperiences} />

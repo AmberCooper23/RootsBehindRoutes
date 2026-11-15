@@ -1,5 +1,9 @@
 const { db, admin } = require("../firebaseConfig.js");
 
+function isManagerRole(role) {
+  return typeof role === "string" && role.toLowerCase() === "manager";
+}
+
 async function createUser(uid, data) {
   const userRef = db.collection("users").doc(uid);
   await userRef.set(data, { merge: true });
@@ -71,6 +75,66 @@ async function removeUserPlace(uid, placeId) {
   return placeId;
 }
 
+async function followUser(followerId, followeeId) {
+  if (followerId === followeeId) throw new Error("Cannot follow yourself");
+
+  const [followerSnap, followeeSnap] = await Promise.all([
+    db.collection("users").doc(followerId).get(),
+    db.collection("users").doc(followeeId).get(),
+  ]);
+
+  if (isManagerRole(followerSnap.data()?.role)) {
+    throw new Error("Managers cannot follow users");
+  }
+  if (isManagerRole(followeeSnap.data()?.role)) {
+    throw new Error("Managers cannot be followed");
+  }
+
+  const batch = db.batch();
+  batch.update(db.collection("users").doc(followerId), {
+    following: admin.firestore.FieldValue.arrayUnion(followeeId),
+  });
+  batch.update(db.collection("users").doc(followeeId), {
+    followers: admin.firestore.FieldValue.arrayUnion(followerId),
+  });
+  await batch.commit();
+  return followeeId;
+}
+
+async function unfollowUser(followerId, followeeId) {
+  const batch = db.batch();
+  batch.update(db.collection("users").doc(followerId), {
+    following: admin.firestore.FieldValue.arrayRemove(followeeId),
+  });
+  batch.update(db.collection("users").doc(followeeId), {
+    followers: admin.firestore.FieldValue.arrayRemove(followerId),
+  });
+  await batch.commit();
+  return followeeId;
+}
+
+async function getFollowers(uid) {
+  const user = await getUser(uid);
+  if (isManagerRole(user?.role)) return [];
+  const ids = user?.followers || [];
+  if (!ids.length) return [];
+  const snaps = await db.getAll(
+    ...ids.map((id) => db.collection("users").doc(id)),
+  );
+  return snaps.filter((s) => s.exists).map((s) => ({ id: s.id, ...s.data() }));
+}
+
+async function getFollowing(uid) {
+  const user = await getUser(uid);
+  if (isManagerRole(user?.role)) return [];
+  const ids = user?.following || [];
+  if (!ids.length) return [];
+  const snaps = await db.getAll(
+    ...ids.map((id) => db.collection("users").doc(id)),
+  );
+  return snaps.filter((s) => s.exists).map((s) => ({ id: s.id, ...s.data() }));
+}
+
 module.exports = {
   createUser,
   getUser,
@@ -80,4 +144,8 @@ module.exports = {
   removeUserActivity,
   addUserPlace,
   removeUserPlace,
+  followUser,
+  unfollowUser,
+  getFollowers,
+  getFollowing,
 };

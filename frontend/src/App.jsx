@@ -23,6 +23,7 @@ function App() {
         <Route path="/" element={<LandingPage user={user} />} />
         <Route path="/ProfileSetup" element={<ProfileSetupPage />} />
         <Route path="/UserProfile" element={<UserProfile />} />
+        <Route path="/UserProfile/:uid" element={<UserProfile />} />
         <Route path="/About" element={<AboutPage />} />
         <Route path="/Bookmarks" element={<BookmarksPage />} />
         <Route path="/Details/:type/:id" element={<DetailsPage />} />

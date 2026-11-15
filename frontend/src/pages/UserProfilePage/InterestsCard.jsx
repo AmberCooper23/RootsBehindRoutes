@@ -5,6 +5,7 @@ export default function InterestsCard({
   allInterests,
   handleRemoveInterest,
   handleAddInterest,
+  isOwner,
 }) {
   const [isAdding, setIsAdding] = useState(false);
 
@@ -33,17 +34,19 @@ export default function InterestsCard({
         {interests.map((interestId, idx) => (
           <li key={idx} className="profileTag">
             <span>{getInterestName(interestId)}</span>
-            <button
-              type="button"
-              onClick={() => handleRemoveInterest(interestId)}
-              className="profileTagRemove"
-            >
-              ×
-            </button>
+            {isOwner && (
+              <button
+                type="button"
+                onClick={() => handleRemoveInterest(interestId)}
+                className="profileTagRemove"
+              >
+                ×
+              </button>
+            )}
           </li>
         ))}
 
-        {!isAdding && availableOptions.length > 0 && (
+        {isOwner && !isAdding && availableOptions.length > 0 && (
           <li>
             <button
               type="button"
@@ -67,7 +70,7 @@ export default function InterestsCard({
         )}
       </ul>
 
-      {isAdding && (
+      {isOwner && isAdding && (
         <div className="profileInterestSelectWrapper">
           <select
             className="profileInterestSelect"

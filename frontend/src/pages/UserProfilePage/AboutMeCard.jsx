@@ -27,42 +27,27 @@ export default function AboutMeCard({
   setIsEditingBio,
   saveBio,
   joinDate,
+  isOwner,
 }) {
-  const handleBirthdayChange = (e) => {
-    const val = e.target.value;
-    setBirthday(val);
-
-    if (val) {
-      const birthDate = new Date(val);
-      const today = new Date();
-      let calculatedAge = today.getFullYear() - birthDate.getFullYear();
-      const m = today.getMonth() - birthDate.getMonth();
-      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-        calculatedAge--;
-      }
-      setAge(calculatedAge >= 0 ? calculatedAge.toString() : "");
-    } else {
-      setAge("");
-    }
-  };
-
   return (
     <article className="profileCard">
       <header className="profileCardHeader">
         <h2 className="profileCardTitle">
-          <button
-            type="button"
-            onClick={() => setIsEditingBio(!isEditingBio)}
-            className="profileEditToggle"
-            aria-label="Edit About Me"
-          >
-            ✎
-          </button>
+          {isOwner && (
+            <button
+              type="button"
+              onClick={() => setIsEditingBio(!isEditingBio)}
+              className="profileEditToggle"
+              aria-label="Edit About Me"
+            >
+              ✎
+            </button>
+          )}
           About Me
         </h2>
       </header>
 
-      {isEditingBio ? (
+      {isEditingBio && isOwner ? (
         <form onSubmit={saveBio} className="profileBioForm">
           <textarea
             value={bio}
@@ -79,8 +64,7 @@ export default function AboutMeCard({
                 value={age}
                 onChange={(e) => setAge(e.target.value)}
                 className="profileAboutInput"
-                placeholder="Auto-calculated"
-                readOnly={!!birthday}
+                placeholder="e.g. 25"
               />
             </div>
             <div className="profileAboutItem">
@@ -88,7 +72,7 @@ export default function AboutMeCard({
               <input
                 type="date"
                 value={birthday}
-                onChange={handleBirthdayChange}
+                onChange={(e) => setBirthday(e.target.value)}
                 className="profileAboutInput"
               />
             </div>
