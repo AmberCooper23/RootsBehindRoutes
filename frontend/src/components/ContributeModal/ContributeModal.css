@@ -33,7 +33,7 @@
   background-color: var(--bg-cont-color);
   border: none;
   width: 100%;
-  max-width: 48rem;
+  max-width: 56rem;
   max-height: 90vh;
   overflow: hidden;
   box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.3);
@@ -97,11 +97,42 @@
   font-style: italic;
 }
 
-.contributeModalForm {
+.contributeModalStepIndicator {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 2rem;
+  border-bottom: 0.125rem solid rgba(139, 115, 85, 0.2);
+  padding-bottom: 0.75rem;
+}
+
+.contributeModalStepIndicator span {
+  flex: 1;
+  text-align: center;
+  font-size: 0.85rem;
+  color: rgba(139, 115, 85, 0.5);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: color 0.2s ease;
+}
+
+.contributeModalStepIndicator span.active {
+  color: var(--primary-cont-color);
+}
+
+.contributeModalStep {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  width: 100%;
+}
+
+.contributeModalForm {
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  width: 100%;
 }
 
 .contributeModalFormGroup {
@@ -150,145 +181,52 @@
   min-height: 5rem;
 }
 
-.contributeModalTextareaHint {
-  font-size: 0.75rem;
-  color: var(--light-primary-cont-color);
-  margin: 0.4rem 0 0 0;
-}
-
-.contributeModalRadioGroup {
+.contributeModalFileUpload {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-}
-
-.contributeModalRadioLabel {
-  display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 0.75rem 1rem;
+  justify-content: center;
+  border: 0.125rem dashed rgba(139, 115, 85, 0.4);
+  border-radius: 0.5rem;
   background-color: var(--light-secondary-cont-colour);
-  border: 0.0625rem solid rgba(139, 115, 85, 0.3);
-  border-radius: 0.25rem;
-  cursor: pointer;
-  transition: border-color 0.2s;
+  padding: 1.5rem;
+  transition: all 0.2s ease;
 }
 
-.contributeModalRadioLabel:hover {
+.contributeModalFileUpload:hover {
   border-color: var(--primary-cont-color);
-}
-
-.contributeModalRadio {
-  width: 1.25rem;
-  height: 1.25rem;
-  accent-color: var(--primary-cont-color);
-  cursor: pointer;
-}
-
-.contributeModalRadioTextWrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.contributeModalRadioTitle {
-  margin: 0;
-  color: var(--text-cont-color);
-  font-size: 0.95rem;
-  font-weight: 600;
-}
-
-.contributeModalRadioDescription {
-  font-size: 0.8rem;
-  color: var(--accent-cont-color);
-  margin: 0;
-}
-
-.contributeModalRangeWrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  width: 100%;
-}
-
-.contributeModalRange {
-  width: 100%;
-  height: 0.5rem;
-  appearance: none;
-  cursor: pointer;
-  border-radius: 0.25rem;
-  background-color: var(--dark-secondary-cont-colour);
-}
-
-.contributeModalRange::-webkit-slider-thumb {
-  appearance: none;
-  width: 1.25rem;
-  height: 1.25rem;
-  background-color: var(--primary-cont-color);
-  border-radius: 50%;
-  border: 2px solid var(--dark-primary-cont-color);
-  cursor: pointer;
-}
-
-.contributeModalRange::-moz-range-thumb {
-  width: 1.25rem;
-  height: 1.25rem;
-  background-color: var(--primary-cont-color);
-  border-radius: 50%;
-  border: 2px solid var(--dark-primary-cont-color);
-  cursor: pointer;
-}
-
-.contributeModalRangeLabels {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 0.8rem;
-  color: var(--primary-cont-color);
-}
-
-.contributeModalRangeLabelLeft {
-  font-style: italic;
-  flex: 1;
-  text-align: left;
-}
-
-.contributeModalRangeLabelRight {
-  font-style: italic;
-  flex: 1;
-  text-align: right;
-}
-
-.contributeModalRangeValue {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--primary-cont-color);
-  text-align: center;
-  flex: 0;
-  margin: 0 1rem;
-}
-
-.contributeModalAlert {
   background-color: rgba(139, 115, 85, 0.05);
-  border-left: 0.25rem solid var(--primary-cont-color);
-  padding: 1rem;
-  margin-bottom: 1.25rem;
-  border-radius: 0 0.25rem 0.25rem 0;
 }
 
-.contributeModalAlertTitle {
-  margin: 0 0 0.25rem 0;
-  color: var(--primary-cont-color);
-  text-transform: uppercase;
-  font-size: var(--font-xs);
-  font-weight: 700;
+.contributeModalFileInput {
+  display: none;
 }
 
-.contributeModalAlertDescription {
+.contributeModalFileLabel {
+  cursor: pointer;
   font-size: 0.9rem;
-  color: var(--accent-cont-color);
-  line-height: 1.5;
-  margin: 0;
+  font-weight: 600;
+  color: var(--primary-cont-color);
+  padding: 0.5rem 1rem;
+  background-color: var(--secondary-cont-color);
+  border: 0.0625rem solid var(--primary-cont-color);
+  border-radius: 2rem;
+  transition: all 0.2s;
+}
+
+.contributeModalFileLabel:hover {
+  background-color: var(--primary-cont-color);
+  color: var(--secondary-cont-color);
+}
+
+.contributeModalImagePreview {
+  margin-top: 1rem;
+  max-width: 100%;
+  height: 8rem;
+  object-fit: cover;
+  border-radius: 0.25rem;
+  border: 0.0625rem solid rgba(139, 115, 85, 0.2);
 }
 
 .contributeModalActions {
@@ -297,7 +235,7 @@
   gap: 1rem;
   padding-top: 1.25rem;
   border-top: 0.0625rem solid rgba(139, 115, 85, 0.1);
-  margin-top: 0.5rem;
+  margin-top: 1.5rem;
   width: 100%;
 }
 
@@ -345,133 +283,6 @@
   color: var(--secondary-cont-color);
 }
 
-.contributeModalFooterNote {
-  font-size: 0.75rem;
-  color: var(--accent-cont-color);
-  text-align: center;
-  margin-top: 1.25rem;
-  font-style: italic;
-}
-
-.contributeModalStarRating {
-  display: flex;
-  gap: 0.25rem;
-  justify-content: center;
-  margin: 0.25rem 0;
-}
-
-.contributeModalStarButton {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--primary-cont-color);
-  padding: 0;
-  transition: transform 0.1s ease;
-}
-
-.contributeModalStarButton:hover {
-  transform: scale(1.1);
-}
-
-.contributeModalStarDescription {
-  font-size: 0.85rem;
-  color: var(--accent-cont-color);
-  text-align: center;
-  margin-top: 0.25rem;
-  font-style: italic;
-}
-
-.contributeModalSuccess {
-  text-align: center;
-  padding: 3rem 1rem;
-}
-
-.contributeModalSuccessTitle {
-  font-size: 1.75rem;
-  color: var(--primary-cont-color);
-  margin: 0 0 1rem 0;
-}
-
-.contributeModalSuccessMessage {
-  font-size: 1rem;
-  color: var(--accent-cont-color);
-  line-height: 1.6;
-  max-width: 30rem;
-  margin: 0 auto 1.5rem auto;
-}
-
-.contributeModalSuccess .contributeModalSubmit {
-  max-width: 250px;
-  margin: 0 auto;
-}
-
-.react-datepicker {
-  font-family: "Lora", serif !important;
-  border: 1px solid var(--primary-cont-color) !important;
-  border-radius: 0.5rem !important;
-  overflow: hidden;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
-}
-
-.react-datepicker__header {
-  background-color: var(--bg-cont-color) !important;
-  border-bottom: 1px solid var(--primary-cont-color) !important;
-}
-
-.react-datepicker__current-month {
-  color: var(--primary-cont-color) !important;
-  font-weight: 700 !important;
-}
-
-.react-datepicker__day-name,
-.react-datepicker__day {
-  color: var(--text-cont-color) !important;
-}
-
-.react-datepicker__day:hover {
-  background-color: var(--light-primary-cont-color) !important;
-  border-radius: 0.25rem !important;
-}
-
-.react-datepicker__day--selected,
-.react-datepicker__day--keyboard-selected {
-  background-color: var(--primary-cont-color) !important;
-  color: white !important;
-  border-radius: 0.25rem !important;
-}
-
-.react-datepicker__day--outside-month {
-  color: #ccc !important;
-}
-
-.react-datepicker__navigation-icon::before {
-  border-color: var(--primary-cont-color) !important;
-}
-
-.contributeModalErrorBanner {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  width: 100%;
-  padding: 1rem;
-  background-color: #fdf2f2;
-  border: 0.0625rem solid #f5c6cb;
-  border-left: 0.25rem solid #b5473a;
-  border-radius: 0.25rem;
-  color: #b5473a;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  margin-bottom: 1rem;
-}
-
-.contributeModalErrorBanner svg {
-  width: 1.25rem;
-  height: 1.25rem;
-  flex-shrink: 0;
-  color: #b5473a;
-  margin-top: 0.1rem;
-}
-
 .contributeModalToggleGroup {
   display: flex;
   width: 100%;
@@ -512,7 +323,6 @@
   padding: 1.25rem;
   border-radius: 0.5rem;
   border: 0.0625rem solid rgba(139, 115, 85, 0.2);
-  margin-top: 0.5rem;
 }
 
 .contributeModalHoursBlock {
@@ -577,22 +387,70 @@
   width: 100%;
 }
 
+.contributeModalErrorBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 1rem;
+  background-color: #fdf2f2;
+  border: 0.0625rem solid #f5c6cb;
+  border-left: 0.25rem solid #b5473a;
+  border-radius: 0.25rem;
+  color: #b5473a;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.contributeModalErrorBanner svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  color: #b5473a;
+  margin-top: 0.1rem;
+}
+
+.contributeModalSuccess {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.contributeModalSuccessTitle {
+  font-size: 1.75rem;
+  color: var(--primary-cont-color);
+  margin: 0 0 1rem 0;
+}
+
+.contributeModalSuccessMessage {
+  font-size: 1rem;
+  color: var(--accent-cont-color);
+  line-height: 1.6;
+  max-width: 30rem;
+  margin: 0 auto 1.5rem auto;
+}
+
+.contributeModalSuccess .contributeModalSubmit {
+  max-width: 250px;
+  margin: 0 auto;
+}
+
 @media (max-width: 48rem) {
   .contributeModal {
     max-height: 95vh;
     border-radius: 0.5rem;
   }
 
+  .contributeModalContactGrid {
+    grid-template-columns: 1fr;
+  }
+
   .contributeModalActions {
-    flex-direction: column;
+    flex-direction: column-reverse;
   }
 
   .contributeModalSubmit,
   .contributeModalCancel {
     width: 100%;
-  }
-
-  .contributeModalContactGrid {
-    grid-template-columns: 1fr;
   }
 }

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useJsApiLoader } from "@react-google-maps/api";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { storage } from "../../firebase";
 import { fetchAllInterests } from "../../../api/interestsApi";
 import "./NewModal.css";
 
@@ -38,6 +40,7 @@ const INITIAL_FORM_DATA = {
   email: "",
   website: "",
   hours: EMPTY_HOURS,
+  image: "",
 };
 
 export function NewPlaceForm({
@@ -46,10 +49,9 @@ export function NewPlaceForm({
   onSubmit,
   onCancel,
 }) {
+  const [step, setStep] = useState(1);
   const [formType, setFormType] = useState(() => {
-    if (initialData) {
-      return initialData.duration ? "activity" : "place";
-    }
+    if (initialData) return initialData.duration ? "activity" : "place";
     return defaultType;
   });
 
@@ -70,6 +72,7 @@ export function NewPlaceForm({
         email: initialData.email || "",
         website: initialData.website || "",
         hours: initialData.hours || EMPTY_HOURS,
+        image: initialData.image || "",
       };
     }
     return INITIAL_FORM_DATA;
@@ -77,6 +80,7 @@ export function NewPlaceForm({
 
   const [interests, setInterests] = useState([]);
   const [isValidating, setIsValidating] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState("");
 
   const { isLoaded } = useJsApiLoader({
@@ -100,12 +104,27 @@ export function NewPlaceForm({
       ...prev,
       hours: {
         ...prev.hours,
-        [day]: {
-          ...prev.hours[day],
-          [field]: value,
-        },
+        [day]: { ...prev.hours[day], [field]: value },
       },
     }));
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const storageRef = ref(storage, `places/${Date.now()}_${file.name}`);
+      await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(storageRef);
+      setFormData((prev) => ({ ...prev, image: downloadURL }));
+    } catch (err) {
+      console.error("Image upload failed:", err);
+      setError("Failed to upload image. Please try again.");
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -153,15 +172,13 @@ export function NewPlaceForm({
         const location = response.results[0].geometry.location;
         const formattedAddress = response.results[0].formatted_address;
 
-        const finalData = {
+        onSubmit({
           ...formData,
           type: formType,
           address: formattedAddress,
           latitude: location.lat(),
           longitude: location.lng(),
-        };
-
-        onSubmit(finalData);
+        });
       } else {
         setError(
           "Could not find the coordinates for this address. Please check the street address, suburb, and city.",
@@ -177,129 +194,124 @@ export function NewPlaceForm({
     }
   };
 
-  return (
-    <>
-      <aside className="contributeModalAlert">
-        <h3 className="contributeModalAlertTitle">Before You Submit</h3>
-        <p className="contributeModalAlertDescription">
-          As a local contributor, your voice shapes how visitors experience our
-          culture. Please only add {formType}s where you genuinely welcome
-          respectful visitors and feel the culture is represented authentically.
-        </p>
-      </aside>
+  const renderStep = () => {
+    if (step === 1) {
+      return (
+        <div className="contributeModalStep">
+          {!initialData && (
+            <div className="contributeModalToggleGroup">
+              <button
+                type="button"
+                className={`contributeModalToggleBtn ${formType === "place" ? "active" : ""}`}
+                onClick={() => setFormType("place")}
+              >
+                Place
+              </button>
+              <button
+                type="button"
+                className={`contributeModalToggleBtn ${formType === "activity" ? "active" : ""}`}
+                onClick={() => setFormType("activity")}
+              >
+                Activity
+              </button>
+            </div>
+          )}
 
-      <form onSubmit={handleSubmit} className="contributeModalForm">
-        <div className="contributeModalToggleGroup">
-          <button
-            type="button"
-            className={`contributeModalToggleBtn ${formType === "place" ? "active" : ""}`}
-            onClick={() => setFormType("place")}
-          >
-            Place
-          </button>
-          <button
-            type="button"
-            className={`contributeModalToggleBtn ${formType === "activity" ? "active" : ""}`}
-            onClick={() => setFormType("activity")}
-          >
-            Activity
-          </button>
-        </div>
-
-        <fieldset className="contributeModalFormGroup">
-          <label htmlFor="placeName" className="contributeModalLabel">
-            {formType === "activity" ? "Activity Name *" : "Place Name *"}
-          </label>
-          <input
-            id="placeName"
-            type="text"
-            value={formData.placeName}
-            onChange={(e) =>
-              setFormData({ ...formData, placeName: e.target.value })
-            }
-            placeholder={
-              formType === "activity"
-                ? "e.g., BraamByBike Tour"
-                : "e.g., Origins Centre Museum"
-            }
-            className="contributeModalInput"
-            required
-          />
-        </fieldset>
-
-        {formType === "activity" && (
           <fieldset className="contributeModalFormGroup">
-            <label htmlFor="duration" className="contributeModalLabel">
-              Estimated Duration *
+            <label htmlFor="placeName" className="contributeModalLabel">
+              {formType === "activity" ? "Activity Name *" : "Place Name *"}
             </label>
             <input
-              id="duration"
+              id="placeName"
               type="text"
-              value={formData.duration}
+              value={formData.placeName}
               onChange={(e) =>
-                setFormData({ ...formData, duration: e.target.value })
+                setFormData({ ...formData, placeName: e.target.value })
               }
-              placeholder="e.g., 2 hours"
+              placeholder={
+                formType === "activity"
+                  ? "e.g., BraamByBike Tour"
+                  : "e.g., Origins Centre Museum"
+              }
               className="contributeModalInput"
               required
             />
           </fieldset>
-        )}
 
-        <fieldset className="contributeModalFormGroup">
-          <label htmlFor="address" className="contributeModalLabel">
-            Street Address *
-          </label>
-          <input
-            id="address"
-            type="text"
-            value={formData.address}
-            onChange={(e) =>
-              setFormData({ ...formData, address: e.target.value })
-            }
-            placeholder="e.g., 1 Jan Smuts Ave"
-            className="contributeModalInput"
-            required
-          />
-        </fieldset>
+          {formType === "activity" && (
+            <fieldset className="contributeModalFormGroup">
+              <label htmlFor="duration" className="contributeModalLabel">
+                Estimated Duration *
+              </label>
+              <input
+                id="duration"
+                type="text"
+                value={formData.duration}
+                onChange={(e) =>
+                  setFormData({ ...formData, duration: e.target.value })
+                }
+                placeholder="e.g., 2 hours"
+                className="contributeModalInput"
+                required
+              />
+            </fieldset>
+          )}
 
-        <fieldset className="contributeModalFormGroup">
-          <label htmlFor="suburb" className="contributeModalLabel">
-            Suburb *
-          </label>
-          <input
-            id="suburb"
-            type="text"
-            value={formData.suburb}
-            onChange={(e) =>
-              setFormData({ ...formData, suburb: e.target.value })
-            }
-            placeholder="e.g., Braamfontein"
-            className="contributeModalInput"
-            required
-          />
-        </fieldset>
+          <fieldset className="contributeModalFormGroup">
+            <label htmlFor="address" className="contributeModalLabel">
+              Street Address *
+            </label>
+            <input
+              id="address"
+              type="text"
+              value={formData.address}
+              onChange={(e) =>
+                setFormData({ ...formData, address: e.target.value })
+              }
+              placeholder="e.g., 1 Jan Smuts Ave"
+              className="contributeModalInput"
+              required
+            />
+          </fieldset>
 
-        <fieldset className="contributeModalFormGroup">
-          <label htmlFor="city" className="contributeModalLabel">
-            City *
-          </label>
-          <input
-            id="city"
-            type="text"
-            value={formData.city}
-            onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-            placeholder="e.g., Johannesburg"
-            className="contributeModalInput"
-            required
-          />
-        </fieldset>
+          <fieldset className="contributeModalFormGroup">
+            <label htmlFor="suburb" className="contributeModalLabel">
+              Suburb *
+            </label>
+            <input
+              id="suburb"
+              type="text"
+              value={formData.suburb}
+              onChange={(e) =>
+                setFormData({ ...formData, suburb: e.target.value })
+              }
+              placeholder="e.g., Braamfontein"
+              className="contributeModalInput"
+              required
+            />
+          </fieldset>
 
-        <fieldset className="contributeModalFormGroup">
-          <label htmlFor="interest" className="contributeModalLabel">
-            Interest *
-          </label>
-          <section className="contributeModalInputWrapper">
+          <fieldset className="contributeModalFormGroup">
+            <label htmlFor="city" className="contributeModalLabel">
+              City *
+            </label>
+            <input
+              id="city"
+              type="text"
+              value={formData.city}
+              onChange={(e) =>
+                setFormData({ ...formData, city: e.target.value })
+              }
+              placeholder="e.g., Johannesburg"
+              className="contributeModalInput"
+              required
+            />
+          </fieldset>
+
+          <fieldset className="contributeModalFormGroup">
+            <label htmlFor="interest" className="contributeModalLabel">
+              Interest *
+            </label>
             <select
               id="interest"
               value={formData.interest}
@@ -316,9 +328,129 @@ export function NewPlaceForm({
                 </option>
               ))}
             </select>
-          </section>
-        </fieldset>
+          </fieldset>
+        </div>
+      );
+    }
 
+    if (step === 2) {
+      return (
+        <div className="contributeModalStep">
+          <fieldset className="contributeModalFormGroup">
+            <label className="contributeModalLabel">Cover Photo</label>
+            <div className="contributeModalFileUpload">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                id="imageUpload"
+                className="contributeModalFileInput"
+                disabled={isUploading}
+              />
+              <label htmlFor="imageUpload" className="contributeModalFileLabel">
+                {isUploading
+                  ? "Uploading..."
+                  : formData.image
+                    ? "Change Photo"
+                    : "Upload a photo"}
+              </label>
+              {formData.image && (
+                <img
+                  src={formData.image}
+                  alt="Preview"
+                  className="contributeModalImagePreview"
+                />
+              )}
+            </div>
+          </fieldset>
+
+          <fieldset className="contributeModalFormGroup">
+            <label className="contributeModalLabel">Operating Hours *</label>
+            <div className="contributeModalHoursGrid">
+              {DAYS.map((day) => (
+                <div key={day} className="contributeModalHoursBlock">
+                  <span className="contributeModalHoursDay">
+                    {day.charAt(0).toUpperCase() + day.slice(1)}
+                  </span>
+                  <div className="contributeModalHoursInputs">
+                    <input
+                      type="time"
+                      value={formData.hours[day]?.open || ""}
+                      onChange={(e) =>
+                        handleHourChange(day, "open", e.target.value)
+                      }
+                      className="contributeModalInput contributeModalTimeInput"
+                      required
+                    />
+                    <span className="contributeModalHoursSeparator">to</span>
+                    <input
+                      type="time"
+                      value={formData.hours[day]?.close || ""}
+                      onChange={(e) =>
+                        handleHourChange(day, "close", e.target.value)
+                      }
+                      className="contributeModalInput contributeModalTimeInput"
+                      required
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+
+          <div className="contributeModalContactGrid">
+            <fieldset className="contributeModalFormGroup">
+              <label htmlFor="phone" className="contributeModalLabel">
+                Cellphone
+              </label>
+              <input
+                id="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
+                placeholder="+27..."
+                className="contributeModalInput"
+              />
+            </fieldset>
+            <fieldset className="contributeModalFormGroup">
+              <label htmlFor="email" className="contributeModalLabel">
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                placeholder="hello@place.com"
+                className="contributeModalInput"
+              />
+            </fieldset>
+            <fieldset className="contributeModalFormGroup">
+              <label htmlFor="website" className="contributeModalLabel">
+                Website
+              </label>
+              <input
+                id="website"
+                type="url"
+                value={formData.website}
+                onChange={(e) =>
+                  setFormData({ ...formData, website: e.target.value })
+                }
+                placeholder="https://..."
+                className="contributeModalInput"
+              />
+            </fieldset>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="contributeModalStep">
         <fieldset className="contributeModalFormGroup">
           <label htmlFor="description" className="contributeModalLabel">
             Description *
@@ -331,94 +463,10 @@ export function NewPlaceForm({
             }
             placeholder={`Describe this ${formType} and what makes it special...`}
             rows={4}
-            className="contributeModalTextarea contributeModalInputWithIcon"
+            className="contributeModalTextarea"
             required
           />
         </fieldset>
-
-        <fieldset className="contributeModalFormGroup">
-          <label className="contributeModalLabel">Operating Hours *</label>
-          <div className="contributeModalHoursGrid">
-            {DAYS.map((day) => (
-              <div key={day} className="contributeModalHoursBlock">
-                <span className="contributeModalHoursDay">
-                  {day.charAt(0).toUpperCase() + day.slice(1)}
-                </span>
-                <div className="contributeModalHoursInputs">
-                  <input
-                    type="time"
-                    value={formData.hours[day]?.open || ""}
-                    onChange={(e) =>
-                      handleHourChange(day, "open", e.target.value)
-                    }
-                    className="contributeModalInput contributeModalTimeInput"
-                    required
-                  />
-                  <span className="contributeModalHoursSeparator">to</span>
-                  <input
-                    type="time"
-                    value={formData.hours[day]?.close || ""}
-                    onChange={(e) =>
-                      handleHourChange(day, "close", e.target.value)
-                    }
-                    className="contributeModalInput contributeModalTimeInput"
-                    required
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </fieldset>
-
-        <div className="contributeModalContactGrid">
-          <fieldset className="contributeModalFormGroup">
-            <label htmlFor="phone" className="contributeModalLabel">
-              Cellphone
-            </label>
-            <input
-              id="phone"
-              type="tel"
-              value={formData.phone}
-              onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
-              }
-              placeholder="e.g., +27 67 676 7676"
-              className="contributeModalInput"
-            />
-          </fieldset>
-
-          <fieldset className="contributeModalFormGroup">
-            <label htmlFor="email" className="contributeModalLabel">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-              placeholder="e.g., hello@place.com"
-              className="contributeModalInput"
-            />
-          </fieldset>
-
-          <fieldset className="contributeModalFormGroup">
-            <label htmlFor="website" className="contributeModalLabel">
-              Website
-            </label>
-            <input
-              id="website"
-              type="url"
-              value={formData.website}
-              onChange={(e) =>
-                setFormData({ ...formData, website: e.target.value })
-              }
-              placeholder="https://..."
-              className="contributeModalInput"
-            />
-          </fieldset>
-        </div>
 
         {!initialData && (
           <>
@@ -433,7 +481,7 @@ export function NewPlaceForm({
                 onChange={(e) =>
                   setFormData({ ...formData, whyEndorse: e.target.value })
                 }
-                placeholder={`Explain why you believe visitors should experience this ${formType}...`}
+                placeholder="Explain why you believe visitors should experience this..."
                 rows={4}
                 className="contributeModalTextarea"
                 required
@@ -489,38 +537,72 @@ export function NewPlaceForm({
                     culturalSensitivity: e.target.value,
                   })
                 }
-                placeholder="Are there any cultural protocols, dress codes, or respectful behaviors visitors should know?"
+                placeholder="Are there any cultural protocols or respectful behaviors visitors should know?"
                 rows={3}
                 className="contributeModalTextarea"
               />
             </fieldset>
           </>
         )}
+      </div>
+    );
+  };
 
-        {error && (
-          <div className="contributeModalErrorBanner">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-            <span>{error}</span>
-          </div>
+  return (
+    <form onSubmit={handleSubmit} className="contributeModalForm">
+      <div className="contributeModalStepIndicator">
+        <span className={step >= 1 ? "active" : ""}>1. Basics</span>
+        <span className={step >= 2 ? "active" : ""}>2. Details</span>
+        <span className={step >= 3 ? "active" : ""}>3. Story</span>
+      </div>
+
+      {renderStep()}
+
+      {error && (
+        <div className="contributeModalErrorBanner">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <span>{error}</span>
+        </div>
+      )}
+
+      <footer className="contributeModalActions">
+        {step > 1 && (
+          <button
+            type="button"
+            onClick={() => setStep(step - 1)}
+            className="contributeModalCancel"
+            disabled={isValidating || isUploading}
+          >
+            Back
+          </button>
         )}
 
-        <footer className="contributeModalActions">
+        {step < 3 ? (
+          <button
+            type="button"
+            onClick={() => setStep(step + 1)}
+            className="contributeModalSubmit"
+            disabled={isUploading}
+          >
+            Next Step
+          </button>
+        ) : (
           <button
             type="submit"
             className="contributeModalSubmit"
-            disabled={isValidating}
+            disabled={isValidating || isUploading}
           >
             {isValidating
               ? "Locating..."
@@ -528,22 +610,9 @@ export function NewPlaceForm({
                 ? "Save Changes"
                 : `Submit ${formType === "activity" ? "Activity" : "Place"}`}
           </button>
-          <button
-            type="button"
-            onClick={onCancel}
-            className="contributeModalCancel"
-            disabled={isValidating}
-          >
-            Cancel
-          </button>
-        </footer>
-      </form>
-
-      <p className="contributeModalFooterNote">
-        * Required fields. All contributions are reviewed to ensure quality and
-        cultural respect.
-      </p>
-    </>
+        )}
+      </footer>
+    </form>
   );
 }
 

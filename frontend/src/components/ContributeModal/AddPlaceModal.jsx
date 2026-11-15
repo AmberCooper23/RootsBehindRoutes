@@ -49,7 +49,7 @@ export function AddPlaceModal({
         touristRating: 0,
         reviewCount: 0,
         endorsementCount: 1,
-        image: PLACEHOLDER_IMAGE,
+        image: data.image || PLACEHOLDER_IMAGE, // 👈 Uses uploaded image or placeholder
         phone: data.phone,
         email: data.email,
         website: data.website,
@@ -89,13 +89,10 @@ export function AddPlaceModal({
             onClick={onClose}
             className="contributeModalClose"
             type="button"
-            aria-label="Close modal"
           >
             X
           </button>
-
           <h2 className="contributeModalTitle">Add an Experience</h2>
-
           <p className="contributeModalSubtitle">
             Help others discover authentic experiences
           </p>
