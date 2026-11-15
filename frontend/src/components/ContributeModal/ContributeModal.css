@@ -4,7 +4,7 @@
   --light-primary-cont-color: #d4a574;
   --secondary-cont-color: #ffffff;
   --light-secondary-cont-colour: #fdfbf7;
-  --dark-secondary-cont-color: #f5ebd6;
+  --dark-secondary-cont-colour: #e2d1ad93;
   --accent-cont-color: #555;
   --text-cont-color: #000000;
   --bg-cont-color: #f5f0e6;
@@ -115,7 +115,7 @@
 
 .contributeModalLabel {
   display: block;
-  font-size: 0.85rem;
+  font-size: var(--font-xxs);
   color: var(--primary-cont-color);
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -135,7 +135,6 @@
   color: var(--text-cont-color);
   border-radius: 0.25rem;
   font-family: "Lora", serif;
-  color-scheme: light;
 }
 
 .contributeModalInput:focus,
@@ -144,16 +143,6 @@
   outline: none;
   border-color: var(--primary-cont-color);
   box-shadow: 0 0 0 0.125rem rgba(139, 115, 85, 0.15);
-}
-
-.contributeModalInput::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-  opacity: 0.6;
-  transition: opacity 0.2s ease;
-}
-
-.contributeModalInput::-webkit-calendar-picker-indicator:hover {
-  opacity: 1;
 }
 
 .contributeModalTextarea {
@@ -179,14 +168,14 @@
   gap: 1rem;
   padding: 0.75rem 1rem;
   background-color: var(--light-secondary-cont-colour);
-  border: 0.125rem solid var(--primary-cont-color);
+  border: 0.0625rem solid rgba(139, 115, 85, 0.3);
   border-radius: 0.25rem;
   cursor: pointer;
   transition: border-color 0.2s;
 }
 
 .contributeModalRadioLabel:hover {
-  border-color: var(--dark-primary-cont-color);
+  border-color: var(--primary-cont-color);
 }
 
 .contributeModalRadio {
@@ -228,7 +217,7 @@
   appearance: none;
   cursor: pointer;
   border-radius: 0.25rem;
-  background-color: var(--dark-secondary-cont-color);
+  background-color: var(--dark-secondary-cont-colour);
 }
 
 .contributeModalRange::-webkit-slider-thumb {
@@ -291,7 +280,7 @@
   margin: 0 0 0.25rem 0;
   color: var(--primary-cont-color);
   text-transform: uppercase;
-  font-size: 0.85rem;
+  font-size: var(--font-xs);
   font-weight: 700;
 }
 
@@ -413,6 +402,49 @@
 .contributeModalSuccess .contributeModalSubmit {
   max-width: 250px;
   margin: 0 auto;
+}
+
+.react-datepicker {
+  font-family: "Lora", serif !important;
+  border: 1px solid var(--primary-cont-color) !important;
+  border-radius: 0.5rem !important;
+  overflow: hidden;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.react-datepicker__header {
+  background-color: var(--bg-cont-color) !important;
+  border-bottom: 1px solid var(--primary-cont-color) !important;
+}
+
+.react-datepicker__current-month {
+  color: var(--primary-cont-color) !important;
+  font-weight: 700 !important;
+}
+
+.react-datepicker__day-name,
+.react-datepicker__day {
+  color: var(--text-cont-color) !important;
+}
+
+.react-datepicker__day:hover {
+  background-color: var(--light-primary-cont-color) !important;
+  border-radius: 0.25rem !important;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background-color: var(--primary-cont-color) !important;
+  color: white !important;
+  border-radius: 0.25rem !important;
+}
+
+.react-datepicker__day--outside-month {
+  color: #ccc !important;
+}
+
+.react-datepicker__navigation-icon::before {
+  border-color: var(--primary-cont-color) !important;
 }
 
 @media (max-width: 48rem) {

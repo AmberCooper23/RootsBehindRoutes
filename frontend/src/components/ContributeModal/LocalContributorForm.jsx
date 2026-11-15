@@ -1,9 +1,11 @@
 import { useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const INITIAL_FORM_DATA = {
   whyEndorse: "",
   localRating: 5,
-  visitDate: "",
+  visitDate: null,
   culturalSensitivity: "",
 };
 
@@ -12,7 +14,20 @@ export function LocalContributorForm({ targetName, onSubmit, onCancel }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+
+    let formattedDate = "";
+    if (formData.visitDate) {
+      const year = formData.visitDate.getFullYear();
+      const month = String(formData.visitDate.getMonth() + 1).padStart(2, "0");
+      const day = String(formData.visitDate.getDate()).padStart(2, "0");
+      formattedDate = `${year}/${month}/${day}`;
+    }
+
+    const submissionData = {
+      ...formData,
+      visitDate: formattedDate,
+    };
+    onSubmit(submissionData);
   };
 
   return (
@@ -44,18 +59,17 @@ export function LocalContributorForm({ targetName, onSubmit, onCancel }) {
         </fieldset>
 
         <fieldset className="contributeModalFormGroup">
-          <label htmlFor="visitDate" className="contributeModalLabel">
+          <label className="contributeModalLabel">
             When Did You Last Visit? *
           </label>
-          <input
-            id="visitDate"
-            type="month"
-            value={formData.visitDate}
-            onChange={(e) =>
-              setFormData({ ...formData, visitDate: e.target.value })
-            }
-            required
+          <DatePicker
+            selected={formData.visitDate}
+            onChange={(date) => setFormData({ ...formData, visitDate: date })}
+            dateFormat="yyyy/MM/dd"
             className="contributeModalInput"
+            placeholderText="YYYY/MM/DD"
+            required
+            showPopperArrow={false}
           />
         </fieldset>
 
@@ -122,8 +136,8 @@ export function LocalContributorForm({ targetName, onSubmit, onCancel }) {
         </footer>
       </form>
       <p className="contributeModalFooterNote">
-        * Required fields. All contributions are reviewed to ensure quality and
-        cultural respect.
+        * Required fields. Please be respectful and constructive in your
+        feedback.
       </p>
     </>
   );

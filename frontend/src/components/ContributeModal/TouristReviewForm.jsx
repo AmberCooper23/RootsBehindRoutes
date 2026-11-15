@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Star } from "lucide-react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const RATING_LABELS = {
   0: "Click to rate your experience",
@@ -14,7 +16,7 @@ const INITIAL_FORM_DATA = {
   rating: 0,
   hoveredRating: 0,
   review: "",
-  visitDate: "",
+  visitDate: null,
   wouldRecommend: "",
 };
 
@@ -23,7 +25,20 @@ export function TouristReviewForm({ targetName, onSubmit, onCancel }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+
+    let formattedDate = "";
+    if (formData.visitDate) {
+      const year = formData.visitDate.getFullYear();
+      const month = String(formData.visitDate.getMonth() + 1).padStart(2, "0");
+      const day = String(formData.visitDate.getDate()).padStart(2, "0");
+      formattedDate = `${year}/${month}/${day}`;
+    }
+
+    const submissionData = {
+      ...formData,
+      visitDate: formattedDate,
+    };
+    onSubmit(submissionData);
   };
 
   return (
@@ -71,18 +86,15 @@ export function TouristReviewForm({ targetName, onSubmit, onCancel }) {
         </fieldset>
 
         <fieldset className="contributeModalFormGroup">
-          <label htmlFor="visitDate" className="contributeModalLabel">
-            When Did You Visit? *
-          </label>
-          <input
-            id="visitDate"
-            type="month"
-            value={formData.visitDate}
-            onChange={(e) =>
-              setFormData({ ...formData, visitDate: e.target.value })
-            }
-            required
+          <label className="contributeModalLabel">When Did You Visit? *</label>
+          <DatePicker
+            selected={formData.visitDate}
+            onChange={(date) => setFormData({ ...formData, visitDate: date })}
+            dateFormat="yyyy/MM/dd"
             className="contributeModalInput"
+            placeholderText="YYYY/MM/DD"
+            required
+            showPopperArrow={false}
           />
         </fieldset>
 
@@ -179,7 +191,7 @@ export function TouristReviewForm({ targetName, onSubmit, onCancel }) {
         <footer className="contributeModalActions">
           <button
             type="submit"
-            disabled={formData.rating === 0}
+            disabled={formData.rating === 0 || !formData.visitDate}
             className="contributeModalSubmit"
           >
             Submit Review
