@@ -70,6 +70,7 @@ export function NavBar() {
                   <p>Johannesburg, South Africa</p>
                 </section>
               </NavLink>
+
               <ul className="navBarLinks">
                 <li className="navBarLinkItem">
                   <NavLink
@@ -77,6 +78,13 @@ export function NavBar() {
                     className="navBarLink"
                   >
                     {isManager ? "Dashboard" : "Discover"}
+                  </NavLink>
+                </li>
+
+                {/* 👇 The Map link is back! */}
+                <li className="navBarLinkItem">
+                  <NavLink to="/Map" className="navBarLink">
+                    Map
                   </NavLink>
                 </li>
 
@@ -95,6 +103,7 @@ export function NavBar() {
                 </li>
               </ul>
             </section>
+
             <section className="navBarRight">
               {!isManager && (
                 <button
