@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signOut } from "firebase/auth";
 import { auth, storage } from "../../firebase";
@@ -33,6 +33,7 @@ function isManagerRole(role) {
 
 export function UserProfile() {
   const { uid } = useParams();
+  const navigate = useNavigate();
   const [user] = useAuthState(auth);
 
   const targetUid = uid || user?.uid;
@@ -201,6 +202,7 @@ export function UserProfile() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
+      navigate("/");
     } catch (error) {
       console.error(error);
     }
