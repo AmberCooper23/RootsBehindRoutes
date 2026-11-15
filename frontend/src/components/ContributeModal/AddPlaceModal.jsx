@@ -3,12 +3,18 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, provider } from "../../firebase";
 import { signInWithPopup } from "firebase/auth";
 import { addPlace } from "../../../api/placesApi";
+import { addActivity } from "../../../api/activitiesApi";
 import { NewPlaceForm } from "./NewPlaceForm";
 import "./ContributeModal.css";
 
 const PLACEHOLDER_IMAGE = "https://placehold.co/600x400?text=Photo+Coming+Soon";
 
-export function AddPlaceModal({ isOpen, onClose, onSuccess }) {
+export function AddPlaceModal({
+  isOpen,
+  onClose,
+  onSuccess,
+  defaultType = "place",
+}) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [user] = useAuthState(auth);
 
@@ -26,12 +32,12 @@ export function AddPlaceModal({ isOpen, onClose, onSuccess }) {
         }
       }
 
-      await addPlace({
+      const payload = {
         name: data.placeName,
         location: {
           address: data.address,
+          suburb: data.suburb,
           city: data.city,
-          region: data.region,
           latitude: data.latitude,
           longitude: data.longitude,
         },
@@ -47,7 +53,14 @@ export function AddPlaceModal({ isOpen, onClose, onSuccess }) {
         contributorId: currentUser.uid,
         contributorName: currentUser.displayName || "Anonymous",
         createdAt: new Date().toISOString(),
-      });
+      };
+
+      if (data.type === "activity") {
+        payload.duration = data.duration;
+        await addActivity(payload);
+      } else {
+        await addPlace(payload);
+      }
 
       onSuccess?.();
       window.dispatchEvent(new CustomEvent("experiences:updated"));
@@ -77,7 +90,7 @@ export function AddPlaceModal({ isOpen, onClose, onSuccess }) {
             X
           </button>
 
-          <h2 className="contributeModalTitle">Add a New Place</h2>
+          <h2 className="contributeModalTitle">Add an Experience</h2>
 
           <p className="contributeModalSubtitle">
             Help others discover authentic experiences
@@ -89,11 +102,15 @@ export function AddPlaceModal({ isOpen, onClose, onSuccess }) {
             <section className="contributeModalSuccess">
               <h3 className="contributeModalSuccessTitle">Thank You!</h3>
               <p className="contributeModalSuccessMessage">
-                Your place has been submitted and is now live on the site.
+                Your experience has been submitted and is now live on the site.
               </p>
             </section>
           ) : (
-            <NewPlaceForm onSubmit={handleSubmit} onCancel={onClose} />
+            <NewPlaceForm
+              defaultType={defaultType}
+              onSubmit={handleSubmit}
+              onCancel={onClose}
+            />
           )}
         </section>
       </article>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import "./LandingPage.css";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../../firebase";
@@ -9,6 +9,7 @@ import LocationCard from "../../components/LocationCard/LocationCard";
 import { fetchAllPlaces } from "../../../api/placesApi";
 import { fetchAllActivities } from "../../../api/activitiesApi";
 import { getBookmarks } from "../../../api/bookmarksApi";
+import { fetchUser } from "../../../api/usersApi";
 
 const DAY_KEYS = [
   "sunday",
@@ -41,6 +42,8 @@ function isCurrentlyOpen(hours) {
 export function LandingPage() {
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
+  const [userRole, setUserRole] = useState(null);
+  const [loadingRole, setLoadingRole] = useState(true);
 
   const [filter, setFilter] = useState({
     interests: [],
@@ -50,6 +53,21 @@ export function LandingPage() {
   const [experiences, setExperiences] = useState([]);
   const [bookmarksByPath, setBookmarksByPath] = useState({});
 
+  useEffect(() => {
+    async function checkRole() {
+      if (user) {
+        try {
+          const profile = await fetchUser(user.uid);
+          setUserRole(profile?.role);
+        } catch (err) {
+          console.error("Failed to fetch role", err);
+        }
+      }
+      setLoadingRole(false);
+    }
+    checkRole();
+  }, [user]);
+
   const loadExperiences = useCallback(async () => {
     try {
       const [places, activities] = await Promise.all([
@@ -57,11 +75,14 @@ export function LandingPage() {
         fetchAllActivities(),
       ]);
 
-      const taggedPlaces = places.map((place) => ({
+      const visiblePlaces = places.filter((p) => !p.isHidden);
+      const visibleActivities = activities.filter((a) => !a.isHidden);
+
+      const taggedPlaces = visiblePlaces.map((place) => ({
         ...place,
         type: "place",
       }));
-      const taggedActivities = activities.map((activity) => ({
+      const taggedActivities = visibleActivities.map((activity) => ({
         ...activity,
         type: "activity",
       }));
@@ -90,8 +111,10 @@ export function LandingPage() {
   }, [user?.uid]);
 
   useEffect(() => {
-    loadExperiences();
-  }, [loadExperiences]);
+    if (userRole !== "manager") {
+      loadExperiences();
+    }
+  }, [loadExperiences, userRole]);
 
   useEffect(() => {
     loadBookmarks();
@@ -153,6 +176,14 @@ export function LandingPage() {
         return 0;
     }
   });
+
+  if (loadingRole) {
+    return <div>Loading...</div>;
+  }
+
+  if (userRole === "manager") {
+    return <Navigate to="/Dashboard" replace />;
+  }
 
   return (
     <main className="discoverPage">

@@ -1,423 +1,469 @@
-import { useCallback, useEffect, useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth } from "../../firebase";
-import { fetchMyBusiness, updateMyBusiness } from "../../../api/managerApi";
+import {
+  fetchManagerPlaces,
+  updateManagerPlace,
+  deleteManagerPlace,
+} from "../../../api/placesApi";
+import {
+  fetchManagerActivities,
+  updateManagerActivity,
+  deleteManagerActivity,
+} from "../../../api/activitiesApi";
+import { AddPlaceModal } from "../../components/ContributeModal/AddPlaceModal";
+import { NewPlaceForm } from "../../components/ContributeModal/NewPlaceForm";
 import "./ManagerDashboardPage.css";
 
-const LOGIN_ERRORS = {
-  "auth/invalid-credential": "That email or password isn't right.",
-  "auth/invalid-email": "Enter a valid email address.",
-  "auth/too-many-requests":
-    "Too many attempts. Wait a few minutes and try again.",
-};
+function EditPlaceModal({ isOpen, onClose, place, onSuccess }) {
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-function formatDate(value) {
-  if (!value) return "";
-  const date = new Date(value);
-  return Number.isNaN(date.getTime())
-    ? String(value)
-    : date.toLocaleDateString(undefined, {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
+  const handleSubmit = async (data) => {
+    try {
+      await updateManagerPlace(place.id, {
+        name: data.placeName,
+        location: {
+          address: data.address,
+          suburb: data.suburb,
+          city: data.city,
+          latitude: data.latitude,
+          longitude: data.longitude,
+        },
+        interests: [data.interest],
+        description: data.description,
       });
-}
-
-function BusinessLogin() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isSigningIn, setIsSigningIn] = useState(false);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setIsSigningIn(true);
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
+      setIsSubmitted(true);
+      setTimeout(() => {
+        setIsSubmitted(false);
+        onSuccess();
+        onClose();
+      }, 1500);
     } catch (err) {
-      setError(LOGIN_ERRORS[err.code] || "Couldn't sign in. Try again.");
-    } finally {
-      setIsSigningIn(false);
+      console.error(err);
+      alert("Failed to update place.");
     }
   };
 
+  if (!isOpen) return null;
+
   return (
-    <main className="dashboard dashboardCentered">
-      <form className="dashboardLogin" onSubmit={handleSubmit}>
-        <h1 className="dashboardLoginTitle">Business sign in</h1>
-        <p className="dashboardMuted">
-          Use the business account we set up for your place. This is separate
-          from your personal account.
-        </p>
-        <label className="dashboardLabel" htmlFor="businessEmail">
-          Email
-        </label>
-        <input
-          id="businessEmail"
-          type="email"
-          className="dashboardInput"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          autoComplete="username"
-          required
-        />
-        <label className="dashboardLabel" htmlFor="businessPassword">
-          Password
-        </label>
-        <input
-          id="businessPassword"
-          type="password"
-          className="dashboardInput"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          autoComplete="current-password"
-          required
-        />
-        {error && (
-          <p className="dashboardError" role="alert">
-            {error}
+    <aside className="contributeModalOverlay" onClick={onClose}>
+      <article className="contributeModal" onClick={(e) => e.stopPropagation()}>
+        <header className="contributeModalHeader">
+          <button
+            onClick={onClose}
+            className="contributeModalClose"
+            type="button"
+          >
+            X
+          </button>
+          <h2 className="contributeModalTitle">Edit Place</h2>
+          <p className="contributeModalSubtitle">
+            Update details for {place.name}
           </p>
-        )}
-        <button
-          type="submit"
-          className="dashboardButton"
-          disabled={isSigningIn}
-        >
-          {isSigningIn ? "Signing in..." : "Sign in"}
-        </button>
-      </form>
-    </main>
+        </header>
+        <section className="contributeModalBody">
+          {isSubmitted ? (
+            <section className="contributeModalSuccess">
+              <h3 className="contributeModalSuccessTitle">Updated!</h3>
+              <p className="contributeModalSuccessMessage">
+                Your place has been successfully updated.
+              </p>
+            </section>
+          ) : (
+            <NewPlaceForm
+              initialData={place}
+              onSubmit={handleSubmit}
+              onCancel={onClose}
+            />
+          )}
+        </section>
+      </article>
+    </aside>
   );
 }
 
-function BusinessForm({ business, getToken, onSaved }) {
-  const [form, setForm] = useState({
-    name: business.name || "",
-    description: business.description || "",
-    image: business.image || "",
-    city: business.location?.city || "",
-    region: business.location?.region || "",
-  });
-  const [status, setStatus] = useState("idle"); // idle | saving | saved | error
-  const [error, setError] = useState("");
+function EditActivityModal({ isOpen, onClose, activity, onSuccess }) {
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const setField = (field) => (e) => {
-    setForm({ ...form, [field]: e.target.value });
-    setStatus("idle");
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setStatus("saving");
-    setError("");
+  const handleSubmit = async (data) => {
     try {
-      const updated = await updateMyBusiness(await getToken(), form);
-      onSaved(updated);
-      setStatus("saved");
+      await updateManagerActivity(activity.id, {
+        name: data.placeName,
+        location: {
+          address: data.address,
+          suburb: data.suburb,
+          city: data.city,
+          latitude: data.latitude,
+          longitude: data.longitude,
+        },
+        interests: [data.interest],
+        description: data.description,
+        duration: data.duration,
+      });
+      setIsSubmitted(true);
+      setTimeout(() => {
+        setIsSubmitted(false);
+        onSuccess();
+        onClose();
+      }, 1500);
     } catch (err) {
-      setError(err.message);
-      setStatus("error");
+      console.error(err);
+      alert("Failed to update activity.");
     }
   };
 
+  if (!isOpen) return null;
+
   return (
-    <form className="dashboardForm" onSubmit={handleSubmit}>
-      <label className="dashboardLabel" htmlFor="bizName">
-        Name
-      </label>
-      <input
-        id="bizName"
-        className="dashboardInput"
-        value={form.name}
-        onChange={setField("name")}
-        required
-      />
-
-      <label className="dashboardLabel" htmlFor="bizDescription">
-        Description
-      </label>
-      <textarea
-        id="bizDescription"
-        className="dashboardInput dashboardTextarea"
-        rows={5}
-        value={form.description}
-        onChange={setField("description")}
-      />
-
-      <label className="dashboardLabel" htmlFor="bizImage">
-        Image link
-      </label>
-      <input
-        id="bizImage"
-        className="dashboardInput"
-        value={form.image}
-        onChange={setField("image")}
-        placeholder="https://..."
-      />
-
-      <section className="dashboardRow">
-        <section className="dashboardField">
-          <label className="dashboardLabel" htmlFor="bizCity">
-            City
-          </label>
-          <input
-            id="bizCity"
-            className="dashboardInput"
-            value={form.city}
-            onChange={setField("city")}
-          />
-        </section>
-        <section className="dashboardField">
-          <label className="dashboardLabel" htmlFor="bizRegion">
-            Region
-          </label>
-          <input
-            id="bizRegion"
-            className="dashboardInput"
-            value={form.region}
-            onChange={setField("region")}
-          />
-        </section>
-      </section>
-
-      {status === "error" && (
-        <p className="dashboardError" role="alert">
-          {error}
-        </p>
-      )}
-      <footer className="dashboardActions">
-        <button
-          type="submit"
-          className="dashboardButton"
-          disabled={status === "saving"}
-        >
-          {status === "saving" ? "Saving..." : "Save changes"}
-        </button>
-        {status === "saved" && (
-          <p className="dashboardSaved" role="status">
-            Changes saved
+    <aside className="contributeModalOverlay" onClick={onClose}>
+      <article className="contributeModal" onClick={(e) => e.stopPropagation()}>
+        <header className="contributeModalHeader">
+          <button
+            onClick={onClose}
+            className="contributeModalClose"
+            type="button"
+          >
+            X
+          </button>
+          <h2 className="contributeModalTitle">Edit Activity</h2>
+          <p className="contributeModalSubtitle">
+            Update details for {activity.name}
           </p>
-        )}
-      </footer>
-    </form>
-  );
-}
-
-function Rating({ label, value, max, count, countLabel }) {
-  return (
-    <article className="dashboardRating">
-      <p className="dashboardRatingLabel">{label}</p>
-      <p className="dashboardRatingValue">
-        {typeof value === "number" && value > 0 ? value : "-"}
-        <span className="dashboardRatingMax">/{max}</span>
-      </p>
-      <p className="dashboardMuted">
-        {count} {countLabel}
-        {count === 1 ? "" : "s"}
-      </p>
-    </article>
-  );
-}
-
-function FeedbackList({ title, items, emptyMessage, renderItem }) {
-  return (
-    <section className="dashboardSection">
-      <h2 className="dashboardSectionTitle">
-        {title} <span className="dashboardMuted">({items.length})</span>
-      </h2>
-      {items.length === 0 ? (
-        <p className="dashboardMuted">{emptyMessage}</p>
-      ) : (
-        <ul className="dashboardFeedbackList">
-          {items.map((item) => (
-            <li key={item.id} className="dashboardFeedbackItem">
-              {renderItem(item)}
-            </li>
-          ))}
-        </ul>
-      )}
-    </section>
+        </header>
+        <section className="contributeModalBody">
+          {isSubmitted ? (
+            <section className="contributeModalSuccess">
+              <h3 className="contributeModalSuccessTitle">Updated!</h3>
+              <p className="contributeModalSuccessMessage">
+                Your activity has been successfully updated.
+              </p>
+            </section>
+          ) : (
+            <NewPlaceForm
+              initialData={activity}
+              onSubmit={handleSubmit}
+              onCancel={onClose}
+            />
+          )}
+        </section>
+      </article>
+    </aside>
   );
 }
 
 export function ManagerDashboardPage() {
   const [user, authLoading] = useAuthState(auth);
-  const [business, setBusiness] = useState(null);
-  const [status, setStatus] = useState("loading"); // loading | ready | notLinked | error
+  const [places, setPlaces] = useState([]);
+  const [activities, setActivities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [isAddPlaceOpen, setIsAddPlaceOpen] = useState(false);
+  const [isAddActivityOpen, setIsAddActivityOpen] = useState(false);
+  const [editingPlace, setEditingPlace] = useState(null);
+  const [editingActivity, setEditingActivity] = useState(null);
+  const [error, setError] = useState("");
 
-  const getToken = useCallback(() => user.getIdToken(), [user]);
-
-  const load = useCallback(async () => {
+  const loadData = useCallback(async () => {
     if (!user) return;
-    setStatus("loading");
+    setLoading(true);
     try {
-      const data = await fetchMyBusiness(await user.getIdToken());
-      if (data) {
-        setBusiness(data);
-        setStatus("ready");
-      } else {
-        setStatus("notLinked");
-      }
+      const [fetchedPlaces, fetchedActivities] = await Promise.all([
+        fetchManagerPlaces(user.uid),
+        fetchManagerActivities(user.uid),
+      ]);
+      setPlaces(fetchedPlaces);
+      setActivities(fetchedActivities);
     } catch (err) {
       console.error(err);
-      setStatus("error");
+      setError("Failed to load your data.");
+    } finally {
+      setLoading(false);
     }
   }, [user]);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    loadData();
+  }, [loadData]);
 
-  if (authLoading) {
-    return <main className="dashboard dashboardCentered">Loading...</main>;
-  }
+  const handleToggleHidePlace = async (place) => {
+    try {
+      const newStatus = !place.isHidden;
+      await updateManagerPlace(place.id, { isHidden: newStatus });
+      setPlaces((prev) =>
+        prev.map((p) =>
+          p.id === place.id ? { ...p, isHidden: newStatus } : p,
+        ),
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update visibility.");
+    }
+  };
 
-  if (!user) return <BusinessLogin />;
+  const handleToggleHideActivity = async (activity) => {
+    try {
+      const newStatus = !activity.isHidden;
+      await updateManagerActivity(activity.id, { isHidden: newStatus });
+      setActivities((prev) =>
+        prev.map((a) =>
+          a.id === activity.id ? { ...a, isHidden: newStatus } : a,
+        ),
+      );
+    } catch (err) {
+      console.error(err);
+      alert("Failed to update visibility.");
+    }
+  };
 
-  if (status === "loading") {
+  const handleDeletePlace = async (id) => {
+    if (
+      !window.confirm("Are you sure you want to permanently delete this place?")
+    )
+      return;
+    try {
+      await deleteManagerPlace(id);
+      setPlaces((prev) => prev.filter((p) => p.id !== id));
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete place.");
+    }
+  };
+
+  const handleDeleteActivity = async (id) => {
+    if (
+      !window.confirm(
+        "Are you sure you want to permanently delete this activity?",
+      )
+    )
+      return;
+    try {
+      await deleteManagerActivity(id);
+      setActivities((prev) => prev.filter((a) => a.id !== id));
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete activity.");
+    }
+  };
+
+  if (authLoading || loading) {
     return (
       <main className="dashboard dashboardCentered">
-        Loading your dashboard...
+        <p className="dashboardMuted">Loading your dashboard...</p>
       </main>
     );
   }
 
-  if (status === "notLinked" || status === "error") {
+  if (!user) {
     return (
       <main className="dashboard dashboardCentered">
         <section className="dashboardNotice">
-          <h1 className="dashboardLoginTitle">
-            {status === "notLinked"
-              ? "This account isn't linked to a business"
-              : "Couldn't load your dashboard"}
-          </h1>
+          <h1 className="dashboardLoginTitle">Access Denied</h1>
           <p className="dashboardMuted">
-            {status === "notLinked"
-              ? `You're signed in as ${user.email}. Sign in with the business account for your place, or contact us to get one linked.`
-              : "Check your connection and try again."}
+            You must be logged in to view this page.
           </p>
-          <footer className="dashboardActions">
-            {status === "error" && (
-              <button type="button" className="dashboardButton" onClick={load}>
-                Try again
-              </button>
-            )}
-            <button
-              type="button"
-              className="dashboardButton dashboardButtonQuiet"
-              onClick={() => signOut(auth)}
-            >
-              Sign out
-            </button>
-          </footer>
+          <Link to="/" className="dashboardButton">
+            Return to Home
+          </Link>
         </section>
       </main>
     );
   }
-
-  const location = [business.location?.city, business.location?.region]
-    .filter(Boolean)
-    .join(", ");
 
   return (
     <main className="dashboard">
       <header className="dashboardHeader">
         <section>
-          <h1 className="dashboardTitle">{business.name}</h1>
-          <p className="dashboardMuted">
-            {business.type === "activity" ? "Activity" : "Place"}
-            {location ? `, ${location}` : ""}
-          </p>
-          <Link
-            className="dashboardLink"
-            to={`/Details/${business.type}/${business.id}`}
-          >
-            View public page
-          </Link>
+          <h1 className="dashboardTitle">Manager Dashboard</h1>
+          <p className="dashboardMuted">Manage your places and activities.</p>
         </section>
-        <button
-          type="button"
-          className="dashboardButton dashboardButtonQuiet"
-          onClick={() => signOut(auth)}
-        >
-          Sign out
-        </button>
+        <div className="managerHeaderActions">
+          <button
+            type="button"
+            className="dashboardButton"
+            onClick={() => setIsAddPlaceOpen(true)}
+          >
+            + Add New Place
+          </button>
+          <button
+            type="button"
+            className="dashboardButton"
+            onClick={() => setIsAddActivityOpen(true)}
+          >
+            + Add New Activity
+          </button>
+        </div>
       </header>
 
-      <section className="dashboardRatings">
-        <Rating
-          label="Local endorsement"
-          value={business.localRating}
-          max={10}
-          count={business.endorsements.length}
-          countLabel="endorsement"
-        />
-        <Rating
-          label="Tourist rating"
-          value={business.touristRating}
-          max={5}
-          count={business.reviews.length}
-          countLabel="review"
-        />
+      {error && <p className="dashboardError">{error}</p>}
+
+      <section className="dashboardSection">
+        <h2 className="dashboardSectionTitle">Your Places</h2>
+        {places.length === 0 ? (
+          <p className="dashboardMuted">You haven't added any places yet.</p>
+        ) : (
+          <div className="managerGrid">
+            {places.map((place) => (
+              <div
+                key={place.id}
+                className={`managerCard ${place.isHidden ? "managerCardHidden" : ""}`}
+              >
+                <img
+                  src={place.image || "/placeholder.png"}
+                  alt={place.name}
+                  className="managerCardImg"
+                />
+                <div className="managerCardBody">
+                  <div className="managerCardHeader">
+                    <h3 className="managerCardTitle">{place.name}</h3>
+                    {place.isHidden && (
+                      <span className="managerHiddenBadge">Hidden</span>
+                    )}
+                  </div>
+                  <p className="managerCardLocation">
+                    {place.location?.suburb && place.location?.city
+                      ? `${place.location.suburb}, ${place.location.city}`
+                      : place.location?.city || "No location set"}
+                  </p>
+
+                  <div className="managerCardRatings">
+                    <span>★ {place.touristRating ?? 0}/5</span>
+                    <span>● {place.localRating ?? 0}/10</span>
+                  </div>
+
+                  <div className="managerCardActions">
+                    <Link
+                      to={`/Details/place/${place.id}`}
+                      className="managerBtn managerBtnPrimary"
+                    >
+                      Preview
+                    </Link>
+                    <button
+                      onClick={() => setEditingPlace(place)}
+                      className="managerBtn"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleToggleHidePlace(place)}
+                      className="managerBtn"
+                    >
+                      {place.isHidden ? "Show" : "Hide"}
+                    </button>
+                    <button
+                      onClick={() => handleDeletePlace(place.id)}
+                      className="managerBtn managerBtnDanger"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="dashboardSection">
-        <h2 className="dashboardSectionTitle">Your details</h2>
-        <BusinessForm
-          key={business.id}
-          business={business}
-          getToken={getToken}
-          onSaved={(updated) => setBusiness(updated)}
-        />
+        <h2 className="dashboardSectionTitle">Your Activities</h2>
+        {activities.length === 0 ? (
+          <p className="dashboardMuted">
+            You haven't added any activities yet.
+          </p>
+        ) : (
+          <div className="managerGrid">
+            {activities.map((activity) => (
+              <div
+                key={activity.id}
+                className={`managerCard ${activity.isHidden ? "managerCardHidden" : ""}`}
+              >
+                <img
+                  src={activity.image || "/placeholder.png"}
+                  alt={activity.name}
+                  className="managerCardImg"
+                />
+                <div className="managerCardBody">
+                  <div className="managerCardHeader">
+                    <h3 className="managerCardTitle">{activity.name}</h3>
+                    {activity.isHidden && (
+                      <span className="managerHiddenBadge">Hidden</span>
+                    )}
+                  </div>
+                  <p className="managerCardLocation">
+                    {activity.location?.suburb && activity.location?.city
+                      ? `${activity.location.suburb}, ${activity.location.city}`
+                      : activity.location?.city || "No location set"}
+                  </p>
+
+                  <div className="managerCardRatings">
+                    <span>★ {activity.touristRating ?? 0}/5</span>
+                    <span>● {activity.localRating ?? 0}/10</span>
+                  </div>
+
+                  <div className="managerCardActions">
+                    <Link
+                      to={`/Details/activity/${activity.id}`}
+                      className="managerBtn managerBtnPrimary"
+                    >
+                      Preview
+                    </Link>
+                    <button
+                      onClick={() => setEditingActivity(activity)}
+                      className="managerBtn"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleToggleHideActivity(activity)}
+                      className="managerBtn"
+                    >
+                      {activity.isHidden ? "Show" : "Hide"}
+                    </button>
+                    <button
+                      onClick={() => handleDeleteActivity(activity.id)}
+                      className="managerBtn managerBtnDanger"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
-      <FeedbackList
-        title="Reviews"
-        items={business.reviews}
-        emptyMessage="No reviews yet. They'll show up here as visitors leave them."
-        renderItem={(review) => (
-          <>
-            <p className="dashboardFeedbackMeta">
-              <strong>{review.rating}/5</strong>
-              {review.visitDate ? ` visited ${review.visitDate}` : ""}
-              {review.wouldRecommend
-                ? `, recommend: ${review.wouldRecommend}`
-                : ""}
-            </p>
-            <p>{review.review}</p>
-            {review.createdAt && (
-              <p className="dashboardMuted">{formatDate(review.createdAt)}</p>
-            )}
-          </>
-        )}
+      <AddPlaceModal
+        isOpen={isAddPlaceOpen}
+        onClose={() => setIsAddPlaceOpen(false)}
+        onSuccess={loadData}
+        defaultType="place"
       />
 
-      <FeedbackList
-        title="Local endorsements"
-        items={business.endorsements}
-        emptyMessage="No endorsements yet. Locals can endorse your place from its page."
-        renderItem={(endorsement) => (
-          <>
-            <p className="dashboardFeedbackMeta">
-              <strong>{endorsement.rating}/10</strong>
-            </p>
-            {endorsement.whyEndorse && <p>{endorsement.whyEndorse}</p>}
-            {endorsement.culturalSensitivity && (
-              <p className="dashboardMuted">
-                Visitor notes: {endorsement.culturalSensitivity}
-              </p>
-            )}
-            {endorsement.createdAt && (
-              <p className="dashboardMuted">
-                {formatDate(endorsement.createdAt)}
-              </p>
-            )}
-          </>
-        )}
+      <AddPlaceModal
+        isOpen={isAddActivityOpen}
+        onClose={() => setIsAddActivityOpen(false)}
+        onSuccess={loadData}
+        defaultType="activity"
       />
+
+      {editingPlace && (
+        <EditPlaceModal
+          isOpen={!!editingPlace}
+          onClose={() => setEditingPlace(null)}
+          place={editingPlace}
+          onSuccess={loadData}
+        />
+      )}
+
+      {editingActivity && (
+        <EditActivityModal
+          isOpen={!!editingActivity}
+          onClose={() => setEditingActivity(null)}
+          activity={editingActivity}
+          onSuccess={loadData}
+        />
+      )}
     </main>
   );
 }

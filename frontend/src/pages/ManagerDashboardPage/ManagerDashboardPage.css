@@ -16,7 +16,7 @@
   padding: 2.5rem max(1.5rem, calc((100% - 56rem) / 2)) 4rem;
   color: var(--dash-text);
   background-color: var(--dash-bg);
-  font-family: inherit;
+  font-family: "Lora", serif;
 }
 
 .dashboard *,
@@ -39,6 +39,7 @@
   gap: 1rem;
   padding-bottom: 1.5rem;
   border-bottom: 2px solid var(--dash-primary);
+  margin-bottom: 2rem;
 }
 
 .dashboardTitle {
@@ -56,62 +57,9 @@
   line-height: 1.5;
 }
 
-.dashboardLink {
-  display: inline-block;
-  margin-top: 0.5rem;
-  color: var(--dash-primary-dark);
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
-}
-
-.dashboardLink:hover {
-  color: var(--dash-text);
-}
-
-.dashboardLink:focus-visible {
-  outline: 2px solid var(--dash-accent);
-  outline-offset: 2px;
-}
-
-/* Ratings: two figures side by side, separated by a rule */
-.dashboardRatings {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  border-bottom: 1px solid var(--dash-line);
-}
-
-.dashboardRating {
-  padding: 1.5rem 0;
-}
-
-.dashboardRating + .dashboardRating {
-  padding-left: 2rem;
-  border-left: 1px solid var(--dash-line);
-}
-
-.dashboardRatingLabel {
-  margin: 0;
-  color: var(--dash-muted);
-}
-
-.dashboardRatingValue {
-  margin: 0.25rem 0;
-  font-size: 3rem;
-  line-height: 1;
-  font-weight: 600;
-  color: var(--dash-primary-dark);
-}
-
-.dashboardRatingMax {
-  font-size: 1.25rem;
-  font-weight: 400;
-  color: var(--dash-muted);
-}
-
-.dashboardSection {
-  padding: 2rem 0;
-  border-bottom: 1px solid var(--dash-line);
+.dashboardError {
+  margin: 0.5rem 0 0;
+  color: var(--dash-error);
 }
 
 .dashboardSectionTitle {
@@ -119,77 +67,6 @@
   font-size: 1.5rem;
   color: var(--dash-primary-dark);
   text-align: left;
-}
-
-/* Forms */
-.dashboardForm,
-.dashboardLogin {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.dashboardLogin {
-  width: 100%;
-  max-width: 24rem;
-  padding: 2rem;
-  text-align: left;
-  background: var(--dash-surface);
-  border: 1px solid var(--dash-line);
-  border-radius: 0.5rem;
-}
-
-.dashboardLoginTitle {
-  margin: 0 0 0.5rem;
-  font-size: 1.75rem;
-  color: var(--dash-primary-dark);
-}
-
-.dashboardLabel {
-  margin-top: 0.75rem;
-  font-weight: 600;
-  color: var(--dash-primary-dark);
-  text-align: left;
-}
-
-.dashboardInput {
-  width: 100%;
-  padding: 0.7rem 0.9rem;
-  font: inherit;
-  color: var(--dash-text);
-  background: var(--dash-surface);
-  border: 1px solid var(--dash-primary);
-  border-radius: 0.25rem;
-}
-
-.dashboardInput:focus {
-  outline: 2px solid var(--dash-accent);
-  outline-offset: 1px;
-}
-
-.dashboardTextarea {
-  resize: vertical;
-  min-height: 7rem;
-}
-
-.dashboardRow {
-  display: flex;
-  gap: 1rem;
-}
-
-.dashboardField {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.dashboardActions {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 1.25rem;
 }
 
 .dashboardButton {
@@ -201,91 +78,158 @@
   border: 1px solid var(--dash-primary);
   border-radius: 0.25rem;
   cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
 }
 
 .dashboardButton:hover:not(:disabled) {
   background: var(--dash-primary-dark);
 }
 
-.dashboardButton:disabled {
+.managerHeaderActions {
+  display: flex;
+  gap: 1rem;
+}
+
+.managerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  gap: 1.5rem;
+}
+
+.managerCard {
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-line);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.managerCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+}
+
+.managerCardHidden {
   opacity: 0.6;
-  cursor: not-allowed;
+  filter: grayscale(1);
 }
 
-.dashboardButton:focus-visible {
-  outline: 2px solid var(--dash-accent);
-  outline-offset: 2px;
+.managerCardImg {
+  width: 100%;
+  height: 12rem;
+  object-fit: cover;
 }
 
-.dashboardButtonQuiet {
-  color: var(--dash-primary-dark);
-  background: transparent;
+.managerCardBody {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
-.dashboardButtonQuiet:hover:not(:disabled) {
-  color: #ffffff;
+.managerCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.25rem;
 }
 
-.dashboardSaved {
+.managerCardTitle {
   margin: 0;
+  font-size: 1.25rem;
   color: var(--dash-primary-dark);
+}
+
+.managerHiddenBadge {
+  background: #b5473a;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.managerCardLocation {
+  margin: 0 0 1rem 0;
+  color: var(--dash-muted);
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.managerCardRatings {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
   font-weight: 600;
+  color: var(--dash-primary);
 }
 
-.dashboardError {
-  margin: 0.5rem 0 0;
-  color: var(--dash-error);
-}
-
-.dashboardNotice {
-  max-width: 32rem;
-}
-
-/* Reviews and endorsements */
-.dashboardFeedbackList {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.dashboardFeedbackItem {
-  padding: 1rem 0;
+.managerCardActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 1rem;
   border-top: 1px solid var(--dash-line);
-  text-align: left;
 }
 
-.dashboardFeedbackItem:first-child {
-  border-top: none;
-  padding-top: 0;
+.managerBtn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: "Lora", serif;
+  background: transparent;
+  border: 1px solid var(--dash-primary);
+  color: var(--dash-primary);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
 }
 
-.dashboardFeedbackItem p {
-  margin: 0 0 0.35rem;
-  line-height: 1.55;
+.managerBtn:hover {
+  background: var(--dash-primary);
+  color: white;
 }
 
-.dashboardFeedbackMeta {
-  color: var(--dash-primary-dark);
+.managerBtnPrimary {
+  background: var(--dash-primary);
+  color: white;
 }
 
-@media (max-width: 40rem) {
-  .dashboard {
-    padding: 1.5rem 1rem 3rem;
-  }
+.managerBtnPrimary:hover {
+  background: var(--dash-primary-dark);
+}
 
+.managerBtnDanger {
+  color: var(--dash-error);
+  border-color: var(--dash-error);
+}
+
+.managerBtnDanger:hover {
+  background: var(--dash-error);
+  color: white;
+}
+
+@media (max-width: 48rem) {
   .dashboardHeader {
     flex-direction: column;
+    align-items: flex-start;
   }
 
-  .dashboardTitle {
-    font-size: 1.75rem;
-  }
-
-  .dashboardRow {
+  .managerHeaderActions {
     flex-direction: column;
+    width: 100%;
   }
 
-  .dashboardRating + .dashboardRating {
-    padding-left: 1rem;
+  .dashboardButton {
+    width: 100%;
+    text-align: center;
   }
 }

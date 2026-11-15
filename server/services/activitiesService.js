@@ -11,8 +11,8 @@ async function createActivity(data) {
           .doc(placeId)
           .update({
             activityIds: admin.firestore.FieldValue.arrayUnion(docRef.id),
-          })
-      )
+          }),
+      ),
     );
   }
 
@@ -33,7 +33,7 @@ async function resolveCategories(categories) {
         console.error("❌ Failed to resolve category:", ref, err);
         return "";
       }
-    })
+    }),
   );
 
   return categoryDocs.filter(Boolean);
@@ -57,14 +57,47 @@ async function getAllActivities() {
       const data = { id: docSnap.id, ...docSnap.data() };
       data.categoryLabels = await resolveCategories(data.category);
       return data;
-    })
+    }),
   );
 
   return activities;
+}
+
+async function getActivitiesByManager(uid) {
+  const snapshot = await db
+    .collection("activities")
+    .where("contributorId", "==", uid)
+    .get();
+
+  const activities = await Promise.all(
+    snapshot.docs.map(async (docSnap) => {
+      const data = { id: docSnap.id, ...docSnap.data() };
+      data.categoryLabels = await resolveCategories(data.category);
+      return data;
+    }),
+  );
+
+  return activities;
+}
+
+async function updateActivity(id, data) {
+  const activityRef = db.collection("activities").doc(id);
+  await activityRef.update(data);
+  const snap = await activityRef.get();
+  return { id: snap.id, ...snap.data() };
+}
+
+async function deleteActivity(id) {
+  const activityRef = db.collection("activities").doc(id);
+  await activityRef.delete();
+  return { id };
 }
 
 module.exports = {
   createActivity,
   getActivity,
   getAllActivities,
+  getActivitiesByManager,
+  updateActivity,
+  deleteActivity,
 };

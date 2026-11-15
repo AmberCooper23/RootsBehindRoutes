@@ -13,10 +13,40 @@ const INITIAL_FORM_DATA = {
   whyEndorse: "",
   localRating: 5,
   culturalSensitivity: "",
+  duration: "",
 };
 
-export function NewPlaceForm({ onSubmit, onCancel }) {
-  const [formData, setFormData] = useState(INITIAL_FORM_DATA);
+export function NewPlaceForm({
+  initialData,
+  defaultType = "place",
+  onSubmit,
+  onCancel,
+}) {
+  const [formType, setFormType] = useState(() => {
+    if (initialData) {
+      return initialData.duration ? "activity" : "place";
+    }
+    return defaultType;
+  });
+
+  const [formData, setFormData] = useState(() => {
+    if (initialData) {
+      return {
+        placeName: initialData.name || "",
+        address: initialData.location?.address || "",
+        suburb: initialData.location?.suburb || "",
+        city: initialData.location?.city || "",
+        interest: initialData.interests?.[0] || "",
+        description: initialData.description || "",
+        whyEndorse: initialData.whyEndorse || "",
+        localRating: initialData.localRating || 5,
+        culturalSensitivity: initialData.culturalSensitivity || "",
+        duration: initialData.duration || "",
+      };
+    }
+    return INITIAL_FORM_DATA;
+  });
+
   const [interests, setInterests] = useState([]);
   const [isValidating, setIsValidating] = useState(false);
   const [error, setError] = useState("");
@@ -40,6 +70,21 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
+    if (
+      initialData &&
+      initialData.location?.address === formData.address &&
+      initialData.location?.suburb === formData.suburb &&
+      initialData.location?.city === formData.city
+    ) {
+      onSubmit({
+        ...formData,
+        type: formType,
+        latitude: initialData.location?.latitude,
+        longitude: initialData.location?.longitude,
+      });
+      return;
+    }
 
     if (!isLoaded) {
       setError(
@@ -87,6 +132,7 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
 
       const finalData = {
         ...formData,
+        type: formType,
         address: formattedAddress,
         latitude: lat,
         longitude: lng,
@@ -108,15 +154,32 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
         <h3 className="contributeModalAlertTitle">Before You Submit</h3>
         <p className="contributeModalAlertDescription">
           As a local contributor, your voice shapes how visitors experience our
-          culture. Please only add places where you genuinely welcome respectful
-          visitors and feel the culture is represented authentically.
+          culture. Please only add {formType}s where you genuinely welcome
+          respectful visitors and feel the culture is represented authentically.
         </p>
       </aside>
 
       <form onSubmit={handleSubmit} className="contributeModalForm">
+        <div className="contributeModalToggleGroup">
+          <button
+            type="button"
+            className={`contributeModalToggleBtn ${formType === "place" ? "active" : ""}`}
+            onClick={() => setFormType("place")}
+          >
+            Place
+          </button>
+          <button
+            type="button"
+            className={`contributeModalToggleBtn ${formType === "activity" ? "active" : ""}`}
+            onClick={() => setFormType("activity")}
+          >
+            Activity
+          </button>
+        </div>
+
         <fieldset className="contributeModalFormGroup">
           <label htmlFor="placeName" className="contributeModalLabel">
-            Place Name *
+            {formType === "activity" ? "Activity Name *" : "Place Name *"}
           </label>
           <input
             id="placeName"
@@ -125,11 +188,34 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
             onChange={(e) =>
               setFormData({ ...formData, placeName: e.target.value })
             }
-            placeholder="e.g., Origins Centre Museum"
+            placeholder={
+              formType === "activity"
+                ? "e.g., BraamByBike Tour"
+                : "e.g., Origins Centre Museum"
+            }
             className="contributeModalInput"
             required
           />
         </fieldset>
+
+        {formType === "activity" && (
+          <fieldset className="contributeModalFormGroup">
+            <label htmlFor="duration" className="contributeModalLabel">
+              Estimated Duration *
+            </label>
+            <input
+              id="duration"
+              type="text"
+              value={formData.duration}
+              onChange={(e) =>
+                setFormData({ ...formData, duration: e.target.value })
+              }
+              placeholder="e.g., 2 hours"
+              className="contributeModalInput"
+              required
+            />
+          </fieldset>
+        )}
 
         <fieldset className="contributeModalFormGroup">
           <label htmlFor="address" className="contributeModalLabel">
@@ -214,78 +300,89 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
             onChange={(e) =>
               setFormData({ ...formData, description: e.target.value })
             }
-            placeholder="Describe this place and what makes it special..."
+            placeholder={`Describe this ${formType} and what makes it special...`}
             rows={4}
             className="contributeModalTextarea contributeModalInputWithIcon"
             required
           />
         </fieldset>
 
-        <fieldset className="contributeModalFormGroup">
-          <label htmlFor="whyEndorse" className="contributeModalLabel">
-            Why Do You Endorse This Place? *
-          </label>
-          <textarea
-            id="whyEndorse"
-            value={formData.whyEndorse}
-            onChange={(e) =>
-              setFormData({ ...formData, whyEndorse: e.target.value })
-            }
-            placeholder="Explain why you believe visitors should experience this place and how it represents our culture authentically..."
-            rows={4}
-            className="contributeModalTextarea"
-            required
-          />
-        </fieldset>
+        {!initialData && (
+          <>
+            <fieldset className="contributeModalFormGroup">
+              <label htmlFor="whyEndorse" className="contributeModalLabel">
+                Why Do You Endorse This{" "}
+                {formType === "activity" ? "Activity" : "Place"}? *
+              </label>
+              <textarea
+                id="whyEndorse"
+                value={formData.whyEndorse}
+                onChange={(e) =>
+                  setFormData({ ...formData, whyEndorse: e.target.value })
+                }
+                placeholder={`Explain why you believe visitors should experience this ${formType}...`}
+                rows={4}
+                className="contributeModalTextarea"
+                required
+              />
+            </fieldset>
 
-        <fieldset className="contributeModalFormGroup">
-          <label htmlFor="localRating" className="contributeModalLabel">
-            Your Local Endorsement (1-10) *
-          </label>
-          <section className="contributeModalRangeWrapper">
-            <input
-              id="localRating"
-              type="range"
-              min="1"
-              max="10"
-              value={formData.localRating}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  localRating: parseInt(e.target.value),
-                })
-              }
-              className="contributeModalRange"
-            />
-            <section className="contributeModalRangeLabels">
-              <span className="contributeModalRangeLabelLeft">
-                Prefer visitors didn't come
-              </span>
-              <output className="contributeModalRangeValue">
-                {formData.localRating}/10
-              </output>
-              <span className="contributeModalRangeLabelRight">
-                Wish they could experience it
-              </span>
-            </section>
-          </section>
-        </fieldset>
+            <fieldset className="contributeModalFormGroup">
+              <label htmlFor="localRating" className="contributeModalLabel">
+                Your Local Endorsement (1-10) *
+              </label>
+              <section className="contributeModalRangeWrapper">
+                <input
+                  id="localRating"
+                  type="range"
+                  min="1"
+                  max="10"
+                  value={formData.localRating}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      localRating: parseInt(e.target.value),
+                    })
+                  }
+                  className="contributeModalRange"
+                />
+                <section className="contributeModalRangeLabels">
+                  <span className="contributeModalRangeLabelLeft">
+                    Prefer visitors didn't come
+                  </span>
+                  <output className="contributeModalRangeValue">
+                    {formData.localRating}/10
+                  </output>
+                  <span className="contributeModalRangeLabelRight">
+                    Wish they could experience it
+                  </span>
+                </section>
+              </section>
+            </fieldset>
 
-        <fieldset className="contributeModalFormGroup">
-          <label htmlFor="culturalSensitivity" className="contributeModalLabel">
-            Cultural Sensitivity Notes
-          </label>
-          <textarea
-            id="culturalSensitivity"
-            value={formData.culturalSensitivity}
-            onChange={(e) =>
-              setFormData({ ...formData, culturalSensitivity: e.target.value })
-            }
-            placeholder="Are there any cultural protocols, dress codes, or respectful behaviors visitors should know?"
-            rows={3}
-            className="contributeModalTextarea"
-          />
-        </fieldset>
+            <fieldset className="contributeModalFormGroup">
+              <label
+                htmlFor="culturalSensitivity"
+                className="contributeModalLabel"
+              >
+                Cultural Sensitivity Notes
+              </label>
+              <textarea
+                id="culturalSensitivity"
+                value={formData.culturalSensitivity}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    culturalSensitivity: e.target.value,
+                  })
+                }
+                placeholder="Are there any cultural protocols, dress codes, or respectful behaviors visitors should know?"
+                rows={3}
+                className="contributeModalTextarea"
+              />
+            </fieldset>
+          </>
+        )}
 
         {error && (
           <div className="contributeModalErrorBanner">
@@ -312,7 +409,11 @@ export function NewPlaceForm({ onSubmit, onCancel }) {
             className="contributeModalSubmit"
             disabled={isValidating}
           >
-            {isValidating ? "Validating Address..." : "Submit Place"}
+            {isValidating
+              ? "Validating Address..."
+              : initialData
+                ? "Save Changes"
+                : `Submit ${formType === "activity" ? "Activity" : "Place"}`}
           </button>
           <button
             type="button"
