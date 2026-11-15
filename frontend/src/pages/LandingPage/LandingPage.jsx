@@ -10,6 +10,7 @@ import { fetchAllPlaces } from "../../../api/placesApi";
 import { fetchAllActivities } from "../../../api/activitiesApi";
 import { getBookmarks } from "../../../api/bookmarksApi";
 import { fetchUser } from "../../../api/usersApi";
+import { useIsAdmin } from "../../context/AdminContext";
 
 const DAY_KEYS = [
   "sunday",
@@ -44,6 +45,7 @@ export function LandingPage() {
   const [user] = useAuthState(auth);
   const [userRole, setUserRole] = useState(null);
   const [loadingRole, setLoadingRole] = useState(true);
+  const { isAdmin } = useIsAdmin();
 
   const [filter, setFilter] = useState({
     interests: [],
@@ -76,8 +78,13 @@ export function LandingPage() {
         fetchAllActivities(),
       ]);
 
-      const visiblePlaces = places.filter((p) => !p.isHidden);
-      const visibleActivities = activities.filter((a) => !a.isHidden);
+      const isVisible = (item) =>
+        !item.isHidden &&
+        item.status !== "hidden" &&
+        item.status !== "rejected";
+
+      const visiblePlaces = places.filter(isVisible);
+      const visibleActivities = activities.filter(isVisible);
 
       const taggedPlaces = visiblePlaces.map((place) => ({
         ...place,
@@ -229,6 +236,8 @@ export function LandingPage() {
                 bookmarkId={bookmarksByPath[itemPath] || null}
                 onBookmarkChange={handleBookmarkChange}
                 onClick={() => handleCardClick(experience)}
+                isAdmin={isAdmin}
+                onModerated={loadExperiences}
               />
             );
           })}

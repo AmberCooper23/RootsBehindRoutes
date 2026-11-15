@@ -1,0 +1,75 @@
+.moderateButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+
+.moderateButtonsCompact {
+  gap: 0.25rem;
+  margin-top: 0.25rem;
+}
+
+.moderateBtn {
+  padding: 0.3rem 0.7rem;
+  font-family: "Lora", serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 2rem;
+  border: 0.0625rem solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: transparent;
+  color: #5c4e3a;
+}
+
+.moderateBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.moderateBtn.approve {
+  background-color: #eaf5ea;
+  color: #2e6b34;
+  border-color: rgba(46, 107, 52, 0.3);
+}
+
+.moderateBtn.approve:hover:not(:disabled) {
+  background-color: #2e6b34;
+  color: #fff;
+}
+
+.moderateBtn.reject {
+  background-color: #fdf0e8;
+  color: #b5473a;
+  border-color: rgba(181, 71, 58, 0.3);
+}
+
+.moderateBtn.reject:hover:not(:disabled) {
+  background-color: #b5473a;
+  color: #fff;
+}
+
+.moderateBtn.hide {
+  background-color: #f5efe7;
+  color: #7a6552;
+  border-color: rgba(139, 115, 85, 0.3);
+}
+
+.moderateBtn.hide:hover:not(:disabled) {
+  background-color: var(--primary-lp-color, #8b7355);
+  color: #fff;
+}
+
+.moderateBtn.delete {
+  background-color: #fff;
+  color: #b5473a;
+  border-color: rgba(181, 71, 58, 0.5);
+}
+
+.moderateBtn.delete:hover:not(:disabled) {
+  background-color: #b5473a;
+  color: #fff;
+}

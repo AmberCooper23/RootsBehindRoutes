@@ -1,6 +1,7 @@
 import "./LocationCard.css";
 import { useState, useEffect } from "react";
 import { addBookmark, removeBookmark } from "../../../api/bookmarksApi";
+import ModerateButtons from "../Admin/ModerateButtons";
 
 const DAY_KEYS = [
   "sunday",
@@ -65,6 +66,9 @@ function getOpenStatus(hours) {
 }
 
 export function LocationCard({
+  id,
+  type,
+  status,
   image,
   name,
   location,
@@ -77,6 +81,8 @@ export function LocationCard({
   itemPath,
   bookmarkId,
   onBookmarkChange,
+  isAdmin,
+  onModerated,
 }) {
   const [localBookmarkId, setLocalBookmarkId] = useState(bookmarkId || null);
 
@@ -146,6 +152,8 @@ export function LocationCard({
       console.error("Bookmark toggle failed:", error);
     }
   };
+
+  const collection = type === "activity" ? "activities" : "places";
 
   return (
     <section
@@ -227,6 +235,16 @@ export function LocationCard({
             </dd>
           </section>
         </dl>
+
+        {isAdmin && id && (
+          <ModerateButtons
+            collection={collection}
+            id={id}
+            status={status}
+            onChanged={onModerated}
+            compact
+          />
+        )}
       </section>
 
       <article className="locationCardAccent" aria-hidden="true" />

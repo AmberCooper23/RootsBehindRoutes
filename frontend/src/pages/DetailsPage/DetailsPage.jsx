@@ -17,6 +17,8 @@ import {
 } from "../../../api/endorsementsApi";
 import { fetchAllReviews, addReviewReply } from "../../../api/reviewsApi";
 import ContributeModal from "../../components/ContributeModal/ContributeModal";
+import ModerateButtons from "../../components/Admin/ModerateButtons";
+import { useIsAdmin } from "../../context/AdminContext";
 import "./DetailsPage.css";
 
 const DAY_KEYS = [
@@ -93,6 +95,7 @@ export function DetailsPage() {
   const { type, id } = useParams();
   const navigate = useNavigate();
   const [user] = useAuthState(auth);
+  const { isAdmin } = useIsAdmin();
 
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -150,21 +153,29 @@ export function DetailsPage() {
       const sortByRecent = (a, b) =>
         new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
 
+      const isVisible = (entry) =>
+        isAdmin ||
+        (!entry.isHidden &&
+          entry.status !== "hidden" &&
+          entry.status !== "rejected");
+
       const filteredEndorsements = allEndorsements
         .filter((e) => e[key] === id)
+        .filter(isVisible)
         .sort(sortByRecent);
       const filteredReviews = allReviews
         .filter((r) => r[key] === id)
+        .filter(isVisible)
         .sort(sortByRecent);
 
       setEndorsements(filteredEndorsements);
       setReviews(filteredReviews);
 
       const userIds = new Set();
-      [...filteredEndorsements, ...filteredReviews].forEach((item) => {
-        if (item.userId) userIds.add(item.userId);
-        if (item.replies) {
-          item.replies.forEach((reply) => {
+      [...filteredEndorsements, ...filteredReviews].forEach((entry) => {
+        if (entry.userId) userIds.add(entry.userId);
+        if (entry.replies) {
+          entry.replies.forEach((reply) => {
             if (reply.userId) userIds.add(reply.userId);
           });
         }
@@ -190,7 +201,7 @@ export function DetailsPage() {
     } catch (err) {
       console.error("❌ Failed to load reviews/endorsements:", err);
     }
-  }, [type, id]);
+  }, [type, id, isAdmin]);
 
   useEffect(() => {
     loadItem();
@@ -416,6 +427,18 @@ export function DetailsPage() {
             )}
           </header>
 
+          {isAdmin && (
+            <ModerateButtons
+              collection={type === "place" ? "places" : "activities"}
+              id={id}
+              status={item?.status}
+              onChanged={() => {
+                loadItem();
+                loadContributions();
+              }}
+            />
+          )}
+
           <section className="detailsRatings">
             <article className="detailsRatingBox">
               <span className="detailsRatingLabel">Local Voice</span>
@@ -619,6 +642,16 @@ export function DetailsPage() {
                           )}
                         </div>
 
+                        {isAdmin && (
+                          <ModerateButtons
+                            collection="endorsements"
+                            id={endorsement.id}
+                            status={endorsement.status}
+                            onChanged={loadContributions}
+                            compact
+                          />
+                        )}
+
                         <div className="detailsReplySection">
                           <div className="detailsReplyList">
                             {endorsement.replies?.map((reply) => {
@@ -807,6 +840,16 @@ export function DetailsPage() {
                             </p>
                           )}
                         </div>
+
+                        {isAdmin && (
+                          <ModerateButtons
+                            collection="reviews"
+                            id={review.id}
+                            status={review.status}
+                            onChanged={loadContributions}
+                            compact
+                          />
+                        )}
 
                         <div className="detailsReplySection">
                           <div className="detailsReplyList">

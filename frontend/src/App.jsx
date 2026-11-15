@@ -9,6 +9,9 @@ import { DetailsPage } from "./pages/DetailsPage/DetailsPage";
 import { ManagerDashboardPage } from "./pages/ManagerDashboardPage/ManagerDashboardPage";
 import { MapPage } from "./pages/MapPage/MapPage";
 import { ProfileSetupPage } from "./pages/ProfileSetupPage/ProfileSetupPage";
+import AdminDashboardPage from "./pages/AdminDashboardPage/AdminDashboardPage";
+import RequireAdmin from "./components/Admin/RequireAdmin";
+import { AdminProvider } from "./context/AdminContext";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "./firebase";
 
@@ -16,7 +19,7 @@ function App() {
   const [user] = useAuthState(auth);
 
   return (
-    <>
+    <AdminProvider>
       <ScrollToTop />
       <NavBar user={user} />
       <Routes>
@@ -29,8 +32,16 @@ function App() {
         <Route path="/Details/:type/:id" element={<DetailsPage />} />
         <Route path="/Dashboard" element={<ManagerDashboardPage />} />
         <Route path="/Map" element={<MapPage />} />
+        <Route
+          path="/Admin"
+          element={
+            <RequireAdmin>
+              <AdminDashboardPage />
+            </RequireAdmin>
+          }
+        />
       </Routes>
-    </>
+    </AdminProvider>
   );
 }
 
