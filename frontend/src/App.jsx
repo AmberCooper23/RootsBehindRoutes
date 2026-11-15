@@ -7,6 +7,7 @@ import { BookmarksPage } from "./pages/BookmarksPage/BookmarksPage";
 import AboutPage from "./pages/AboutPage/AboutPage";
 import { DetailsPage } from "./pages/DetailsPage/DetailsPage";
 import { ManagerDashboardPage } from "./pages/ManagerDashboardPage/ManagerDashboardPage";
+import { MapPage } from "./pages/MapPage/MapPage";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "./firebase";
 
@@ -24,6 +25,7 @@ function App() {
         <Route path="/Bookmarks" element={<BookmarksPage />} />
         <Route path="/Details/:type/:id" element={<DetailsPage />} />
         <Route path="/Dashboard" element={<ManagerDashboardPage />} />
+        <Route path="/Map" element={<MapPage />} />
       </Routes>
     </>
   );
