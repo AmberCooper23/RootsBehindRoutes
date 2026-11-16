@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 
 const { db, admin } = require("./firebaseConfig.js");
+const { contentFilter } = require("./middleware/contentFilter.js");
 
 const usersRoutes = require("./routes/usersRoutes.js");
 const postsRoutes = require("./routes/postsRoutes.js");
@@ -19,6 +20,8 @@ const recommendationsRoutes = require("./routes/recommendationsRoutes.js");
 
 const app = express();
 app.use(express.json());
+
+app.use(contentFilter);
 
 app.use(
   cors({

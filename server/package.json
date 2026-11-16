@@ -15,7 +15,8 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "firebase": "^12.16.0",
-    "firebase-admin": "^13.0.0"
+    "firebase-admin": "^13.0.0",
+    "obscenity": "^0.4.6"
   },
   "engines": {
     "node": "20"

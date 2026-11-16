@@ -18,7 +18,10 @@ export async function addReview(data) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error("Failed to create review");
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || "Failed to create review");
+  }
   return res.json();
 }
 
@@ -28,6 +31,9 @@ export async function addReviewReply(reviewId, data) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error("Failed to add reply");
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || "Failed to add reply");
+  }
   return res.json();
 }

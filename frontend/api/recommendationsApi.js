@@ -8,7 +8,10 @@ export async function addRecommendation(data) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error("Failed to submit recommendation");
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || "Failed to submit recommendation");
+  }
   return res.json();
 }
 
@@ -31,6 +34,9 @@ export async function updateRecommendationStatus(id, status) {
     },
     body: JSON.stringify({ status }),
   });
-  if (!res.ok) throw new Error("Failed to update status");
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || "Failed to update status");
+  }
   return res.json();
 }
