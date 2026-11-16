@@ -93,3 +93,27 @@ npm run dev
 
 The app will be available http://localhost:5173
 
+## Run Deployment
+Use the same steps above first
+
+### 1. Stop Open Ports
+``` Ctrl + C ``` in both terminals
+
+### 2. Deploy Server
+
+Open Render. Login with credentials.
+
+Manually Deploy -> Clear build cache and deploy
+
+### 3. Deploy Frontend
+
+Open terminal
+
+```bash
+cd frontend
+npm run build
+firebase deploy --only hosting
+```
+
+The site will be deployed at [https://rootsbehindroutes.web.app/](https://rootsbehindroutes.web.app/)
+
