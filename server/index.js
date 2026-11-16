@@ -19,9 +19,6 @@ const adminRoutes = require("./routes/adminRoutes.js");
 const recommendationsRoutes = require("./routes/recommendationsRoutes.js");
 
 const app = express();
-app.use(express.json());
-
-app.use(contentFilter);
 
 app.use(
   cors({
@@ -34,6 +31,10 @@ app.use(
     credentials: true,
   }),
 );
+
+app.use(express.json());
+
+app.use(contentFilter);
 
 app.use("/api/users", usersRoutes);
 app.use("/api/posts", postsRoutes);
