@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../firebase";
@@ -7,6 +8,7 @@ import { addUser, fetchUser } from "../../../api/usersApi";
 import "./AboutPage.css";
 
 export function AboutPage() {
+  const navigate = useNavigate();
   const [user] = useAuthState(auth);
 
   const handleLogin = async () => {
@@ -26,6 +28,7 @@ export function AboutPage() {
       section.scrollIntoView({ behavior: "smooth" });
     }
   };
+
   return (
     <main className="aboutPage">
       <header className="aboutHero">
@@ -159,7 +162,7 @@ export function AboutPage() {
             ) : (
               <button
                 className="aboutCtaSecondaryButton"
-                onClick={scrollToDiscover}
+                onClick={() => navigate("/")}
               >
                 Continue Contributing
               </button>
