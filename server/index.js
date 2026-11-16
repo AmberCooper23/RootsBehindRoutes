@@ -15,6 +15,7 @@ const statsRoutes = require("./routes/statsRoutes.js");
 const bookmarksRoutes = require("./routes/bookmarksRoutes.js");
 const managerRoutes = require("./routes/managerRoutes.js");
 const adminRoutes = require("./routes/adminRoutes.js");
+const recommendationsRoutes = require("./routes/recommendationsRoutes.js");
 
 const app = express();
 app.use(express.json());
@@ -43,6 +44,7 @@ app.use("/api/stats", statsRoutes);
 app.use("/api/bookmarks", bookmarksRoutes);
 app.use("/api/manage", managerRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/recommendations", recommendationsRoutes);
 
 app.get("/api/healthcheck", (req, res) => {
   res.json({ status: "ok", firebase: true });
