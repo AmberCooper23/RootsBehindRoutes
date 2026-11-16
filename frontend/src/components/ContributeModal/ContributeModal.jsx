@@ -82,6 +82,7 @@ export function ContributeModal({ isOpen, onClose, target, onSuccess }) {
       }, 2000);
     } catch (error) {
       console.error("Submission failed:", error);
+      alert(error.message || "Something went wrong. Please try again.");
     }
   };
 
