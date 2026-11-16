@@ -1,0 +1,123 @@
+.recommendOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 1rem;
+}
+
+.recommendModal {
+  background-color: #fdfbf7;
+  border-radius: 0.5rem;
+  width: 100%;
+  max-width: 30rem;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.recommendHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid rgba(139, 115, 85, 0.2);
+  background-color: #ffffff;
+}
+
+.recommendTitle {
+  font-family: "Playfair Display", serif;
+  font-size: 1.5rem;
+  color: var(--primary-lp-color, #8b7355);
+  margin: 0;
+}
+
+.recommendClose {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #7a6552;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.recommendForm {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.recommendSubtitle {
+  margin: 0 0 0.5rem 0;
+  color: #7a6552;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.recommendLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #5c4e3a;
+}
+
+.recommendLabel input,
+.recommendLabel textarea {
+  padding: 0.6rem;
+  border: 1px solid rgba(139, 115, 85, 0.3);
+  border-radius: 0.25rem;
+  font-family: "Lora", serif;
+  font-size: 0.95rem;
+  background-color: #ffffff;
+  color: #000000;
+  resize: vertical;
+}
+
+.recommendLabel input:focus,
+.recommendLabel textarea:focus {
+  outline: none;
+  border-color: var(--primary-lp-color, #8b7355);
+}
+
+.recommendSubmitBtn {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background-color: var(--primary-lp-color, #8b7355);
+  color: #ffffff;
+  border: none;
+  border-radius: 0.25rem;
+  font-family: "Lora", serif;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.recommendSubmitBtn:hover:not(:disabled) {
+  background-color: #6d5a42;
+}
+
+.recommendSubmitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.recommendSuccess {
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.recommendSuccess h3 {
+  color: var(--primary-lp-color, #8b7355);
+  margin-bottom: 0.5rem;
+}
+
+.recommendSuccess p {
+  color: #7a6552;
+  font-size: 0.95rem;
+}

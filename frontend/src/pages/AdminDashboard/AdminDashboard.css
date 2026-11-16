@@ -55,7 +55,7 @@
   color: #ffffff;
   border: 1px solid var(--dash-primary);
   border-radius: 0.25rem;
-  font-size: var(--font-size-sm);
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -76,7 +76,7 @@
 
 .adminSummaryGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
   gap: 1rem;
   margin-bottom: 2rem;
 }
@@ -214,6 +214,26 @@
   color: var(--dash-muted);
 }
 
+.adminRecommendationReason {
+  margin: 0.5rem 0 0 0;
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--dash-muted);
+  line-height: 1.4;
+}
+
+.adminRecommendationActions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.adminRecommendationStatus {
+  text-transform: capitalize;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
 .adminUserInfo {
   display: flex;
   align-items: center;
@@ -329,6 +349,10 @@
     align-items: stretch;
   }
   .adminUserActions {
+    justify-content: flex-start;
+    margin-top: 1rem;
+  }
+  .adminRecommendationActions {
     justify-content: flex-start;
     margin-top: 1rem;
   }

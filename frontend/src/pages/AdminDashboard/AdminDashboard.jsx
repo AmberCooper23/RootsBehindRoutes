@@ -9,6 +9,10 @@ import {
   suspendUser,
   unsuspendUser,
 } from "../../../api/adminApi";
+import {
+  fetchRecommendations,
+  updateRecommendationStatus,
+} from "../../../api/recommendationsApi";
 import ModerateButtons from "../../components/Admin/ModerateButtons";
 import "./AdminDashboard.css";
 
@@ -49,6 +53,7 @@ export default function AdminDashboardPage() {
   const [summary, setSummary] = useState(null);
   const [contentItems, setContentItems] = useState([]);
   const [users, setUsers] = useState([]);
+  const [recommendations, setRecommendations] = useState([]);
   const [tab, setTab] = useState("pending");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -57,15 +62,18 @@ export default function AdminDashboardPage() {
     try {
       setLoading(true);
       setError(null);
-      const contentStatus = tab === "users" ? "pending" : tab;
-      const [s, c, u] = await Promise.all([
+      const contentStatus =
+        tab === "users" || tab === "recommendations" ? "pending" : tab;
+      const [s, c, u, r] = await Promise.all([
         getModerationSummary(),
         listContentByStatus(contentStatus),
         listAllUsers(),
+        fetchRecommendations(),
       ]);
       setSummary(s);
       setContentItems(c);
       setUsers(u);
+      setRecommendations(r);
     } catch (err) {
       setError(err.message || "Failed to load dashboard");
     } finally {
@@ -79,11 +87,23 @@ export default function AdminDashboardPage() {
 
   const reloadContent = async () => {
     try {
-      const contentStatus = tab === "users" ? "pending" : tab;
+      const contentStatus =
+        tab === "users" || tab === "recommendations" ? "pending" : tab;
       const c = await listContentByStatus(contentStatus);
       setContentItems(c);
       const s = await getModerationSummary();
       setSummary(s);
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  const handleRecommendationStatus = async (id, status) => {
+    try {
+      await updateRecommendationStatus(id, status);
+      setRecommendations((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, status } : r)),
+      );
     } catch (err) {
       alert(err.message);
     }
@@ -193,14 +213,11 @@ export default function AdminDashboardPage() {
             <span className="adminSummaryMeta">content hidden</span>
           </div>
           <div className="adminSummaryCard">
-            <span className="adminSummaryLabel">Rejected</span>
+            <span className="adminSummaryLabel">Recommendations</span>
             <span className="adminSummaryValue">
-              {summary.places.rejected +
-                summary.activities.rejected +
-                summary.reviews.rejected +
-                summary.endorsements.rejected}
+              {recommendations.filter((r) => r.status === "pending").length}
             </span>
-            <span className="adminSummaryMeta">rejected submissions</span>
+            <span className="adminSummaryMeta">user suggestions</span>
           </div>
         </section>
       )}
@@ -216,6 +233,12 @@ export default function AdminDashboardPage() {
           </button>
         ))}
         <button
+          className={`adminTab ${tab === "recommendations" ? "active" : ""}`}
+          onClick={() => setTab("recommendations")}
+        >
+          Recommendations ({recommendations.length})
+        </button>
+        <button
           className={`adminTab ${tab === "users" ? "active" : ""}`}
           onClick={() => setTab("users")}
         >
@@ -223,7 +246,7 @@ export default function AdminDashboardPage() {
         </button>
       </nav>
 
-      {tab !== "users" && (
+      {tab !== "users" && tab !== "recommendations" && (
         <section className="adminPanel">
           {contentItems.length === 0 ? (
             <div className="adminEmpty">Nothing here 🎉</div>
@@ -255,6 +278,66 @@ export default function AdminDashboardPage() {
                 </li>
               ))}
             </ul>
+          )}
+        </section>
+      )}
+
+      {tab === "recommendations" && (
+        <section className="adminPanel">
+          <ul className="adminPendingList">
+            {recommendations.map((rec) => (
+              <li key={rec.id} className="adminPendingItem">
+                <div className="adminPendingInfo">
+                  <span className="adminPendingCollection">Recommendation</span>
+                  <span className="adminPendingTitle">{rec.name}</span>
+                  <span className="adminPendingMeta">
+                    Location: {rec.location} · By {rec.userName}
+                  </span>
+                  <p
+                    style={{
+                      margin: "0.5rem 0",
+                      fontSize: "0.9rem",
+                      fontStyle: "italic",
+                      color: "#7a6552",
+                    }}
+                  >
+                    "{rec.reason}"
+                  </p>
+                </div>
+                <div style={{ display: "flex", gap: "0.5rem" }}>
+                  {rec.status === "pending" ? (
+                    <>
+                      <button
+                        className="adminUserBtn ok"
+                        onClick={() =>
+                          handleRecommendationStatus(rec.id, "approved")
+                        }
+                      >
+                        Mark Reviewed
+                      </button>
+                      <button
+                        className="adminUserBtn danger"
+                        onClick={() =>
+                          handleRecommendationStatus(rec.id, "dismissed")
+                        }
+                      >
+                        Dismiss
+                      </button>
+                    </>
+                  ) : (
+                    <span
+                      className={`tone-${rec.status === "approved" ? "ok" : "danger"}`}
+                      style={{ textTransform: "capitalize" }}
+                    >
+                      {rec.status}
+                    </span>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+          {recommendations.length === 0 && (
+            <div className="adminEmpty">No recommendations yet 🎉</div>
           )}
         </section>
       )}

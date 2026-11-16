@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { AddPlaceModal } from "../ContributeModal/AddPlaceModal";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../firebase";
 import { addUser, fetchUser } from "../../../api/usersApi";
+import RecommendModal from "../RecommendModal/RecommendModal";
 import "./NavBar.css";
 
 export function NavBar() {
-  const [isAddPlaceOpen, setIsAddPlaceOpen] = useState(false);
+  const [isRecommendOpen, setIsRecommendOpen] = useState(false);
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
 
@@ -139,14 +139,14 @@ export function NavBar() {
             </section>
 
             <section className="navBarRight">
-              {!isManager && (
+              {!isManager && !isAdmin && (
                 <button
-                  onClick={() => setIsAddPlaceOpen(true)}
+                  onClick={() => setIsRecommendOpen(true)}
                   className="contributeButton"
                   type="button"
-                  aria-label="Contribute"
+                  aria-label="Recommend a place"
                 >
-                  Contribute
+                  Recommend
                 </button>
               )}
 
@@ -163,12 +163,10 @@ export function NavBar() {
         </section>
       </nav>
 
-      {!isManager && (
-        <AddPlaceModal
-          isOpen={isAddPlaceOpen}
-          onClose={() => setIsAddPlaceOpen(false)}
-        />
-      )}
+      <RecommendModal
+        isOpen={isRecommendOpen}
+        onClose={() => setIsRecommendOpen(false)}
+      />
     </>
   );
 }
