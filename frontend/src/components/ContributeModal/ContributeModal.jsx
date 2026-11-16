@@ -14,6 +14,7 @@ export function ContributeModal({ isOpen, onClose, target, onSuccess }) {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [user, authLoading] = useAuthState(auth);
   const [isLoadingRole, setIsLoadingRole] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   useEffect(() => {
     async function determineRole() {
@@ -42,6 +43,7 @@ export function ContributeModal({ isOpen, onClose, target, onSuccess }) {
     setTimeout(() => {
       setIsSubmitted(false);
       setUserType(null);
+      setSubmitError(null);
     }, 300);
   };
 
@@ -51,6 +53,7 @@ export function ContributeModal({ isOpen, onClose, target, onSuccess }) {
       : { placeId: target?.id };
 
   const handleSubmit = async (data) => {
+    setSubmitError(null);
     try {
       if (userType === "local") {
         await addEndorsement({
@@ -82,7 +85,9 @@ export function ContributeModal({ isOpen, onClose, target, onSuccess }) {
       }, 2000);
     } catch (error) {
       console.error("Submission failed:", error);
-      alert(error.message || "Something went wrong. Please try again.");
+      setSubmitError(
+        error.message || "Something went wrong. Please try again.",
+      );
     }
   };
 
@@ -191,7 +196,26 @@ export function ContributeModal({ isOpen, onClose, target, onSuccess }) {
                 : "Your feedback helps future travellers"}
           </p>
         </header>
-        <section className="contributeModalBody">{renderBody()}</section>
+        <section className="contributeModalBody">
+          {submitError && (
+            <div className="contributeModalErrorBanner">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <span>{submitError}</span>
+            </div>
+          )}
+          {renderBody()}
+        </section>
       </article>
     </aside>
   );
