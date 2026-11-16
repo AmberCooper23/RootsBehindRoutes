@@ -99,33 +99,49 @@ export function NavBar() {
               </NavLink>
 
               <ul className="navBarLinks">
-                <li className="navBarLinkItem">
-                  <NavLink
-                    to={isManager ? "/Dashboard" : "/"}
-                    className="navBarLink"
-                  >
-                    {isManager ? "Dashboard" : "Discover"}
-                  </NavLink>
-                </li>
-
-                <li className="navBarLinkItem">
-                  <NavLink to="/Map" className="navBarLink">
-                    Map
-                  </NavLink>
-                </li>
-
-                {user && !isManager && (
+                {!isManager && !isAdmin && (
                   <li className="navBarLinkItem">
-                    <NavLink to="/Bookmarks" className="navBarLink">
-                      Saved
+                    <NavLink to="/" className="navBarLink">
+                      Discover
+                    </NavLink>
+                  </li>
+                )}
+
+                {isManager && (
+                  <li className="navBarLinkItem">
+                    <NavLink to="/Dashboard" className="navBarLink">
+                      Dashboard
                     </NavLink>
                   </li>
                 )}
 
                 {isAdmin && (
+                  <>
+                    <li className="navBarLinkItem">
+                      <NavLink to="/" className="navBarLink">
+                        Discover
+                      </NavLink>
+                    </li>
+                    <li className="navBarLinkItem">
+                      <NavLink to="/Admin" className="navBarLink">
+                        Dashboard
+                      </NavLink>
+                    </li>
+                  </>
+                )}
+
+                {!isManager && !isAdmin && (
                   <li className="navBarLinkItem">
-                    <NavLink to="/Admin" className="navBarLink">
-                      Moderation
+                    <NavLink to="/Map" className="navBarLink">
+                      Map
+                    </NavLink>
+                  </li>
+                )}
+
+                {user && !isManager && !isAdmin && (
+                  <li className="navBarLinkItem">
+                    <NavLink to="/Bookmarks" className="navBarLink">
+                      Saved
                     </NavLink>
                   </li>
                 )}

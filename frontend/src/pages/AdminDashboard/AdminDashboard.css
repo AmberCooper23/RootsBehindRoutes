@@ -143,9 +143,6 @@
   border-bottom-color: var(--dash-primary);
 }
 
-.adminPanel {
-  /* Wrapper for the list items */
-}
 
 .adminEmpty {
   text-align: center;
