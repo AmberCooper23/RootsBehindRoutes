@@ -42,7 +42,7 @@ function isCurrentlyOpen(hours) {
 
 export function LandingPage() {
   const navigate = useNavigate();
-  const [user] = useAuthState(auth);
+  const [user, authLoading] = useAuthState(auth);
   const [userRole, setUserRole] = useState(null);
   const [loadingRole, setLoadingRole] = useState(true);
   const { isAdmin } = useIsAdmin();
@@ -57,19 +57,27 @@ export function LandingPage() {
 
   useEffect(() => {
     async function checkRole() {
-      if (user) {
-        try {
-          const profile = await fetchUser(user.uid);
-          setUserRole(profile?.role || null);
-        } catch (err) {
-          console.error("Failed to fetch role", err);
-          setUserRole(null);
-        }
+      if (authLoading) return;
+
+      if (!user) {
+        setUserRole(null);
+        setLoadingRole(false);
+        return;
       }
-      setLoadingRole(false);
+
+      try {
+        setLoadingRole(true);
+        const profile = await fetchUser(user.uid);
+        setUserRole(profile?.role || null);
+      } catch (err) {
+        console.error("Failed to fetch role", err);
+        setUserRole(null);
+      } finally {
+        setLoadingRole(false);
+      }
     }
     checkRole();
-  }, [user]);
+  }, [user, authLoading]);
 
   const loadExperiences = useCallback(async () => {
     try {
@@ -119,12 +127,12 @@ export function LandingPage() {
   }, [user?.uid]);
 
   useEffect(() => {
-    if (userRole !== "manager" && userRole !== null) {
-      loadExperiences();
-    } else if (!user) {
-      loadExperiences();
+    if (!authLoading && !loadingRole) {
+      if (userRole !== "manager") {
+        loadExperiences();
+      }
     }
-  }, [loadExperiences, userRole, user]);
+  }, [loadExperiences, userRole, authLoading, loadingRole]);
 
   useEffect(() => {
     loadBookmarks();
@@ -187,8 +195,14 @@ export function LandingPage() {
     }
   });
 
-  if (loadingRole) {
-    return <div>Loading...</div>;
+  if (authLoading || loadingRole) {
+    return (
+      <main className="discoverPage">
+        <section className="detailsStateBox">
+          <p className="detailsStateText">Loading...</p>
+        </section>
+      </main>
+    );
   }
 
   if (user && !userRole) {
