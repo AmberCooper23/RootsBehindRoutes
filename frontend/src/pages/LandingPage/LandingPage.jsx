@@ -8,6 +8,8 @@ import Filter from "../../components/Filter/Filter";
 import LocationCard from "../../components/LocationCard/LocationCard";
 import { fetchAllPlaces } from "../../../api/placesApi";
 import { fetchAllActivities } from "../../../api/activitiesApi";
+import { fetchAllEndorsements } from "../../../api/endorsementsApi";
+import { fetchAllReviews } from "../../../api/reviewsApi";
 import { getBookmarks } from "../../../api/bookmarksApi";
 import { fetchUser } from "../../../api/usersApi";
 import { useIsAdmin } from "../../context/AdminContext";
@@ -81,10 +83,13 @@ export function LandingPage() {
 
   const loadExperiences = useCallback(async () => {
     try {
-      const [places, activities] = await Promise.all([
-        fetchAllPlaces(),
-        fetchAllActivities(),
-      ]);
+      const [places, activities, allEndorsements, allReviews] =
+        await Promise.all([
+          fetchAllPlaces(),
+          fetchAllActivities(),
+          fetchAllEndorsements(),
+          fetchAllReviews(),
+        ]);
 
       const isVisible = (item) =>
         !item.isHidden &&
@@ -94,14 +99,54 @@ export function LandingPage() {
       const visiblePlaces = places.filter(isVisible);
       const visibleActivities = activities.filter(isVisible);
 
-      const taggedPlaces = visiblePlaces.map((place) => ({
-        ...place,
-        type: "place",
-      }));
-      const taggedActivities = visibleActivities.map((activity) => ({
-        ...activity,
-        type: "activity",
-      }));
+      const calculateLocal = (ends) => {
+        if (!ends || ends.length === 0) return 0;
+        const avg =
+          ends.reduce((sum, e) => sum + (e.score ?? e.rating ?? 0), 0) /
+          ends.length;
+        return Math.round(avg * 10) / 10;
+      };
+
+      const calculateTourist = (revs) => {
+        if (!revs || revs.length === 0) return 0;
+        const avg =
+          revs.reduce((sum, r) => sum + (r.rating || 0), 0) / revs.length;
+        return Math.round(avg * 10) / 10;
+      };
+
+      const taggedPlaces = visiblePlaces.map((place) => {
+        const ends = allEndorsements.filter((e) => e.placeId === place.id);
+        const revs = allReviews.filter((r) => r.placeId === place.id);
+        return {
+          ...place,
+          localRating:
+            ends.length > 0 ? calculateLocal(ends) : (place.localRating ?? 0),
+          touristRating:
+            revs.length > 0
+              ? calculateTourist(revs)
+              : (place.touristRating ?? 0),
+          type: "place",
+        };
+      });
+
+      const taggedActivities = visibleActivities.map((activity) => {
+        const ends = allEndorsements.filter(
+          (e) => e.activityId === activity.id,
+        );
+        const revs = allReviews.filter((r) => r.activityId === activity.id);
+        return {
+          ...activity,
+          localRating:
+            ends.length > 0
+              ? calculateLocal(ends)
+              : (activity.localRating ?? 0),
+          touristRating:
+            revs.length > 0
+              ? calculateTourist(revs)
+              : (activity.touristRating ?? 0),
+          type: "activity",
+        };
+      });
 
       setExperiences([...taggedPlaces, ...taggedActivities]);
     } catch (error) {
