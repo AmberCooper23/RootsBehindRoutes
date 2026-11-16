@@ -99,7 +99,7 @@ export function NavBar() {
               </NavLink>
 
               <ul className="navBarLinks">
-                {!isManager && !isAdmin && (
+                {!isManager && (
                   <li className="navBarLinkItem">
                     <NavLink to="/" className="navBarLink">
                       Discover
@@ -113,21 +113,6 @@ export function NavBar() {
                       Dashboard
                     </NavLink>
                   </li>
-                )}
-
-                {isAdmin && (
-                  <>
-                    <li className="navBarLinkItem">
-                      <NavLink to="/" className="navBarLink">
-                        Discover
-                      </NavLink>
-                    </li>
-                    <li className="navBarLinkItem">
-                      <NavLink to="/Admin" className="navBarLink">
-                        Dashboard
-                      </NavLink>
-                    </li>
-                  </>
                 )}
 
                 {!isManager && !isAdmin && (

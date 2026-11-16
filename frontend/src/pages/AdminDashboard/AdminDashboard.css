@@ -143,7 +143,6 @@
   border-bottom-color: var(--dash-primary);
 }
 
-
 .adminEmpty {
   text-align: center;
   padding: 3rem;
@@ -353,4 +352,27 @@
     justify-content: flex-start;
     margin-top: 1rem;
   }
+}
+
+.adminHeaderActions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.adminSignOutBtn {
+  padding: 0.7rem 1.5rem;
+  background-color: transparent;
+  color: var(--dash-error);
+  border: 1px solid var(--dash-error);
+  border-radius: 0.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.adminSignOutBtn:hover {
+  background-color: var(--dash-error);
+  color: #ffffff;
 }

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { auth } from "../../firebase";
 import {
   getModerationSummary,
   listContentByStatus,
@@ -50,6 +52,7 @@ const CONTENT_TABS = [
 ];
 
 export default function AdminDashboardPage() {
+  const navigate = useNavigate();
   const [summary, setSummary] = useState(null);
   const [contentItems, setContentItems] = useState([]);
   const [users, setUsers] = useState([]);
@@ -154,6 +157,15 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate("/");
+    } catch (err) {
+      console.error("Sign out failed:", err);
+    }
+  };
+
   if (loading && !summary) {
     return <main className="adminPage">Loading admin dashboard...</main>;
   }
@@ -178,9 +190,14 @@ export default function AdminDashboardPage() {
             Review content, manage accounts, and keep the community healthy.
           </p>
         </div>
-        <button className="adminRefreshBtn" onClick={loadAll}>
-          Refresh
-        </button>
+        <div className="adminHeaderActions">
+          <button className="adminSignOutBtn" onClick={handleLogout}>
+            Sign Out
+          </button>
+          <button className="adminRefreshBtn" onClick={loadAll}>
+            Refresh
+          </button>
+        </div>
       </header>
 
       {summary && (
